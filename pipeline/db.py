@@ -24,13 +24,14 @@ CREATE TABLE IF NOT EXISTS items (
     meeting_date TEXT,
     comment_deadline TEXT,
     status TEXT DEFAULT 'active',
-    hash TEXT NOT NULL UNIQUE,
+    hash TEXT NOT NULL,
     created_at TEXT NOT NULL DEFAULT (datetime('now'))
 );
 
 CREATE INDEX IF NOT EXISTS idx_items_jurisdiction ON items(jurisdiction);
 CREATE INDEX IF NOT EXISTS idx_items_meeting_date ON items(meeting_date);
 CREATE INDEX IF NOT EXISTS idx_items_created_at ON items(created_at);
+CREATE INDEX IF NOT EXISTS idx_items_hash ON items(hash);
 
 CREATE TABLE IF NOT EXISTS item_topics (
     item_id TEXT NOT NULL,
