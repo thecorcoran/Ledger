@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Drinking Water Rate Review — Loretta's Ledger</title>
+    <style>
+        :root {
+            --bg: #0b1120;
+            --surface: #1e293b;
+            --surface-hover: #24344d;
+            --border: #334155;
+            --text: #f8fafc;
+            --muted: #94a3b8;
+            --accent: #38bdf8;
+            --accent-glow: rgba(56, 189, 248, 0.15);
+            --gold: #f59e0b;
+            --green: #10b981;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+        }
+        header {
+            background: rgba(15, 23, 42, 0.95);
+            border-bottom: 1px solid var(--border);
+            padding: 18px 24px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(8px);
+        }
+        .header-inner {
+            max-width: 1100px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .logo {
+            font-size: 20px;
+            font-weight: 700;
+            color: #fff;
+            text-decoration: none;
+            letter-spacing: -0.02em;
+        }
+        .logo span { color: var(--accent); }
+        nav a {
+            color: var(--muted);
+            text-decoration: none;
+            font-size: 14px;
+            margin-left: 20px;
+            font-weight: 500;
+            transition: color 0.15s ease;
+        }
+        nav a:hover, nav a.active { color: var(--accent); }
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 32px 20px 60px 20px;
+        }
+        .hero {
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 28px;
+            margin-bottom: 32px;
+        }
+        .hero h1 {
+            font-size: 32px;
+            margin: 0 0 10px 0;
+            font-weight: 800;
+            line-height: 1.2;
+        }
+        .hero p {
+            font-size: 16px;
+            color: var(--muted);
+            margin: 0;
+            max-width: 800px;
+        }
+        .badge {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        .badge-jur { background: var(--accent-glow); color: var(--accent); }
+        .badge-testcase { background: rgba(245, 158, 11, 0.15); color: var(--gold); border: 1px solid rgba(245, 158, 11, 0.3); }
+        .badge-topic { background: #1e3a5f; color: #7dd3fc; margin-right: 4px; }
+        .card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            transition: transform 0.15s ease, border-color 0.15s ease;
+        }
+        .card:hover { border-color: #475569; }
+        .card-title {
+            font-size: 18px;
+            font-weight: 700;
+            margin: 0 0 8px 0;
+        }
+        .card-title a {
+            color: #fff;
+            text-decoration: none;
+        }
+        .card-title a:hover { color: var(--accent); }
+        .card-meta {
+            font-size: 13px;
+            color: var(--muted);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .btn {
+            display: inline-block;
+            background: var(--accent);
+            color: #0b1120;
+            font-weight: 600;
+            font-size: 13px;
+            padding: 8px 14px;
+            border-radius: 6px;
+            text-decoration: none;
+            margin-top: 10px;
+        }
+        .btn:hover { opacity: 0.9; }
+        pre {
+            background: #060913;
+            border: 1px solid var(--border);
+            padding: 16px;
+            border-radius: 6px;
+            overflow-x: auto;
+            color: #cbd5e1;
+            font-size: 13px;
+        }
+        blockquote {
+            border-left: 3px solid var(--accent);
+            margin: 16px 0;
+            padding-left: 16px;
+            color: #cbd5e1;
+            font-style: italic;
+        }
+        footer {
+            border-top: 1px solid var(--border);
+            padding: 24px;
+            text-align: center;
+            color: var(--muted);
+            font-size: 13px;
+        }
+        @media print {
+            body { background: #fff; color: #000; }
+            header, footer, nav, .btn { display: none; }
+            .container { max-width: 100%; padding: 0; }
+            .card { border: none; padding: 0; }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-inner">
+            <a href="index.html" class="logo">Loretta's <span>Ledger</span></a>
+            <nav>
+                <a href="index.html" class="">Home</a>
+                <a href="briefs.html" class="active">Policy Briefs</a>
+                <a href="action.html" class="">Citizen Action</a>
+                <a href="test-cases.html" class="">Test Cases</a>
+                <a href="influences.html" class="">Who's Behind This</a>
+            </nav>
+        </div>
+    </header>
+    <div class="container">
+        <h1>Brief: Drinking Water Rate Review</h1>
+<br>
+<p><strong>Jurisdiction</strong>: Olympia</p>
+<p><strong>Meeting Date</strong>: 2026-10-06</p>
+<p><strong>Original Source</strong>: <a href="https://example.com/item" target="_blank">Olympia Official Record</a></p>
+<br>
+<h2>Summary (facts only)</h2>
+<p>The Olympia governing body has scheduled consideration of: Drinking Water Rate Review.</p>
+<p>Official record details:</p>
+<p>Details on rates</p>
+<br>
+<h2>Litmus Test Evaluation</h2>
+<p>1. <strong>Subsidiarity</strong>: [Rating: Neutral / unclear]. Is this decided at the most local level? Upstream tracking indicates: local initiative. [Source: https://example.com/item]</p>
+<p>2. <strong>Ownership</strong>: [Rating: Neutral / unclear]. Effect on ability of ordinary families to own and retain land, homes, or shops: not stated in source.</p>
+<p>3. <strong>Small and local vs. large and distant</strong>: [Rating: Neutral / unclear]. Documents do not explicitly detail disparity between small local merchants versus institutional players.</p>
+<p>4. <strong>Family and household</strong>: [Rating: Neutral / unclear]. Support for household self-reliance versus programmatic agency replacement: not stated in source.</p>
+<p>5. <strong>Cost and who pays</strong>: [Rating: Neutral / unclear]. Specific distribution of fees or compliance burden among small versus large owners: not stated in source.</p>
+<p>6. <strong>Consent and process</strong>: [Rating: Supports]. Matter noticed on public agenda with opportunity for public attendance and comment prior to final action. [Source: https://example.com/item]</p>
+<p>7. <strong>Reversibility and accountability</strong>: [Rating: Supports]. Action remains under jurisdiction of elected local officials who remain publicly answerable. [Source: https://example.com/item]</p>
+<p>8. <strong>Place</strong>: [Rating: Neutral / unclear]. Impact on unique character and longstanding residents of neighborhood: not stated in source.</p>
+<br>
+<h2>Who&#x27;s Behind This? (Upstream Influence)</h2>
+<p>No upstream source identified in the documents reviewed.</p>
+<br>
+<h2>Overall Analysis</h2>
+<p>*(Analysis)*: This proposal represents formal policy action by Olympia. Citizens should examine whether the financial and regulatory conditions align with local self-determination and people-first policy principles.</p>
+<br>
+<h2>Plain-Language Effect for Residents</h2>
+<p>This action establishes local regulatory or financial standards directly touching Olympia residents. Review supporting attachments to evaluate direct impacts on property taxes, service fees, and local land rights.</p>
+<br>
+<h2>Next Step for Citizens</h2>
+<ul>
+<li><strong>Meeting / Public Hearing</strong>: 2026-10-06</li>
+<li><strong>Public Comment Deadline</strong>: Check meeting agenda for registration cutoff</li>
+<li><strong>Official Documentation</strong>: <a href="https://example.com/item" target="_blank">Review Complete Packet</a></li>
+</ul>
+<br>
+    </div>
+    <footer>
+        Loretta's Ledger &bull; Independent local policy publication for Olympia and Thurston County &bull; People-First Policy Framework
+    </footer>
+</body>
+</html>
