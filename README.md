@@ -1,6 +1,6 @@
 # Loretta's Ledger
 
-A local policy publication providing consistent, evidence-based policy briefs for the **City of Olympia** and **Thurston County**, analyzed through a Distributist / Chestertonian lens (subsidiarity, widely held property, family and local economy, skepticism of concentrated power).
+A local policy publication providing consistent, evidence-based policy briefs for the **City of Olympia** and **Thurston County**, analyzed through a people-first policy lens (subsidiarity, widely held property, family and local economy, skepticism of concentrated power).
 
 ## Key Features
 - **Litmus Test Analysis:** Consistent evaluation of policies across 8 core principles (subsidiarity, ownership, small/local vs large/distant, family/household, cost/burden, consent/process, reversibility/accountability, place).

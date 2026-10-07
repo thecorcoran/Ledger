@@ -48,7 +48,7 @@ Next step for citizens: [date, email, hearing link]
 ## Rules for the analyst (human or AI)
 
 - Facts and analysis are separate. Label analysis as analysis.
-- Do not lead with the word "Distributism" in public-facing text. Use plain language such as local control, ownership, affordability.
+- Frame analysis around people-first policy. Use plain language such as local control, ownership, affordability.
 - Name real tradeoffs and where the policy has merit. A policy that cuts against a principle can still be justified.
 - Do not assert motive. Judge effects, not intentions.
 - No invented quotes, dates, or vote outcomes.

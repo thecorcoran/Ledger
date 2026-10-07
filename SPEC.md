@@ -2,7 +2,7 @@
 
 ## 1. Purpose
 
-A local policy publication. **The main product is policy briefs about Olympia and Thurston County**, analyzed through a Distributist / Chestertonian lens (subsidiarity, widely held property, family and local economy, skepticism of concentrated power).
+A local policy publication. **The main product is policy briefs about Olympia and Thurston County**, analyzed through a people-first policy lens (subsidiarity, widely held property, family and local economy, skepticism of concentrated power).
 
 Its distinguishing feature is **upstream influence tracking**: showing where local policy actually comes from (state law, state agencies, regional bodies, funding conditions, model ordinances, outside policy groups, other jurisdictions). Every brief answers the question "Who's behind this?"
 
@@ -12,7 +12,7 @@ Audiences:
 - **Citizens**: plain-language action pages (what's happening, when, how to comment).
 - **Officials and organizers**: PDF policy briefs.
 
-**Tone rule:** do not lead with the word "Distributism." Lead with concrete effects on families, property owners, small business, and neighborhoods. Use plain language (local control, affordability, people who own a stake in their place).
+**Tone rule:** lead with concrete effects on families, property owners, small business, and neighborhoods. Use plain language (local control, affordability, people who own a stake in their place).
 
 ## 2. Scope
 

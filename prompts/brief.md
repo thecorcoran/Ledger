@@ -31,7 +31,7 @@ Evaluate the following policy item through the Loretta's Ledger Litmus Test.
    - A source citation / link.
    - If not answered by the documents, state: `not stated in source`. Do not guess.
 3. **Tone Rules**:
-   - Do NOT use the word "Distributism" in public-facing text.
+   - Frame analysis around people-first policy.
    - Use plain language: local control, ownership, affordability, people who own a stake in their place.
    - Name real tradeoffs and where the policy has merit.
    - Never assert motive or coordination; judge effects and documented relationships only.
