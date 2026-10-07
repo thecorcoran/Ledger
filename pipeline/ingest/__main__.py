@@ -68,9 +68,14 @@ def main():
 
     print("\nIngest Summary:")
     for src, stats in results.items():
-        print(f"  [{src.upper()}] Events: {stats['events_processed']} | Items Created: {stats['items_created']} | Updated: {stats['items_updated']} | Skipped: {stats['items_skipped']}")
+        events_cnt = stats.get("events_processed", stats.get("items_created", 0) + stats.get("items_skipped", 0))
+        created = stats.get("items_created", 0)
+        updated = stats.get("items_updated", 0)
+        skipped = stats.get("items_skipped", 0)
+        print(f"  [{src.upper()}] Events: {events_cnt} | Items Created: {created} | Updated: {updated} | Skipped: {skipped}")
     print("\nIngestion completed successfully.")
 
 
 if __name__ == "__main__":
     main()
+

@@ -7,6 +7,7 @@ import yaml
 
 from pipeline.db import get_db_connection, init_db, seed_upstream_actors
 from pipeline.ingest.olympia import OlympiaIngester
+from pipeline.ingest.thurston import ThurstonIngester
 
 logger = logging.getLogger(__name__)
 
@@ -27,8 +28,8 @@ def run_ingest(
 
     results = {}
     try:
-        # In Phase 1, Olympia is the core source implemented
-        if all_sources or source in (None, "olympia", "olympia-legistar-api"):
+        # Olympia
+        if all_sources or source in ("olympia", "olympia-legistar-api"):
             ingester = OlympiaIngester()
             res = ingester.ingest(
                 conn=conn,
@@ -38,6 +39,15 @@ def run_ingest(
                 use_cache=use_cache,
             )
             results["olympia"] = res
+
+        # Thurston County
+        if all_sources or source in ("thurston", "thurston-commissioners", "thurston-planning-commission"):
+            t_ingester = ThurstonIngester()
+            t_res = t_ingester.ingest(
+                conn=conn,
+                use_cache=use_cache,
+            )
+            results["thurston"] = t_res
     finally:
         conn.close()
 
