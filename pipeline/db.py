@@ -207,3 +207,4 @@ def seed_upstream_actors(db_path: Optional[Path] = None, config_path: Optional[P
     finally:
         conn.close()
     return count
+

@@ -23,3 +23,4 @@ Draft an Upstream Actor Influence Dossier for Loretta's Ledger.
 1. Summarize the role and legal/institutional authority of this upstream entity in shaping local policy.
 2. Outline observed patterns across the documented items (e.g. repeated grant conditions, mandate compliance deadlines, model code language).
 3. Keep tone objective and descriptive. Never assert conspiracy, bad faith, or coordinated motives.
+

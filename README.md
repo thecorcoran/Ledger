@@ -14,3 +14,4 @@ The project uses Python 3.12+ with SQLite for data pipeline storage and Eleventy
 # Ingest local feeds (Phase 1)
 python3 -m pipeline.ingest --all
 ```
+

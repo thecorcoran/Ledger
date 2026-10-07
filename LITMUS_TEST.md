@@ -57,3 +57,4 @@ Next step for citizens: [date, email, hearing link]
 ## Revision process
 
 Test on 2 or 3 real Olympia or Thurston items. Write the briefs by hand. Wherever a question was awkward, redundant, or missed something important, revise it. Keep the list short (eight or fewer).
+

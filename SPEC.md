@@ -237,3 +237,4 @@ Same pattern for Thurston County sources.
 ## 10. Out of scope (for now)
 
 Briefs for any jurisdiction other than Olympia and Thurston County, accounts or comments on the site, email newsletter, paid tiers. Revisit after Phase 7.
+
