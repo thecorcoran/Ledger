@@ -1,0 +1,129 @@
+topics:
+  - id: housing
+    name: Housing
+    description: Residential zoning, ADUs, multifamily requirements, tenant rules, affordable housing mandates.
+    keywords:
+      - housing
+      - tenant
+      - residential
+      - adu
+      - duplex
+      - triplex
+      - fourplex
+      - multifamily
+      - shelter
+      - tiny home
+      - eviction
+      - landlord
+
+  - id: land-use
+    name: Land Use
+    description: Comprehensive plan amendments, zoning changes, subdivisions, urban growth area decisions.
+    keywords:
+      - zoning
+      - land use
+      - comprehensive plan
+      - subdivision
+      - urban growth area
+      - uga
+      - master plan
+      - development code
+      - conditional use
+      - variance
+
+  - id: water
+    name: Water
+    description: Municipal water system, water rights, water availability, conservation, utilities.
+    keywords:
+      - water
+      - water system
+      - water right
+      - water rights
+      - aquifer
+      - utility rate
+      - drinking water
+
+  - id: wells
+    name: Wells
+    description: Private domestic wells, group wells, permit-exempt wells, well testing, metering.
+    keywords:
+      - well
+      - wells
+      - permit-exempt well
+      - drilling
+      - wellhead
+      - private well
+
+  - id: stormwater
+    name: Stormwater
+    description: Runoff regulations, retention ponds, stormwater utility fees, drainage infrastructure.
+    keywords:
+      - stormwater
+      - storm water
+      - drainage
+      - runoff
+      - retention
+      - impervious surface
+
+  - id: shoreline
+    name: Shoreline
+    description: Shoreline Master Program, coastal and riverfront buffers, docks, marine environment.
+    keywords:
+      - shoreline
+      - shoreline master program
+      - smp
+      - marine
+      - waterfront
+      - buffer
+      - ordinary high water mark
+
+  - id: agriculture
+    name: Agriculture
+    description: Farmland protection, agricultural zoning, local food production, right-to-farm.
+    keywords:
+      - agriculture
+      - farm
+      - farmland
+      - agricultural
+      - livestock
+      - crop
+      - agritourism
+
+  - id: small-business
+    name: Small Business
+    description: Local merchant regulations, commercial permitting, signage, home businesses, vendors.
+    keywords:
+      - small business
+      - commercial
+      - downtown alliance
+      - storefront
+      - vendor
+      - merchant
+      - home occupation
+
+  - id: taxes-fees
+    name: Taxes & Fees
+    description: Property tax levies, impact fees, utility rates, permit fees, sales tax measures.
+    keywords:
+      - tax
+      - taxes
+      - levy
+      - fee
+      - fees
+      - impact fee
+      - rate increase
+      - assessment
+      - lodging tax
+      - general facility charge
+
+  - id: public-process
+    name: Public Process
+    description: Public hearing schedules, public comment rules, open public meetings, citizen notice.
+    keywords:
+      - public hearing
+      - public comment
+      - notice of application
+      - open public meetings act
+      - citizen participation
+      - referendum
+      - initiative

@@ -1,0 +1,71 @@
+upstream_actors:
+  - id: wa-gma
+    name: Washington Growth Management Act
+    upstream_type: state_law
+    aliases:
+      - Growth Management Act
+      - GMA
+      - RCW 36.70A
+      - 36.70A RCW
+    home_url: https://app.leg.wa.gov/rcw/default.aspx?cite=36.70A
+    notes: Comprehensive state land use and planning framework.
+
+  - id: wa-commerce
+    name: Washington State Department of Commerce
+    upstream_type: state_agency
+    aliases:
+      - Department of Commerce
+      - Dept. of Commerce
+      - WA Commerce
+      - Commerce
+    home_url: https://www.commerce.wa.gov/
+    notes: Administers GMA periodic updates, housing mandates, climate planning guidance.
+
+  - id: wa-ecology
+    name: Washington State Department of Ecology
+    upstream_type: state_agency
+    aliases:
+      - Department of Ecology
+      - Dept. of Ecology
+      - WA Ecology
+      - Ecology
+    home_url: https://ecology.wa.gov/
+    notes: Water resources, stormwater manual, shoreline management program oversight.
+
+  - id: trpc
+    name: Thurston Regional Planning Council
+    upstream_type: regional_body
+    aliases:
+      - Thurston Regional Planning Council
+      - TRPC
+    home_url: https://www.trpc.org/
+    notes: Regional transportation and growth planning body for Thurston County.
+
+  - id: gmhb
+    name: Growth Management Hearings Board
+    upstream_type: court_or_board
+    aliases:
+      - Growth Management Hearings Board
+      - GMHB
+    home_url: https://eluho.wa.gov/boards/gmhb
+    notes: Hears petitions challenging city and county comprehensive plans and development regulations.
+
+  - id: us-hud
+    name: U.S. Department of Housing and Urban Development
+    upstream_type: federal
+    aliases:
+      - Department of Housing and Urban Development
+      - HUD
+      - Community Development Block Grant
+      - CDBG
+    home_url: https://www.hud.gov/
+    notes: Federal housing funding and CDBG grant conditions.
+
+  - id: mrsc
+    name: Municipal Research and Services Center
+    upstream_type: outside_group
+    aliases:
+      - Municipal Research and Services Center
+      - MRSC
+    home_url: https://mrsc.org/
+    notes: Provides model ordinances, legal guidance, and policy templates to WA cities and counties.

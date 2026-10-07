@@ -1,0 +1,63 @@
+sources:
+  - id: olympia-legistar-api
+    name: City of Olympia Legistar API
+    jurisdiction: olympia
+    type: api
+    url: https://webapi.legistar.com/v1/olympia/
+    poll_frequency: daily
+    role: core
+    notes: Granicus Legistar Web API for City of Olympia events, agenda items, and matters.
+
+  - id: olympia-legistar-portal
+    name: City of Olympia Legistar Web Portal
+    jurisdiction: olympia
+    type: html
+    url: https://olympia.legistar.com/Calendar.aspx
+    poll_frequency: daily
+    role: core
+    notes: Public web calendar and agenda detail views.
+
+  - id: thurston-commissioners
+    name: Thurston County Board of Commissioners Agendas
+    jurisdiction: thurston
+    type: html
+    url: https://www.thurstoncountywa.gov/departments/board-county-commissioners
+    poll_frequency: daily
+    role: core
+    notes: County commissioner meeting agendas and packets.
+
+  - id: thurston-planning-commission
+    name: Thurston County Planning Commission
+    jurisdiction: thurston
+    type: html
+    url: https://www.thurstoncountywa.gov/departments/community-planning-and-economic-development/community-planning/planning-commission
+    poll_frequency: weekly
+    role: core
+    notes: Planning commission public hearings and work sessions.
+
+  - id: thurston-public-health
+    name: Thurston County Public Health & Social Services
+    jurisdiction: thurston
+    type: html
+    url: https://www.thurstoncountywa.gov/departments/public-health-and-social-services
+    poll_frequency: weekly
+    role: core
+    notes: Environmental health, well/septic regulations, water advisory committees.
+
+  - id: wa-commerce-growth
+    name: WA Dept of Commerce Growth Management
+    jurisdiction: olympia
+    type: html
+    url: https://www.commerce.wa.gov/serving-communities/growth-management/
+    poll_frequency: monthly
+    role: upstream_trigger
+    notes: State housing guidance, periodic update schedules, model codes.
+
+  - id: wa-ecology-rules
+    name: WA Dept of Ecology Rulemaking
+    jurisdiction: olympia
+    type: html
+    url: https://ecology.wa.gov/Regulations-Permits/Laws-rules-rulemaking
+    poll_frequency: monthly
+    role: upstream_trigger
+    notes: Water resources, instream flow, stormwater management manual.
