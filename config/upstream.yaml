@@ -32,6 +32,28 @@ upstream_actors:
     home_url: https://ecology.wa.gov/
     notes: Water resources, stormwater manual, shoreline management program oversight.
 
+  - id: wa-doh
+    name: Washington State Department of Health
+    upstream_type: state_agency
+    aliases:
+      - Department of Health
+      - Dept. of Health
+      - WA DOH
+      - State Board of Health
+    home_url: https://doh.wa.gov/
+    notes: Regulates public and group drinking water systems, on-site sewage systems (WAC 246).
+
+  - id: wa-leg
+    name: Washington State Legislature
+    upstream_type: state_law
+    aliases:
+      - Washington State Legislature
+      - State of Washington
+      - Revised Code of Washington
+      - RCW
+    home_url: https://leg.wa.gov/
+    notes: Enacts state statutes governing municipal powers, local taxation, and property rules.
+
   - id: trpc
     name: Thurston Regional Planning Council
     upstream_type: regional_body
@@ -55,6 +77,7 @@ upstream_actors:
     upstream_type: federal
     aliases:
       - Department of Housing and Urban Development
+      - U.S. Department of Housing and Urban Development
       - HUD
       - Community Development Block Grant
       - CDBG
@@ -70,3 +93,20 @@ upstream_actors:
     home_url: https://mrsc.org/
     notes: Provides model ordinances, legal guidance, and policy templates to WA cities and counties.
 
+  - id: thurston-county-gov
+    name: Thurston County
+    upstream_type: peer_jurisdiction
+    aliases:
+      - Thurston County
+      - Board of County Commissioners
+    home_url: https://www.thurstoncountywa.gov/
+    notes: Interlocal agreements, countywide planning policies, regional agreements with Olympia.
+
+  - id: olympia-city-gov
+    name: City of Olympia
+    upstream_type: peer_jurisdiction
+    aliases:
+      - City of Olympia
+      - Olympia City Council
+    home_url: https://www.olympiawa.gov/
+    notes: Interlocal agreements and urban growth area agreements with Thurston County.

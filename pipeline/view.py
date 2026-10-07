@@ -57,6 +57,15 @@ def show_item(item_id: str, db_path: Optional[Path] = None):
 
         topics = [r["topic"] for r in conn.execute("SELECT topic FROM item_topics WHERE item_id = ?", (item_id,)).fetchall()]
         test_case = conn.execute("SELECT * FROM test_cases WHERE item_id = ?", (item_id,)).fetchone()
+        refs = conn.execute(
+            """
+            SELECT r.*, a.name as actor_name, a.upstream_type
+            FROM upstream_refs r
+            JOIN upstream_actors a ON r.actor_id = a.id
+            WHERE r.item_id = ?
+            """,
+            (item_id,),
+        ).fetchall()
 
         print("\n" + "=" * 95)
         print(f"ITEM: {row['id']}")
@@ -68,7 +77,13 @@ def show_item(item_id: str, db_path: Optional[Path] = None):
         print(f"Deadline:     {row['comment_deadline'] or 'None'}")
         if test_case:
             print(f"Test Case:    YES - {test_case['flagged_reason']} (Status: {test_case['status']})")
-        print(f"URL:          {row['url']}")
+        if refs:
+            print("\nWHO'S BEHIND THIS (Upstream Influence):")
+            for rf in refs:
+                print(f"  - Actor:     {rf['actor_name']} ({rf['upstream_type']})")
+                print(f"    Mechanism: {rf['mechanism']} [Confidence: {rf['confidence']}]")
+                print(f"    Evidence:  \"{rf['evidence_ref']}\"")
+        print(f"\nURL:          {row['url']}")
         print(f"Published:    {row['published_at']}")
         print(f"Status:       {row['status']}")
         print(f"Hash:         {row['hash']}")
@@ -100,8 +115,21 @@ def generate_html_dashboard(db_path: Optional[Path] = None) -> str:
         for r in topic_rows:
             item_topics_map.setdefault(r["item_id"], []).append(r["topic"])
 
+        # Load upstream refs per item
+        ref_rows = conn.execute(
+            """
+            SELECT r.*, a.name as actor_name, a.upstream_type
+            FROM upstream_refs r
+            JOIN upstream_actors a ON r.actor_id = a.id
+            """
+        ).fetchall()
+        item_refs_map = {}
+        for r in ref_rows:
+            item_refs_map.setdefault(r["item_id"], []).append(r)
+
         actors = conn.execute("SELECT * FROM upstream_actors ORDER BY name").fetchall()
         test_case_count = conn.execute("SELECT COUNT(*) FROM test_cases").fetchone()[0]
+        total_refs_count = conn.execute("SELECT COUNT(*) FROM upstream_refs").fetchone()[0]
     finally:
         conn.close()
 
@@ -109,6 +137,20 @@ def generate_html_dashboard(db_path: Optional[Path] = None) -> str:
     for it in items:
         topics = item_topics_map.get(it["id"], [])
         topic_badges = " ".join([f'<span class="badge badge-topic">{html.escape(t)}</span>' for t in topics])
+
+        refs = item_refs_map.get(it["id"], [])
+        upstream_html = ""
+        if refs:
+            ref_badges = []
+            for rf in refs:
+                ref_badges.append(
+                    f'<div class="upstream-ref-card">'
+                    f'<strong>Who\'s Behind This:</strong> <span class="badge badge-actor">{html.escape(rf["actor_name"])}</span> '
+                    f'<span class="badge badge-mechanism">{html.escape(rf["mechanism"])}</span><br>'
+                    f'<span class="upstream-evidence">&ldquo;{html.escape(rf["evidence_ref"])}&rdquo;</span>'
+                    f'</div>'
+                )
+            upstream_html = "".join(ref_badges)
 
         tc_html = ""
         if it["test_case_reason"]:
@@ -132,6 +174,7 @@ def generate_html_dashboard(db_path: Optional[Path] = None) -> str:
                     <span class="topics-wrap">{topic_badges}</span>
                 </div>
                 {tc_html}
+                {upstream_html}
                 <details class="item-details">
                     <summary>View Details & Attachments</summary>
                     <pre>{html.escape(it['body_text'] or '')}</pre>
@@ -208,7 +251,23 @@ def generate_html_dashboard(db_path: Optional[Path] = None) -> str:
         }}
         .badge-jur {{ background: rgba(56, 189, 248, 0.15); color: var(--accent); }}
         .badge-actor {{ background: #334155; color: #e2e8f0; margin: 2px 4px; }}
+        .badge-mechanism {{ background: rgba(168, 85, 247, 0.2); color: #c084fc; border: 1px solid rgba(168, 85, 247, 0.4); margin-left: 4px; }}
         .badge-topic {{ background: #1e3a5f; color: #7dd3fc; margin-left: 6px; }}
+        .upstream-ref-card {{
+            background: rgba(168, 85, 247, 0.08);
+            border: 1px solid rgba(168, 85, 247, 0.25);
+            padding: 8px 12px;
+            border-radius: 6px;
+            margin-top: 8px;
+            font-size: 13px;
+        }}
+        .upstream-evidence {{
+            font-size: 12px;
+            color: #cbd5e1;
+            font-style: italic;
+            display: inline-block;
+            margin-top: 4px;
+        }}
         .badge-testcase {{
             background: rgba(245, 158, 11, 0.15);
             color: #fbbf24;
@@ -301,12 +360,12 @@ def generate_html_dashboard(db_path: Optional[Path] = None) -> str:
                 <div class="stat-label">Test-Case Watch Items</div>
             </div>
             <div class="stat-card">
-                <div class="stat-num">{len(actors)}</div>
-                <div class="stat-label">Upstream Actors Monitored</div>
+                <div class="stat-num">{total_refs_count}</div>
+                <div class="stat-label">Upstream Influence Links</div>
             </div>
             <div class="stat-card">
-                <div class="stat-num">SQLite</div>
-                <div class="stat-label">Database Storage (data/ledger.db)</div>
+                <div class="stat-num">{len(actors)}</div>
+                <div class="stat-label">Monitored Actors</div>
             </div>
         </div>
 
