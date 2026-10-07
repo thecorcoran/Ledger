@@ -19,19 +19,29 @@ def list_items(db_path: Optional[Path] = None, limit: int = 25, offset: int = 0)
         total = conn.execute("SELECT COUNT(*) FROM items").fetchone()[0]
         rows = conn.execute(
             """
-            SELECT id, jurisdiction, title, meeting_date, url
-            FROM items
-            ORDER BY meeting_date DESC, id DESC
+            SELECT i.id, i.jurisdiction, i.title, i.meeting_date, i.comment_deadline, i.url,
+                   t.flagged_reason as test_case_reason
+            FROM items i
+            LEFT JOIN test_cases t ON i.id = t.item_id
+            ORDER BY i.meeting_date DESC, i.id DESC
             LIMIT ? OFFSET ?
             """,
             (limit, offset),
         ).fetchall()
 
         print(f"\nLoretta's Ledger — Ingested Items (Total: {total}, Showing: {len(rows)})")
-        print("=" * 90)
+        print("=" * 95)
         for r in rows:
-            print(f"[{r['meeting_date'] or 'No Date'}] ({r['jurisdiction'].upper()}) {r['id']}")
+            # Fetch topics
+            t_rows = conn.execute("SELECT topic FROM item_topics WHERE item_id = ?", (r["id"],)).fetchall()
+            topics_str = ", ".join([tr["topic"] for tr in t_rows]) if t_rows else "uncategorized"
+
+            print(f"[{r['meeting_date'] or 'No Date'}] ({r['jurisdiction'].upper()}) [{topics_str}] {r['id']}")
             print(f"  Title: {r['title']}")
+            if r["comment_deadline"]:
+                print(f"  Deadline: {r['comment_deadline']}")
+            if r["test_case_reason"]:
+                print(f"  * TEST CASE WATCH: {r['test_case_reason']}")
             print(f"  URL:   {r['url']}\n")
     finally:
         conn.close()
@@ -45,20 +55,27 @@ def show_item(item_id: str, db_path: Optional[Path] = None):
             print(f"Item not found: {item_id}")
             return
 
-        print("\n" + "=" * 90)
+        topics = [r["topic"] for r in conn.execute("SELECT topic FROM item_topics WHERE item_id = ?", (item_id,)).fetchall()]
+        test_case = conn.execute("SELECT * FROM test_cases WHERE item_id = ?", (item_id,)).fetchone()
+
+        print("\n" + "=" * 95)
         print(f"ITEM: {row['id']}")
-        print("=" * 90)
+        print("=" * 95)
         print(f"Jurisdiction: {row['jurisdiction']}")
         print(f"Title:        {row['title']}")
+        print(f"Topics:       {', '.join(topics) if topics else 'None'}")
         print(f"Meeting Date: {row['meeting_date']}")
+        print(f"Deadline:     {row['comment_deadline'] or 'None'}")
+        if test_case:
+            print(f"Test Case:    YES - {test_case['flagged_reason']} (Status: {test_case['status']})")
         print(f"URL:          {row['url']}")
         print(f"Published:    {row['published_at']}")
         print(f"Status:       {row['status']}")
         print(f"Hash:         {row['hash']}")
         print("\nBODY TEXT:")
-        print("-" * 90)
+        print("-" * 95)
         print(row["body_text"] or "(None)")
-        print("=" * 90 + "\n")
+        print("=" * 95 + "\n")
     finally:
         conn.close()
 
@@ -67,21 +84,54 @@ def generate_html_dashboard(db_path: Optional[Path] = None) -> str:
     conn = get_db_connection(db_path)
     try:
         items = conn.execute(
-            "SELECT * FROM items ORDER BY meeting_date DESC, id DESC"
+            """
+            SELECT i.*, 
+                   t.flagged_reason as test_case_reason, 
+                   t.status as test_case_status
+            FROM items i
+            LEFT JOIN test_cases t ON i.id = t.item_id
+            ORDER BY i.meeting_date DESC, i.id DESC
+            """
         ).fetchall()
+
+        # Load topics per item
+        topic_rows = conn.execute("SELECT item_id, topic FROM item_topics").fetchall()
+        item_topics_map = {}
+        for r in topic_rows:
+            item_topics_map.setdefault(r["item_id"], []).append(r["topic"])
+
         actors = conn.execute("SELECT * FROM upstream_actors ORDER BY name").fetchall()
+        test_case_count = conn.execute("SELECT COUNT(*) FROM test_cases").fetchone()[0]
     finally:
         conn.close()
 
     rows_html = []
     for it in items:
+        topics = item_topics_map.get(it["id"], [])
+        topic_badges = " ".join([f'<span class="badge badge-topic">{html.escape(t)}</span>' for t in topics])
+
+        tc_html = ""
+        if it["test_case_reason"]:
+            tc_html = f'<div class="badge badge-testcase">&#9888; TEST CASE WATCH: {html.escape(it["test_case_reason"])}</div>'
+
+        deadline_html = ""
+        if it["comment_deadline"]:
+            deadline_html = f'<div class="deadline-note">&#9201; Comment Deadline: {html.escape(it["comment_deadline"])}</div>'
+
         rows_html.append(f"""
         <tr class="item-row">
-            <td><strong>{html.escape(str(it['meeting_date'] or ''))}</strong></td>
+            <td>
+                <strong>{html.escape(str(it['meeting_date'] or ''))}</strong>
+                {deadline_html}
+            </td>
             <td><span class="badge badge-jur">{html.escape(it['jurisdiction'].upper())}</span></td>
             <td>
                 <div class="item-title">{html.escape(it['title'])}</div>
-                <div class="item-id">{html.escape(it['id'])}</div>
+                <div class="item-meta">
+                    <span class="item-id">{html.escape(it['id'])}</span>
+                    <span class="topics-wrap">{topic_badges}</span>
+                </div>
+                {tc_html}
                 <details class="item-details">
                     <summary>View Details & Attachments</summary>
                     <pre>{html.escape(it['body_text'] or '')}</pre>
@@ -158,6 +208,29 @@ def generate_html_dashboard(db_path: Optional[Path] = None) -> str:
         }}
         .badge-jur {{ background: rgba(56, 189, 248, 0.15); color: var(--accent); }}
         .badge-actor {{ background: #334155; color: #e2e8f0; margin: 2px 4px; }}
+        .badge-topic {{ background: #1e3a5f; color: #7dd3fc; margin-left: 6px; }}
+        .badge-testcase {{
+            background: rgba(245, 158, 11, 0.15);
+            color: #fbbf24;
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            margin-top: 6px;
+            font-size: 12px;
+            padding: 4px 8px;
+            border-radius: 4px;
+            display: inline-block;
+        }}
+        .deadline-note {{
+            font-size: 11px;
+            color: #f59e0b;
+            margin-top: 6px;
+            line-height: 1.3;
+        }}
+        .item-meta {{
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 4px;
+        }}
         table {{
             width: 100%;
             border-collapse: collapse;
@@ -181,7 +254,7 @@ def generate_html_dashboard(db_path: Optional[Path] = None) -> str:
         }}
         .item-row:hover {{ background: rgba(255, 255, 255, 0.02); }}
         .item-title {{ font-size: 15px; font-weight: 600; line-height: 1.4; color: #fff; }}
-        .item-id {{ font-size: 11px; color: var(--muted); font-family: monospace; margin-top: 4px; }}
+        .item-id {{ font-size: 11px; color: var(--muted); font-family: monospace; }}
         .item-details {{
             margin-top: 8px;
             font-size: 13px;
@@ -222,6 +295,10 @@ def generate_html_dashboard(db_path: Optional[Path] = None) -> str:
             <div class="stat-card">
                 <div class="stat-num">{len(items)}</div>
                 <div class="stat-label">Ingested Items</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-num">{test_case_count}</div>
+                <div class="stat-label">Test-Case Watch Items</div>
             </div>
             <div class="stat-card">
                 <div class="stat-num">{len(actors)}</div>
