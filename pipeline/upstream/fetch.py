@@ -48,3 +48,4 @@ def get_or_create_statute_doc(
         (doc_id, actor_id, title, url, "rule" if is_wac else "statute"),
     )
     return doc_id
+
