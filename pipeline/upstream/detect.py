@@ -20,7 +20,7 @@ MECHANISM_PATTERNS = [
         "funding_strings",
     ),
     (
-        r"\b(?:required by|mandated by|pursuant to|in compliance with|shall adopt|statutory requirement|statute requires|state mandate|gma periodic update)\b",
+        r"\b(?:required by|mandated by|pursuant to|in compliance with|shall adopt|statutory requirement|statute requires|state mandate|gma periodic update|critical area.*(?:update|ordinance|code)|draft code|article iii)\b",
         "mandate",
     ),
     (
@@ -81,8 +81,15 @@ def find_citations(text: str) -> List[Tuple[str, str, str, int, int]]:
     for m in rcw_matches:
         cite_num = m.group(1) or m.group(2)
         full_cite = f"RCW {cite_num}"
-        # Map GMA specifically to wa-gma, otherwise general legislature
-        actor_id = "wa-gma" if cite_num.startswith("36.70A") else "wa-leg"
+        # Map GMA specifically to wa-gma, Conservation Commission to wa-scc, DOH to wa-doh, otherwise general legislature
+        if cite_num.startswith("36.70A"):
+            actor_id = "wa-gma"
+        elif cite_num.startswith("89.08"):
+            actor_id = "wa-scc"
+        elif cite_num.startswith("70A.125") or cite_num.startswith("70.119"):
+            actor_id = "wa-doh"
+        else:
+            actor_id = "wa-leg"
         citations.append(("statute", full_cite, actor_id, m.start(), m.end()))
 
     # WAC pattern: e.g. "WAC 365-196" or "WAC 173-26" or "WAC 246-290"
@@ -182,9 +189,12 @@ def detect_upstream_influences_for_item(
             if not variant or len(variant.strip()) < 3:
                 continue
 
-            # Word boundary regex
+            # Word boundary regex or embedded attachment file name match
             pattern = r"\b" + re.escape(variant.strip()) + r"\b"
             match = re.search(pattern, combined_text, re.IGNORECASE)
+            if not match and len(variant.strip()) >= 5:
+                # Also match embedded keywords in attachment filenames like "OlympiaCAO_CommerceChecklist"
+                match = re.search(re.escape(variant.strip()), combined_text, re.IGNORECASE)
             if match:
                 excerpt = extract_evidence_excerpt(combined_text, match.start(), match.end())
                 mechanism = detect_mechanism(excerpt)

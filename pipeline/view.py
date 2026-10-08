@@ -1,9 +1,16 @@
-"""Back-end Control Center and web dashboard for Loretta's Ledger."""
+"""Back-end Control Center and web dashboard for Loretta's Ledger.
+
+Simplified single-page review dashboard:
+1. "Needs your review": list of unreviewed drafts (title, jurisdiction, date, test-case flag).
+2. The draft view: brief text, "Who's behind this?" with evidence links, litmus ratings, source link.
+   Three buttons: Approve, Reject, Save edits.
+3. "Published": list of approved items with links to public pages.
+"""
 
 import argparse
 import html
 import http.server
-import json
+import re
 import socketserver
 import sqlite3
 import sys
@@ -13,8 +20,7 @@ from typing import Optional
 
 from pipeline.db import DEFAULT_DB_PATH, get_db_connection
 from pipeline.review import approve_draft, reject_draft
-from pipeline.run import run_full_pipeline
-from pipeline.export import export_site_content
+from pipeline.export import export_site_content, markdown_to_html
 
 
 def list_items(db_path: Optional[Path] = None, limit: int = 25, offset: int = 0):
@@ -98,166 +104,284 @@ def show_item(item_id: str, db_path: Optional[Path] = None):
         conn.close()
 
 
-def generate_html_dashboard(db_path: Optional[Path] = None, tab: str = "items") -> str:
+def generate_html_dashboard(
+    db_path: Optional[Path] = None,
+    selected_draft_id: Optional[int] = None,
+    approved_draft_id: Optional[int] = None,
+) -> str:
+    """Generates the simplified, single-page editorial dashboard."""
     conn = get_db_connection(db_path)
     try:
-        items = conn.execute(
-            """
-            SELECT i.*, 
-                   t.flagged_reason as test_case_reason, 
-                   t.status as test_case_status
-            FROM items i
-            LEFT JOIN test_cases t ON i.id = t.item_id
-            ORDER BY i.meeting_date DESC, i.id DESC
-            """
-        ).fetchall()
+        # 0. Check approved item notice if present
+        approved_item = None
+        if approved_draft_id:
+            approved_item = conn.execute(
+                """
+                SELECT d.id, d.item_id, d.kind, i.title as item_title
+                FROM drafts d
+                JOIN items i ON d.item_id = i.id
+                WHERE d.id = ?
+                """,
+                (approved_draft_id,),
+            ).fetchone()
 
-        topic_rows = conn.execute("SELECT item_id, topic FROM item_topics").fetchall()
-        item_topics_map = {}
-        for r in topic_rows:
-            item_topics_map.setdefault(r["item_id"], []).append(r["topic"])
-
-        ref_rows = conn.execute(
+        # 1. Unreviewed drafts query (Policy briefs only, triaged by priority: test cases, upstream refs, then meeting date)
+        unreviewed = conn.execute(
             """
-            SELECT r.*, a.name as actor_name, a.upstream_type
-            FROM upstream_refs r
-            JOIN upstream_actors a ON r.actor_id = a.id
-            """
-        ).fetchall()
-        item_refs_map = {}
-        for r in ref_rows:
-            item_refs_map.setdefault(r["item_id"], []).append(r)
-
-        actors = conn.execute("SELECT * FROM upstream_actors ORDER BY name").fetchall()
-        test_case_count = conn.execute("SELECT COUNT(*) FROM test_cases").fetchone()[0]
-        total_refs_count = conn.execute("SELECT COUNT(*) FROM upstream_refs").fetchone()[0]
-
-        drafts = conn.execute(
-            """
-            SELECT d.*, i.title as item_title, i.jurisdiction, i.meeting_date
+            SELECT d.id, d.item_id, d.kind, d.markdown, d.reviewed,
+                   i.title as item_title, i.jurisdiction, i.meeting_date, i.url as item_url,
+                   t.flagged_reason as test_case_reason,
+                   (CASE WHEN t.item_id IS NOT NULL THEN 1 WHEN r.item_id IS NOT NULL THEN 2 ELSE 3 END) as priority_rank
             FROM drafts d
             JOIN items i ON d.item_id = i.id
-            ORDER BY d.reviewed ASC, d.id DESC
+            LEFT JOIN test_cases t ON i.id = t.item_id
+            LEFT JOIN upstream_refs r ON i.id = r.item_id
+            WHERE d.reviewed = 0 AND d.kind = 'brief'
+            GROUP BY d.id
+            ORDER BY priority_rank ASC, i.meeting_date DESC, d.id ASC
             """
         ).fetchall()
-        pending_drafts_count = len([d for d in drafts if not d["reviewed"]])
-        approved_drafts_count = len([d for d in drafts if d["reviewed"]])
+
+        # 2. Published drafts query (Policy briefs only to prevent duplicate cards)
+        published = conn.execute(
+            """
+            SELECT d.id, d.item_id, d.kind, d.reviewed, d.reviewed_at,
+                   i.title as item_title, i.jurisdiction, i.meeting_date, i.url as item_url
+            FROM drafts d
+            JOIN items i ON d.item_id = i.id
+            WHERE d.reviewed = 1 AND d.kind = 'brief'
+            ORDER BY d.reviewed_at DESC, d.id DESC
+            """
+        ).fetchall()
+
+        waiting_count = len(unreviewed)
+
+        # Determine which draft is actively open for review
+        active_draft = None
+        if selected_draft_id:
+            for d in unreviewed:
+                if d["id"] == selected_draft_id:
+                    active_draft = d
+                    break
+            # If not in unreviewed, check all drafts
+            if not active_draft:
+                active_draft = conn.execute(
+                    """
+                    SELECT d.id, d.item_id, d.kind, d.markdown, d.reviewed,
+                           i.title as item_title, i.jurisdiction, i.meeting_date, i.url as item_url,
+                           t.flagged_reason as test_case_reason
+                    FROM drafts d
+                    JOIN items i ON d.item_id = i.id
+                    LEFT JOIN test_cases t ON i.id = t.item_id
+                    WHERE d.id = ?
+                    """,
+                    (selected_draft_id,),
+                ).fetchone()
+        elif unreviewed:
+            active_draft = unreviewed[0]
+
+        # Gather upstream evidence refs for the active draft if selected
+        active_refs = []
+        if active_draft:
+            active_refs = conn.execute(
+                """
+                SELECT r.*, a.name as actor_name, a.upstream_type, a.home_url
+                FROM upstream_refs r
+                JOIN upstream_actors a ON r.actor_id = a.id
+                WHERE r.item_id = ?
+                """,
+                (active_draft["item_id"],),
+            ).fetchall()
+
     finally:
         conn.close()
 
-    # Drafts Review HTML
-    drafts_rows_html = []
-    for d in drafts:
-        status_badge = (
-            '<span class="badge" style="background:#10b981; color:#0b1120;">PUBLISHED</span>'
-            if d["reviewed"]
-            else '<span class="badge" style="background:#f59e0b; color:#0b1120;">PENDING REVIEW</span>'
-        )
-        actions_btn = ""
-        if not d["reviewed"]:
-            actions_btn = f"""
-            <form method="POST" action="/action/approve" style="display:inline;">
-                <input type="hidden" name="draft_id" value="{d['id']}">
-                <button type="submit" class="btn btn-green">Approve & Publish</button>
-            </form>
-            <form method="POST" action="/action/reject" style="display:inline; margin-left:6px;">
-                <input type="hidden" name="draft_id" value="{d['id']}">
-                <button type="submit" class="btn btn-red" onclick="return confirm('Delete this draft?');">Reject</button>
-            </form>
-            """
-        else:
-            actions_btn = f"""
-            <form method="POST" action="/action/reject" style="display:inline;">
-                <input type="hidden" name="draft_id" value="{d['id']}">
-                <button type="submit" class="btn btn-red" onclick="return confirm('Unpublish and remove this draft?');">Unpublish</button>
-            </form>
-            """
+    # Section 1: "Needs your review" list
+    needs_review_cards = []
+    for d in unreviewed:
+        is_selected = active_draft and d["id"] == active_draft["id"]
+        jur_name = "Olympia" if d["jurisdiction"].lower() == "olympia" else "Thurston County"
+        tc_flag = ""
+        if d["test_case_reason"]:
+            tc_flag = f'<span class="badge badge-testcase">&#9888; Test case: {html.escape(d["test_case_reason"])}</span>'
 
-        drafts_rows_html.append(f"""
-        <div class="card">
-            <div class="card-meta">
-                <span class="badge badge-jur">{d['jurisdiction'].upper()}</span>
-                <span class="badge" style="background:#334155; color:#cbd5e1;">{d['kind'].upper()}</span>
-                {status_badge}
-                <span>Meeting: {d['meeting_date']}</span>
+        needs_review_cards.append(f"""
+        <div class="draft-row {'active-row' if is_selected else ''}">
+            <div class="draft-row-meta">
+                <span class="badge badge-jur">{html.escape(jur_name)}</span>
+                <span class="date-text">{html.escape(str(d['meeting_date'] or 'Upcoming'))}</span>
+                {tc_flag}
             </div>
-            <h3 class="card-title">{html.escape(d['item_title'])}</h3>
-            <div style="margin: 12px 0;">{actions_btn}</div>
-            <details class="item-details">
-                <summary>Read Draft Content ({d['kind']})</summary>
-                <pre>{html.escape(d['markdown'])}</pre>
-            </details>
+            <div class="draft-row-title">
+                <a href="/?draft_id={d['id']}#draft-view">{html.escape(d['item_title'])}</a>
+            </div>
         </div>
         """)
 
-    # Items Table HTML
-    rows_html = []
-    for it in items:
-        topics = item_topics_map.get(it["id"], [])
-        topic_badges = " ".join([f'<span class="badge badge-topic">{html.escape(t)}</span>' for t in topics])
+    # Section 2: Active Draft View
+    draft_view_html = ""
+    if active_draft:
+        jur_label = "Olympia" if active_draft["jurisdiction"].lower() == "olympia" else "Thurston County"
+        tc_notice = ""
+        if active_draft["test_case_reason"]:
+            tc_notice = f"""
+            <div class="testcase-alert">
+                <strong>&#9888; Precedent-Setting Test Case:</strong> {html.escape(active_draft['test_case_reason'])}
+            </div>
+            """
 
-        refs = item_refs_map.get(it["id"], [])
-        upstream_html = ""
-        if refs:
-            ref_badges = []
-            for rf in refs:
-                ref_badges.append(
-                    f'<div class="upstream-ref-card">'
-                    f'<strong>Who\'s Behind This:</strong> <span class="badge badge-actor">{html.escape(rf["actor_name"])}</span> '
-                    f'<span class="badge badge-mechanism">{html.escape(rf["mechanism"])}</span><br>'
-                    f'<span class="upstream-evidence">&ldquo;{html.escape(rf["evidence_ref"])}&rdquo;</span>'
-                    f'</div>'
-                )
-            upstream_html = "".join(ref_badges)
-
-        tc_html = ""
-        if it["test_case_reason"]:
-            tc_html = f'<div class="badge badge-testcase">&#9888; TEST CASE WATCH: {html.escape(it["test_case_reason"])}</div>'
-
-        deadline_html = ""
-        if it["comment_deadline"]:
-            deadline_html = f'<div class="deadline-note">&#9201; Comment Deadline: {html.escape(it["comment_deadline"])}</div>'
-
-        rows_html.append(f"""
-        <tr class="item-row">
-            <td>
-                <strong>{html.escape(str(it['meeting_date'] or ''))}</strong>
-                {deadline_html}
-            </td>
-            <td><span class="badge badge-jur">{html.escape(it['jurisdiction'].upper())}</span></td>
-            <td>
-                <div class="item-title">{html.escape(it['title'])}</div>
-                <div class="item-meta">
-                    <span class="item-id">{html.escape(it['id'])}</span>
-                    <span class="topics-wrap">{topic_badges}</span>
+        # Format "Who's behind this?" section
+        who_behind_html = ""
+        if active_refs:
+            ref_items = []
+            for r in active_refs:
+                link_html = f'<a href="{html.escape(r["evidence_url"])}" target="_blank" class="evidence-link">Evidence Source &rarr;</a>' if r["evidence_url"] else ""
+                ref_items.append(f"""
+                <div class="influence-item">
+                    <div class="influence-title">
+                        <strong>{html.escape(r['actor_name'])}</strong> 
+                        <span class="badge badge-mech">{html.escape(r['mechanism'])}</span>
+                    </div>
+                    <div class="influence-evidence">&ldquo;{html.escape(r['evidence_ref'])}&rdquo;</div>
+                    {link_html}
                 </div>
-                {tc_html}
-                {upstream_html}
-                <details class="item-details">
-                    <summary>View Details & Attachments</summary>
-                    <pre>{html.escape(it['body_text'] or '')}</pre>
-                </details>
-            </td>
-            <td><a href="{html.escape(it['url'])}" target="_blank" class="source-link">Source &rarr;</a></td>
-        </tr>
+                """)
+            who_behind_html = "".join(ref_items)
+        else:
+            who_behind_html = "<p class='muted-text'>No upstream influences identified in official documents for this item.</p>"
+
+        # Render preview from markdown
+        rendered_draft_body = markdown_to_html(active_draft["markdown"])
+
+        draft_view_html = f"""
+        <div id="draft-view" class="active-draft-box">
+            <div class="draft-header">
+                <div class="draft-meta">
+                    <span class="badge badge-jur">{html.escape(jur_label)}</span>
+                    <span class="date-text">Meeting: {html.escape(str(active_draft['meeting_date'] or 'Upcoming'))}</span>
+                    <a href="{html.escape(active_draft['item_url'])}" target="_blank" class="source-link">View Official Source &rarr;</a>
+                </div>
+                <h2>{html.escape(active_draft['item_title'])}</h2>
+                {tc_notice}
+            </div>
+
+            <!-- Action Buttons Bar -->
+            <div class="button-bar">
+                <form method="POST" action="/action/approve" style="display:inline;">
+                    <input type="hidden" name="draft_id" value="{active_draft['id']}">
+                    <button type="submit" class="btn btn-green">&#10003; Approve</button>
+                </form>
+
+                <form method="POST" action="/action/reject" style="display:inline;" onsubmit="return confirm('Reject and discard this draft?');">
+                    <input type="hidden" name="draft_id" value="{active_draft['id']}">
+                    <button type="submit" class="btn btn-red">&#10005; Reject</button>
+                </form>
+
+                <button type="button" class="btn btn-blue" onclick="toggleEditMode();">&#9998; Edit Draft Text</button>
+            </div>
+
+            <!-- Editable Form (Hidden by default, shown when Edit is clicked) -->
+            <div id="edit-panel" style="display: none; margin-top: 16px;">
+                <form method="POST" action="/action/save-edit">
+                    <input type="hidden" name="draft_id" value="{active_draft['id']}">
+                    <div style="margin-bottom: 8px;">
+                        <label for="markdown-editor" style="font-weight:600; font-size:13px; color:#cbd5e1;">Edit draft text:</label>
+                    </div>
+                    <textarea id="markdown-editor" name="markdown" rows="18" class="text-editor">{html.escape(active_draft['markdown'])}</textarea>
+                    <div style="margin-top: 10px;">
+                        <button type="submit" class="btn btn-green">&#128190; Save edits</button>
+                        <button type="button" class="btn btn-secondary" onclick="toggleEditMode();">Cancel</button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Who's Behind This Section -->
+            <div class="section-card">
+                <h3>Who's behind this?</h3>
+                {who_behind_html}
+            </div>
+
+            <!-- Draft Content & Litmus Ratings Preview -->
+            <div class="section-card">
+                <h3>Draft Content & Litmus Ratings</h3>
+                <div class="draft-rendered">
+                    {rendered_draft_body}
+                </div>
+            </div>
+        </div>
+        """
+    else:
+        draft_view_html = """
+        <div class="empty-state">
+            <p>No drafts are currently open for review.</p>
+        </div>
+        """
+
+    # Section 3: "Published" list
+    published_items_html = []
+    for p in published:
+        jur_title = "Olympia" if p["jurisdiction"].lower() == "olympia" else "Thurston County"
+        public_url = f"/docs/briefs/brief-{p['item_id']}.html" if p["kind"] == "brief" else f"/docs/action-pages/action-{p['item_id']}.html"
+
+        published_items_html.append(f"""
+        <div class="published-row">
+            <div class="published-row-meta">
+                <span class="badge badge-jur">{html.escape(jur_title)}</span>
+                <span class="date-text">Published {html.escape(str(p['reviewed_at'] or ''))[:10]}</span>
+            </div>
+            <div class="published-row-title" style="flex: 1; margin: 0 16px;">
+                <a href="{html.escape(public_url)}" target="_blank">{html.escape(p['item_title'])}</a>
+            </div>
+            <div>
+                <a href="{html.escape(public_url)}" target="_blank" class="btn btn-blue" style="font-size: 12px; padding: 4px 12px; text-decoration: none; white-space: nowrap;">View Public Page &rarr;</a>
+            </div>
+        </div>
         """)
 
-    actor_badges = []
-    for a in actors:
-        actor_badges.append(
-            f'<span class="badge badge-actor" title="{html.escape(a["notes"] or "")}">{html.escape(a["name"])} ({html.escape(a["upstream_type"])})</span>'
-        )
+    published_section_html = "".join(published_items_html) if published_items_html else "<p class='muted-text'>No items have been published yet.</p>"
+
+    # Banner message
+    approved_banner_html = ""
+    if approved_item:
+        approved_url = f"/docs/briefs/brief-{approved_item['item_id']}.html" if approved_item["kind"] == "brief" else f"/docs/action-pages/action-{approved_item['item_id']}.html"
+        approved_banner_html = f"""
+        <div class="banner banner-done" style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; margin-bottom: 20px;">
+            <div>
+                <strong>&#10003; Policy Brief Approved & Published Locally:</strong> {html.escape(approved_item['item_title'])}
+            </div>
+            <div style="display: flex; gap: 10px;">
+                <a href="{html.escape(approved_url)}" target="_blank" class="btn btn-blue" style="font-size: 12px; padding: 6px 14px; text-decoration: none;">Open Public Policy Brief &rarr;</a>
+                <a href="/docs/index.html" target="_blank" class="btn btn-secondary" style="font-size: 12px; padding: 6px 14px; text-decoration: none;">View Public Website &rarr;</a>
+            </div>
+        </div>
+        """
+
+    if waiting_count > 0:
+        waiting_banner_html = f"""
+        <div class="banner banner-waiting">
+            <strong>{waiting_count} {'draft is' if waiting_count == 1 else 'drafts are'} waiting for your review.</strong>
+        </div>
+        """
+    else:
+        waiting_banner_html = """
+        <div class="banner banner-done">
+            <strong>All caught up!</strong> No drafts are waiting for review.
+        </div>
+        """
+
+    banner_html = approved_banner_html + waiting_banner_html
 
     return f"""<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Loretta's Ledger — Pipeline Control Center</title>
+    <title>Loretta's Ledger — Review</title>
     <style>
         :root {{
             --bg: #0b1120;
             --surface: #1e293b;
+            --surface-hover: #26354a;
             --border: #334155;
             --text: #f8fafc;
             --muted: #94a3b8;
@@ -278,206 +402,287 @@ def generate_html_dashboard(db_path: Optional[Path] = None, tab: str = "items") 
             background: #0f172a;
             border-bottom: 1px solid var(--border);
             padding: 16px 24px;
-            position: sticky;
-            top: 0;
-            z-index: 100;
         }}
         .header-inner {{
-            max-width: 1200px;
+            max-width: 960px;
             margin: 0 auto;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
         }}
-        .logo {{ font-size: 20px; font-weight: 700; color: #fff; text-decoration: none; }}
-        .logo span {{ color: var(--accent); }}
-        .actions-bar {{ display: flex; gap: 12px; }}
-        .btn {{
-            display: inline-block;
-            background: var(--accent);
-            color: #0b1120;
-            font-weight: 600;
+        .site-title {{
+            font-size: 22px;
+            font-weight: 700;
+            margin: 0 0 4px 0;
+            color: #fff;
+        }}
+        .site-title span {{ color: var(--accent); }}
+        .notice-banner {{
             font-size: 13px;
-            padding: 7px 14px;
-            border-radius: 6px;
-            border: none;
-            cursor: pointer;
-            text-decoration: none;
+            color: var(--muted);
+            margin: 0;
         }}
-        .btn:hover {{ opacity: 0.9; }}
-        .btn-green {{ background: var(--green); color: #0b1120; }}
-        .btn-red {{ background: var(--red); color: #fff; }}
-        .container {{ max-width: 1200px; margin: 0 auto; padding: 24px; }}
-        .nav-tabs {{
-            display: flex;
-            gap: 12px;
-            border-bottom: 1px solid var(--border);
-            padding-bottom: 12px;
+        .container {{
+            max-width: 960px;
+            margin: 0 auto;
+            padding: 24px 20px 80px 20px;
+        }}
+        .banner {{
+            padding: 14px 20px;
+            border-radius: 8px;
+            font-size: 15px;
             margin-bottom: 24px;
         }}
-        .nav-tab {{
-            color: var(--muted);
+        .banner-waiting {{
+            background: rgba(245, 158, 11, 0.15);
+            border: 1px solid rgba(245, 158, 11, 0.4);
+            color: #fbbf24;
+        }}
+        .banner-done {{
+            background: rgba(16, 185, 129, 0.15);
+            border: 1px solid rgba(16, 185, 129, 0.4);
+            color: #34d399;
+        }}
+        .section {{
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 24px;
+            margin-bottom: 32px;
+        }}
+        .section h2 {{
+            margin-top: 0;
+            margin-bottom: 16px;
+            font-size: 19px;
+            color: #fff;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 10px;
+        }}
+        .draft-row {{
+            padding: 12px 14px;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            margin-bottom: 10px;
+            background: #0f172a;
+            transition: border-color 0.15s ease;
+        }}
+        .draft-row:hover {{ border-color: var(--accent); }}
+        .draft-row.active-row {{
+            border-color: var(--accent);
+            background: rgba(56, 189, 248, 0.08);
+        }}
+        .draft-row-meta {{
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 4px;
+        }}
+        .draft-row-title a {{
+            color: #fff;
             text-decoration: none;
             font-size: 15px;
             font-weight: 600;
-            padding: 6px 12px;
-            border-radius: 6px;
         }}
-        .nav-tab.active {{
-            background: var(--surface);
-            color: var(--accent);
-        }}
-        .stats-bar {{
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 16px;
-            margin-bottom: 24px;
-        }}
-        .stat-card {{
-            background: var(--surface);
-            border: 1px solid var(--border);
-            padding: 14px 18px;
-            border-radius: 8px;
-        }}
-        .stat-num {{ font-size: 24px; font-weight: 700; color: var(--accent); }}
-        .stat-label {{ color: var(--muted); font-size: 12px; text-transform: uppercase; margin-top: 2px; }}
+        .draft-row-title a:hover {{ color: var(--accent); }}
         .badge {{
             display: inline-block;
             padding: 3px 8px;
             border-radius: 4px;
             font-size: 11px;
             font-weight: 600;
+            text-transform: uppercase;
         }}
         .badge-jur {{ background: rgba(56, 189, 248, 0.15); color: var(--accent); }}
-        .badge-actor {{ background: #334155; color: #e2e8f0; margin: 2px 4px; }}
-        .badge-mechanism {{ background: rgba(168, 85, 247, 0.2); color: #c084fc; border: 1px solid rgba(168, 85, 247, 0.4); margin-left: 4px; }}
-        .badge-topic {{ background: #1e3a5f; color: #7dd3fc; margin-left: 4px; }}
-        .badge-testcase {{
-            background: rgba(245, 158, 11, 0.15);
-            color: #fbbf24;
-            border: 1px solid rgba(245, 158, 11, 0.3);
-            margin-top: 6px;
-            font-size: 12px;
-            padding: 4px 8px;
-            border-radius: 4px;
+        .badge-testcase {{ background: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.3); }}
+        .badge-mech {{ background: #334155; color: #cbd5e1; font-size: 11px; }}
+        .date-text {{ font-size: 12px; color: var(--muted); }}
+        .btn {{
             display: inline-block;
-        }}
-        .upstream-ref-card {{
-            background: rgba(168, 85, 247, 0.08);
-            border: 1px solid rgba(168, 85, 247, 0.25);
-            padding: 8px 12px;
+            font-weight: 600;
+            font-size: 14px;
+            padding: 8px 18px;
             border-radius: 6px;
-            margin-top: 8px;
+            border: none;
+            cursor: pointer;
+            text-decoration: none;
+            transition: opacity 0.15s;
+        }}
+        .btn:hover {{ opacity: 0.9; }}
+        .btn-green {{ background: var(--green); color: #0b1120; }}
+        .btn-red {{ background: var(--red); color: #fff; }}
+        .btn-blue {{ background: #0284c7; color: #fff; }}
+        .btn-secondary {{ background: #334155; color: #cbd5e1; }}
+        .button-bar {{
+            display: flex;
+            gap: 10px;
+            margin: 20px 0;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--border);
+        }}
+        .active-draft-box {{
+            background: #0f172a;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 24px;
+        }}
+        .draft-header h2 {{
+            font-size: 20px;
+            margin: 8px 0 12px 0;
+            color: #fff;
+            border: none;
+            padding: 0;
+        }}
+        .draft-meta {{
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 8px;
+        }}
+        .source-link {{
+            color: var(--accent);
+            text-decoration: none;
             font-size: 13px;
         }}
-        .upstream-evidence {{ font-size: 12px; color: #cbd5e1; font-style: italic; display: inline-block; margin-top: 4px; }}
-        .deadline-note {{ font-size: 11px; color: #f59e0b; margin-top: 6px; line-height: 1.3; }}
-        .item-meta {{ display: flex; align-items: center; gap: 8px; margin-top: 4px; }}
-        table {{
-            width: 100%;
-            border-collapse: collapse;
-            background: var(--surface);
-            border-radius: 8px;
-            overflow: hidden;
-            border: 1px solid var(--border);
-        }}
-        th, td {{
-            padding: 12px 16px;
-            text-align: left;
-            border-bottom: 1px solid var(--border);
-            vertical-align: top;
-        }}
-        th {{ background: #1e293b; color: var(--muted); font-size: 12px; text-transform: uppercase; }}
-        .item-row:hover {{ background: rgba(255, 255, 255, 0.02); }}
-        .item-title {{ font-size: 15px; font-weight: 600; line-height: 1.4; color: #fff; }}
-        .item-id {{ font-size: 11px; color: var(--muted); font-family: monospace; }}
-        .item-details {{ margin-top: 8px; font-size: 13px; }}
-        .item-details summary {{ cursor: pointer; color: var(--accent); }}
-        .item-details pre, .card pre {{
-            background: #060913;
-            padding: 12px;
+        .source-link:hover {{ text-decoration: underline; }}
+        .testcase-alert {{
+            background: rgba(245, 158, 11, 0.15);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            color: #fbbf24;
+            padding: 10px 14px;
             border-radius: 6px;
-            white-space: pre-wrap;
-            word-break: break-word;
-            font-size: 12px;
-            color: #cbd5e1;
-            border: 1px solid var(--border);
-            margin-top: 8px;
+            font-size: 13px;
+            margin: 12px 0;
         }}
-        .card {{
+        .section-card {{
             background: var(--surface);
             border: 1px solid var(--border);
-            padding: 18px;
-            border-radius: 8px;
-            margin-bottom: 16px;
+            border-radius: 6px;
+            padding: 16px 20px;
+            margin-top: 20px;
         }}
-        .card-title {{ margin: 0 0 6px 0; font-size: 17px; color: #fff; }}
-        .card-meta {{ font-size: 13px; color: var(--muted); margin-bottom: 8px; display: flex; gap: 8px; align-items: center; }}
-        a.source-link {{ color: var(--accent); text-decoration: none; font-weight: 500; font-size: 13px; }}
+        .section-card h3 {{
+            margin-top: 0;
+            margin-bottom: 12px;
+            font-size: 16px;
+            color: var(--accent);
+        }}
+        .influence-item {{
+            padding: 10px 0;
+            border-bottom: 1px solid var(--border);
+        }}
+        .influence-item:last-child {{ border-bottom: none; }}
+        .influence-evidence {{
+            font-size: 13px;
+            color: #cbd5e1;
+            font-style: italic;
+            margin: 4px 0;
+        }}
+        .evidence-link {{
+            font-size: 12px;
+            color: var(--accent);
+            text-decoration: none;
+        }}
+        .text-editor {{
+            width: 100%;
+            box-sizing: border-box;
+            background: #060913;
+            color: #f8fafc;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 12px;
+            font-family: inherit;
+            font-size: 14px;
+            line-height: 1.5;
+            resize: vertical;
+        }}
+        .draft-rendered {{
+            font-size: 14px;
+            line-height: 1.6;
+            color: #e2e8f0;
+        }}
+        .draft-rendered h1, .draft-rendered h2, .draft-rendered h3 {{
+            color: #fff;
+            margin-top: 20px;
+            margin-bottom: 8px;
+        }}
+        .draft-rendered a {{ color: var(--accent); }}
+        .draft-rendered blockquote {{
+            border-left: 3px solid var(--accent);
+            margin: 12px 0;
+            padding-left: 12px;
+            color: #94a3b8;
+        }}
+        .published-row {{
+            padding: 10px 14px;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            margin-bottom: 8px;
+            background: #0f172a;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }}
+        .published-row-title a {{
+            color: #fff;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+        }}
+        .published-row-title a:hover {{ color: var(--accent); }}
+        .published-row-meta {{ display: flex; align-items: center; gap: 10px; }}
+        .muted-text {{ color: var(--muted); font-size: 14px; margin: 0; }}
+        .empty-state {{
+            padding: 30px;
+            text-align: center;
+            color: var(--muted);
+        }}
     </style>
+    <script>
+        function toggleEditMode() {{
+            var panel = document.getElementById("edit-panel");
+            if (panel.style.display === "none") {{
+                panel.style.display = "block";
+            }} else {{
+                panel.style.display = "none";
+            }}
+        }}
+    </script>
 </head>
 <body>
     <header>
-        <div class="header-inner">
-            <a href="/" class="logo">Loretta's <span>Ledger</span> &bull; Control Center</a>
-            <div class="actions-bar">
-                <form method="POST" action="/action/run-pipeline" style="display:inline;">
-                    <button type="submit" class="btn">&#9654; Run Full Pipeline Now</button>
-                </form>
-                <a href="http://localhost:8000/docs/index.html" target="_blank" class="btn" style="background:#334155; color:#fff;">View Public Site &rarr;</a>
+        <div class="header-inner" style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;">
+            <div>
+                <h1 class="site-title">Loretta's <span>Ledger</span> &bull; Review Dashboard</h1>
+                <p class="notice-banner">This page runs only on your computer. Nothing here is public until you approve it and push.</p>
+            </div>
+            <div>
+                <a href="/docs/index.html" target="_blank" class="btn btn-secondary" style="text-decoration: none; font-size: 13px; padding: 7px 14px;">
+                    View Public Website &rarr;
+                </a>
             </div>
         </div>
     </header>
 
     <div class="container">
-        <div class="stats-bar">
-            <div class="stat-card">
-                <div class="stat-num">{len(items)}</div>
-                <div class="stat-label">Ingested Items</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-num" style="color:var(--gold);">{pending_drafts_count}</div>
-                <div class="stat-label">Pending Drafts to Review</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-num" style="color:var(--green);">{approved_drafts_count}</div>
-                <div class="stat-label">Approved & Published Briefs</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-num">{test_case_count}</div>
-                <div class="stat-label">Test-Case Watch Items</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-num">{total_refs_count}</div>
-                <div class="stat-label">Upstream Influence Links</div>
-            </div>
+        {banner_html}
+
+        <!-- Section 1: Needs your review -->
+        <div class="section">
+            <h2>1. Needs your review ({waiting_count})</h2>
+            {''.join(needs_review_cards) if needs_review_cards else '<p class=\"muted-text\">No drafts waiting for review.</p>'}
         </div>
 
-        <div class="nav-tabs">
-            <a href="/?tab=items" class="nav-tab {'active' if tab == 'items' else ''}">All Policy Items ({len(items)})</a>
-            <a href="/?tab=drafts" class="nav-tab {'active' if tab == 'drafts' else ''}">Editorial Review & Drafts ({pending_drafts_count} pending)</a>
+        <!-- Section 2: Draft view -->
+        <div class="section">
+            <h2>2. Draft view</h2>
+            {draft_view_html}
         </div>
 
-        {''.join(drafts_rows_html) if tab == 'drafts' else f"""
-        <div style="background:var(--surface); border:1px solid var(--border); padding:16px; border-radius:8px; margin-bottom:20px;">
-            <div style="font-size:12px; font-weight:700; text-transform:uppercase; color:var(--muted); margin-bottom:8px;">Monitored Upstream Actors</div>
-            <div>{''.join(actor_badges)}</div>
+        <!-- Section 3: Published -->
+        <div class="section">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; border-bottom: 1px solid var(--border); padding-bottom: 10px;">
+                <h2 style="margin: 0; border: none; padding: 0;">3. Published ({len(published)})</h2>
+                <a href="/docs/index.html" target="_blank" class="btn btn-secondary" style="font-size: 12px; padding: 5px 12px; text-decoration: none;">View Public Website &rarr;</a>
+            </div>
+            {published_section_html}
         </div>
-
-        <table>
-            <thead>
-                <tr>
-                    <th style="width: 120px;">Meeting Date</th>
-                    <th style="width: 90px;">Jurisdiction</th>
-                    <th>Policy Proposal & Details</th>
-                    <th style="width: 100px;">Source Link</th>
-                </tr>
-            </thead>
-            <tbody>
-                {''.join(rows_html)}
-            </tbody>
-        </table>
-        """}
     </div>
 </body>
 </html>
@@ -490,10 +695,29 @@ class DashboardHandler(http.server.BaseHTTPRequestHandler):
         path = parsed.path
         query = urllib.parse.parse_qs(parsed.query)
 
-        # Serve static site files from docs/ if requested
+        # 1. Alias /docs, /docs/, /public, /public/ to /docs/index.html
+        if path in ("/docs", "/docs/", "/public", "/public/"):
+            path = "/docs/index.html"
+
+        # 2. Allow direct access to /briefs/ or /action-pages/
+        if path.startswith("/briefs/") or path.startswith("/action-pages/"):
+            path = "/docs" + path
+
+        # 3. Serve static site files from docs/ if requested
         if path.startswith("/docs/"):
             rel_path = path[6:]
-            doc_file = Path(__file__).resolve().parent.parent / "docs" / rel_path
+            docs_base = Path(__file__).resolve().parent.parent / "docs"
+            doc_file = docs_base / rel_path
+            if doc_file.is_dir():
+                doc_file = doc_file / "index.html"
+
+            # Fallback if a relative navbar link requested e.g. /docs/briefs/index.html or /docs/briefs/briefs.html
+            if not doc_file.exists() and "/" in rel_path:
+                flat_name = rel_path.split("/")[-1]
+                parent_fallback = docs_base / flat_name
+                if parent_fallback.exists() and parent_fallback.is_file():
+                    doc_file = parent_fallback
+
             if doc_file.exists() and doc_file.is_file():
                 content_type = "text/html" if doc_file.suffix == ".html" else "text/plain"
                 self.send_response(200)
@@ -503,8 +727,21 @@ class DashboardHandler(http.server.BaseHTTPRequestHandler):
                     self.wfile.write(f.read())
                 return
 
-        tab = query.get("tab", ["items"])[0]
-        html_content = generate_html_dashboard(tab=tab)
+        selected_id = None
+        if "draft_id" in query:
+            try:
+                selected_id = int(query["draft_id"][0])
+            except (ValueError, TypeError):
+                selected_id = None
+
+        approved_id = None
+        if "approved" in query:
+            try:
+                approved_id = int(query["approved"][0])
+            except (ValueError, TypeError):
+                approved_id = None
+
+        html_content = generate_html_dashboard(selected_draft_id=selected_id, approved_draft_id=approved_id)
         self.send_response(200)
         self.send_header("Content-Type", "text/html; charset=utf-8")
         self.end_headers()
@@ -517,20 +754,20 @@ class DashboardHandler(http.server.BaseHTTPRequestHandler):
 
         conn = get_db_connection()
         try:
-            if self.path == "/action/run-pipeline":
-                run_full_pipeline()
-                self.send_response(303)
-                self.send_header("Location", "/?tab=items")
-                self.end_headers()
-                return
-
-            elif self.path == "/action/approve":
+            if self.path == "/action/approve":
                 draft_id = int(params.get("draft_id", [0])[0])
                 if draft_id:
                     approve_draft(conn, draft_id)
+                    draft_item_row = conn.execute("SELECT item_id FROM drafts WHERE id = ?", (draft_id,)).fetchone()
+                    if draft_item_row:
+                        conn.execute(
+                            "UPDATE drafts SET reviewed = 1, reviewed_at = datetime('now') WHERE item_id = ? AND kind = 'action_page'",
+                            (draft_item_row["item_id"],),
+                        )
+                        conn.commit()
                     export_site_content(conn)
                 self.send_response(303)
-                self.send_header("Location", "/?tab=drafts")
+                self.send_header("Location", f"/?approved={draft_id}")
                 self.end_headers()
                 return
 
@@ -540,7 +777,21 @@ class DashboardHandler(http.server.BaseHTTPRequestHandler):
                     reject_draft(conn, draft_id)
                     export_site_content(conn)
                 self.send_response(303)
-                self.send_header("Location", "/?tab=drafts")
+                self.send_header("Location", "/")
+                self.end_headers()
+                return
+
+            elif self.path == "/action/save-edit":
+                draft_id = int(params.get("draft_id", [0])[0])
+                new_markdown = params.get("markdown", [""])[0]
+                if draft_id and new_markdown:
+                    conn.execute(
+                        "UPDATE drafts SET markdown = ? WHERE id = ?",
+                        (new_markdown, draft_id),
+                    )
+                    conn.commit()
+                self.send_response(303)
+                self.send_header("Location", f"/?draft_id={draft_id}#draft-view")
                 self.end_headers()
                 return
         finally:
@@ -557,10 +808,10 @@ def serve_dashboard(port: int = 8000):
     socketserver.TCPServer.allow_reuse_address = True
     with socketserver.TCPServer(("", port), DashboardHandler) as httpd:
         print("\n" + "=" * 80)
-        print(" LORETTA'S LEDGER — CONTROL CENTER READY")
+        print(" LORETTA'S LEDGER — REVIEW DASHBOARD READY")
         print("=" * 80)
-        print(f" Web Dashboard: http://localhost:{port}")
-        print(f" One-Click Actions: Run Pipeline, Approve/Reject Drafts, View Live Site")
+        print(f" Review page: http://localhost:{port}")
+        print(" This page runs only on your computer. Nothing publishes until approved.")
         print(" Press Ctrl+C in terminal to stop.")
         print("=" * 80 + "\n")
         try:
@@ -575,7 +826,7 @@ def main():
     parser.add_argument("--item", type=str, default=None, help="Display full details for an item ID")
     parser.add_argument("--limit", type=int, default=25, help="Number of items to list")
     parser.add_argument("--offset", type=int, default=0, help="Offset for item listing")
-    parser.add_argument("--serve", action="store_true", help="Start local web Control Center in browser")
+    parser.add_argument("--serve", action="store_true", help="Start local review dashboard in browser")
     parser.add_argument("--port", type=int, default=8000, help="Port for local web server (default: 8000)")
 
     args = parser.parse_args()

@@ -1,36 +1,38 @@
 #!/usr/bin/env bash
-# Loretta's Ledger — Easy One-Command Control Script
+# Loretta's Ledger — Easy Control Script
 
 set -e
 DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 cd "$DIR"
 
 case "$1" in
-  run|update|"")
+  run|all)
     python3 -m pipeline
     ;;
-  web|serve|dashboard)
+  web|serve|dashboard|review)
     python3 -m pipeline.view --serve
     ;;
-  review)
-    python3 -m pipeline.review --list
+  push|publish)
+    echo "Staging approved briefs and public site updates..."
+    git add docs/ site/_site/ data/ledger.db
+    if git diff --staged --quiet; then
+      echo "No newly approved drafts to commit."
+    else
+      git commit -m "Publish approved policy briefs and site updates"
+    fi
+    echo "Pushing to public website repository..."
+    git push origin main
     ;;
   test)
     python3 -m unittest discover tests
     ;;
-  push)
-    git push
-    ;;
   *)
-    echo "Loretta's Ledger Helper"
-    echo "Usage: ./ledger [command]"
+    echo "Loretta's Ledger"
+    echo "Here are the three commands you need:"
     echo ""
-    echo "Commands:"
-    echo "  ./ledger         - Run full automated pipeline (ingest, classify, upstream, drafts, site)"
-    echo "  ./ledger web     - Launch interactive Web Control Center (http://localhost:8000)"
-    echo "  ./ledger review  - View pending drafts waiting for review"
-    echo "  ./ledger push    - Push updates to GitHub / GitHub Pages"
-    echo "  ./ledger test    - Run unit test suite"
+    echo "  ./ledger run    - Check for new items and build drafts"
+    echo "  ./ledger web    - Open the review page on your computer (http://localhost:8000)"
+    echo "  ./ledger push   - Publish your approved drafts to the public website"
+    echo ""
     ;;
 esac
-

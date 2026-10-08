@@ -67,6 +67,38 @@ class TestAnalyzeAndReview(unittest.TestCase):
         # Verify citizen next step
         self.assertIn("Next Step for Citizens", brief)
 
+        # Verify actionable way forward
+        self.assertIn("Recommended Response & A Way Forward", brief)
+        self.assertIn("For Citizens & Property Owners:", brief)
+        self.assertIn("For Local Elected Officials:", brief)
+
+    def test_design_rubric_evaluations(self):
+        # Test critical areas evaluation
+        cao_item = {
+            "title": "Presentation - CAO Fish and Wildlife Habitat Conservation Areas (FWHCAs) Draft Code",
+            "jurisdiction": "thurston",
+            "meeting_date": "2026-09-16",
+            "url": "https://example.com/cao",
+            "body_text": "CAO update covering buffers and wetland habitat",
+            "comment_deadline": "2026-09-16 5pm",
+        }
+        refs = [{
+            "actor_name": "Washington Growth Management Act",
+            "upstream_type": "state_law",
+            "mechanism": "mandate",
+            "evidence_ref": "CAO update",
+            "evidence_url": "https://example.com/cao",
+        }]
+        cao_brief = generate_brief_markdown(cao_item, refs, "")
+
+        self.assertIn("1. **Subsidiarity**: [Rating: Cuts against]", cao_brief)
+        self.assertIn("2. **Ownership**: [Rating: Cuts against]", cao_brief)
+        self.assertIn("3. **Small and local vs. large and distant**: [Rating: Cuts against]", cao_brief)
+        self.assertIn("4. **Family and household**: [Rating: Cuts against]", cao_brief)
+        self.assertIn("5. **Cost and who pays**: [Rating: Cuts against]", cao_brief)
+        self.assertIn("Demand Small-Parcel Exemptions", cao_brief)
+        self.assertIn("Adopt Statutory Minimums Only", cao_brief)
+
     def test_draft_item_and_review_workflow(self):
         # 1. Generate drafts
         res = draft_item(self.conn, self.item_id)
@@ -93,6 +125,19 @@ class TestAnalyzeAndReview(unittest.TestCase):
 
         rejected_row = self.conn.execute("SELECT * FROM drafts WHERE id = ?", (other_draft_id,)).fetchone()
         self.assertIsNone(rejected_row)
+
+    def test_save_draft_edits(self):
+        draft_item(self.conn, self.item_id)
+        row = self.conn.execute("SELECT id FROM drafts WHERE item_id = ? LIMIT 1", (self.item_id,)).fetchone()
+        draft_id = row["id"]
+
+        # Save an edit
+        new_text = "# Edited Brief Title\n\nCustom edited content with resident notes."
+        self.conn.execute("UPDATE drafts SET markdown = ? WHERE id = ?", (new_text, draft_id))
+        self.conn.commit()
+
+        updated_row = self.conn.execute("SELECT markdown FROM drafts WHERE id = ?", (draft_id,)).fetchone()
+        self.assertEqual(updated_row["markdown"], new_text)
 
 
 if __name__ == "__main__":

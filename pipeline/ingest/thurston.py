@@ -103,8 +103,10 @@ class ThurstonIngester:
             if not title_clean or title_clean.lower().startswith("canceled:") or title_clean.lower().startswith("cancelled:"):
                 continue
 
-            # Skip orientation / purely internal notices
+            # Skip orientation / purely internal notices or generic meeting container rows
             if "new employee orientation" in title_clean.lower():
+                continue
+            if title_clean.lower() in ("board of county commissioners business meeting &amp; public hearing(s)", "board of county commissioners business meeting & public hearing(s)", "board work session", "agenda review"):
                 continue
 
             meeting_date = self.parse_date(date_raw)

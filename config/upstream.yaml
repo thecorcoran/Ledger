@@ -7,8 +7,24 @@ upstream_actors:
       - GMA
       - RCW 36.70A
       - 36.70A RCW
+      - Critical Areas Ordinance
+      - Critical Area Ordinance
+      - CAO
     home_url: https://app.leg.wa.gov/rcw/default.aspx?cite=36.70A
     notes: Comprehensive state land use and planning framework.
+
+  - id: wa-wdfw
+    name: Washington Department of Fish and Wildlife
+    upstream_type: state_agency
+    aliases:
+      - Washington Department of Fish and Wildlife
+      - Dept. of Fish and Wildlife
+      - WDFW
+      - Fish and Wildlife Habitat Conservation Areas
+      - FWHCA
+      - FWHCAs
+    home_url: https://wdfw.wa.gov/
+    notes: State agency issuing Priority Habitats and Species (PHS) guidance and management recommendations for local critical areas ordinances.
 
   - id: wa-commerce
     name: Washington State Department of Commerce
@@ -40,6 +56,11 @@ upstream_actors:
       - Dept. of Health
       - WA DOH
       - State Board of Health
+      - Drinking Water Code
+      - Article III
+      - Group A
+      - Group B
+      - WAC 246
     home_url: https://doh.wa.gov/
     notes: Regulates public and group drinking water systems, on-site sewage systems (WAC 246).
 
@@ -110,3 +131,16 @@ upstream_actors:
       - Olympia City Council
     home_url: https://www.olympiawa.gov/
     notes: Interlocal agreements and urban growth area agreements with Thurston County.
+
+  - id: wa-scc
+    name: Washington State Conservation Commission
+    upstream_type: state_agency
+    aliases:
+      - Conservation Commission
+      - State Conservation Commission
+      - Conservation District
+      - Thurston Conservation District
+      - RCW 89.08
+    home_url: https://scc.wa.gov/
+    notes: State agency governing Washington conservation districts and special assessments under RCW 89.08.
+

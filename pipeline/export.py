@@ -117,7 +117,7 @@ def re_links(text: str) -> str:
     return re.sub(r"\[(.*?)\]\((.*?)\)", r'<a href="\2" target="_blank">\1</a>', text)
 
 
-def get_base_html_page(title: str, content: str, active_nav: str = "home") -> str:
+def get_base_html_page(title: str, content: str, active_nav: str = "home", root_prefix: str = "") -> str:
     return f"""<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -284,13 +284,13 @@ def get_base_html_page(title: str, content: str, active_nav: str = "home") -> st
 <body>
     <header>
         <div class="header-inner">
-            <a href="index.html" class="logo">Loretta's <span>Ledger</span></a>
+            <a href="{root_prefix}index.html" class="logo">Loretta's <span>Ledger</span></a>
             <nav>
-                <a href="index.html" class="{'active' if active_nav == 'home' else ''}">Home</a>
-                <a href="briefs.html" class="{'active' if active_nav == 'briefs' else ''}">Policy Briefs</a>
-                <a href="action.html" class="{'active' if active_nav == 'action' else ''}">Citizen Action</a>
-                <a href="test-cases.html" class="{'active' if active_nav == 'test-cases' else ''}">Test Cases</a>
-                <a href="influences.html" class="{'active' if active_nav == 'influences' else ''}">Who's Behind This</a>
+                <a href="{root_prefix}index.html" class="{'active' if active_nav == 'home' else ''}">Home</a>
+                <a href="{root_prefix}briefs.html" class="{'active' if active_nav == 'briefs' else ''}">Policy Briefs</a>
+                <a href="{root_prefix}action.html" class="{'active' if active_nav == 'action' else ''}">Citizen Action</a>
+                <a href="{root_prefix}test-cases.html" class="{'active' if active_nav == 'test-cases' else ''}">Test Cases</a>
+                <a href="{root_prefix}influences.html" class="{'active' if active_nav == 'influences' else ''}">Who's Behind This</a>
             </nav>
         </div>
     </header>
@@ -305,9 +305,12 @@ def get_base_html_page(title: str, content: str, active_nav: str = "home") -> st
 """
 
 
-def export_site_content(conn) -> Dict[str, int]:
+def export_site_content(conn, out_dirs: Optional[List[Path]] = None) -> Dict[str, int]:
     """Exports reviewed drafts, test cases, and upstream dossier pages."""
-    ensure_directories()
+    target_dirs = out_dirs if out_dirs is not None else [SITE_OUT_DIR, DOCS_DIR]
+    for d in target_dirs:
+        for sub in ("briefs", "action-pages", "test-cases", "influences"):
+            (d / sub).mkdir(parents=True, exist_ok=True)
     stats = {"briefs": 0, "actions": 0, "test_cases": 0, "influences": 0}
 
     # 1. Export Reviewed Briefs
@@ -324,10 +327,10 @@ def export_site_content(conn) -> Dict[str, int]:
     brief_cards = []
     for b in briefs:
         html_body = markdown_to_html(b["markdown"])
-        page_html = get_base_html_page(b["item_title"], html_body, active_nav="briefs")
+        page_html = get_base_html_page(b["item_title"], html_body, active_nav="briefs", root_prefix="../")
 
         file_slug = f"brief-{b['item_id']}.html"
-        for out_base in (SITE_OUT_DIR, DOCS_DIR):
+        for out_base in target_dirs:
             with open(out_base / "briefs" / file_slug, "w", encoding="utf-8") as f:
                 f.write(page_html)
 
@@ -357,10 +360,10 @@ def export_site_content(conn) -> Dict[str, int]:
     action_cards = []
     for a in actions:
         html_body = markdown_to_html(a["markdown"])
-        page_html = get_base_html_page(a["item_title"], html_body, active_nav="action")
+        page_html = get_base_html_page(a["item_title"], html_body, active_nav="action", root_prefix="../")
 
         file_slug = f"action-{a['item_id']}.html"
-        for out_base in (SITE_OUT_DIR, DOCS_DIR):
+        for out_base in target_dirs:
             with open(out_base / "action-pages" / file_slug, "w", encoding="utf-8") as f:
                 f.write(page_html)
 
@@ -376,12 +379,14 @@ def export_site_content(conn) -> Dict[str, int]:
         """)
         stats["actions"] += 1
 
-    # 3. Export Test Cases
+    # 3. Export Test Cases (Only for items that have an approved/reviewed brief)
     test_cases = conn.execute(
         """
         SELECT t.*, i.title as item_title, i.jurisdiction, i.meeting_date, i.url as item_url, i.body_text
         FROM test_cases t
         JOIN items i ON t.item_id = i.id
+        JOIN drafts d ON d.item_id = i.id
+        WHERE d.kind = 'brief' AND d.reviewed = 1
         ORDER BY i.meeting_date DESC
         """
     ).fetchall()
@@ -403,12 +408,14 @@ def export_site_content(conn) -> Dict[str, int]:
         """)
         stats["test_cases"] += 1
 
-    # 4. Export Upstream Influence Dossier Pages
+    # 4. Export Upstream Influence Dossier Pages (Only linking items that have approved/reviewed drafts)
     actors = conn.execute(
         """
         SELECT a.*, COUNT(DISTINCT r.item_id) as items_touched
         FROM upstream_actors a
-        LEFT JOIN upstream_refs r ON a.id = r.actor_id
+        JOIN upstream_refs r ON a.id = r.actor_id
+        JOIN drafts d ON d.item_id = r.item_id
+        WHERE d.reviewed = 1
         GROUP BY a.id
         ORDER BY items_touched DESC, a.name ASC
         """
@@ -421,7 +428,8 @@ def export_site_content(conn) -> Dict[str, int]:
             SELECT r.*, i.title as item_title, i.meeting_date, i.jurisdiction
             FROM upstream_refs r
             JOIN items i ON r.item_id = i.id
-            WHERE r.actor_id = ?
+            JOIN drafts d ON d.item_id = r.item_id
+            WHERE r.actor_id = ? AND d.reviewed = 1
             ORDER BY i.meeting_date DESC
             """,
             (act["id"],),
@@ -511,7 +519,11 @@ def export_site_content(conn) -> Dict[str, int]:
     {''.join(inf_cards)}
     """
 
-    for out_base in (SITE_OUT_DIR, DOCS_DIR, ROOT_DIR):
+    all_out_bases = list(target_dirs)
+    if ROOT_DIR not in all_out_bases and out_dirs is None:
+        all_out_bases.append(ROOT_DIR)
+
+    for out_base in all_out_bases:
         with open(out_base / "index.html", "w", encoding="utf-8") as f:
             f.write(get_base_html_page("Home", index_content, active_nav="home"))
         with open(out_base / "briefs.html", "w", encoding="utf-8") as f:

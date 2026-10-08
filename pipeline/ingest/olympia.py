@@ -35,6 +35,16 @@ PROCEDURAL_TITLES = {
     "other business",
     "city manager's report and referrals",
     "council intergovernmental/committee reports and referrals",
+    "agenda review",
+    "public hearing",
+    "business items",
+    "reports",
+    "other topics",
+    "upcoming",
+    "upcoming meetings",
+    "accommodations",
+    "approval of minutes",
+    "staff report",
 }
 
 
@@ -139,17 +149,30 @@ class OlympiaIngester:
         if normalized.endswith("- none") or normalized.endswith("(none)"):
             return True
 
-        if normalized in PROCEDURAL_TITLES:
+        # Strip leading numbers/agenda indicators (e.g. "1. AGENDA REVIEW" -> "agenda review")
+        stripped_prefix = re.sub(r"^[0-9]+(\.[0-9a-z]+)*\s*[-–:]?\s*", "", normalized).strip()
+
+        if normalized in PROCEDURAL_TITLES or stripped_prefix in PROCEDURAL_TITLES:
             return True
 
         for p in PROCEDURAL_TITLES:
-            if normalized == p or normalized.startswith(f"{p}:") or normalized.startswith(f"{p} -"):
+            if normalized == p or normalized.startswith(f"{p}:") or normalized.startswith(f"{p} -") or normalized.startswith(f"{p} ("):
+                return True
+            if stripped_prefix == p or stripped_prefix.startswith(f"{p}:") or stripped_prefix.startswith(f"{p} -") or stripped_prefix.startswith(f"{p} ("):
                 return True
 
         # If no matter_id is associated and title matches category uppercase headers
         if matter_id is None and (
             normalized.startswith("consideration of a resolution")
             or normalized.startswith("special recognition")
+            or normalized.startswith("business items")
+            or normalized.startswith("public hearing")
+            or normalized.startswith("reports")
+            or normalized.startswith("other topics")
+            or normalized.startswith("upcoming")
+            or stripped_prefix.startswith("business items")
+            or stripped_prefix.startswith("public hearing")
+            or stripped_prefix.startswith("reports")
         ):
             return True
 

@@ -106,6 +106,16 @@ def detect_test_case(
     body_text: str,
 ) -> Optional[Tuple[str, str]]:
     """Evaluates rule-based criteria for flagging an item as a precedent-setting test case."""
+    normalized_title = title.strip().lower()
+    stripped_prefix = re.sub(r"^[0-9]+(\.[0-9a-z]+)*\s*[-–:]?\s*", "", normalized_title).strip()
+    # Never flag procedural agenda headers as test cases
+    if stripped_prefix in (
+        "agenda review", "public hearing", "business items", "reports",
+        "other topics", "upcoming", "accommodations", "adjournment",
+        "approval of minutes", "staff report", "call to order", "roll call"
+    ):
+        return None
+
     combined = f"{title}\n{body_text}".lower()
 
     for pattern, reason in TEST_CASE_PATTERNS:
