@@ -24,61 +24,45 @@ Evaluate the following policy item through the Loretta's Ledger Litmus Test.
 
 ## Instructions
 
-1. **Facts First**: Separate facts from analysis. Label analysis clearly.
-2. **Litmus Test Ratings**: Evaluate each of the 8 questions below strictly using facts from the source documents. For each question, provide:
-   - Rating: **Supports** | **Neutral / unclear** | **Cuts against**
-   - A one-sentence reason
-   - A source citation / link.
-   - If not answered by the documents, state: `not stated in source`. Do not guess.
+1. **Facts First**: Every statement must have a documented basis in the source documents (staff report, ordinance text, contracts, attachments).
+2. **Directed Litmus Analysis**:
+   - Do NOT evaluate or list all 8 principles.
+   - Identify and name ONLY the 1 to 3 principles the documents actually engage, and state what the documents show about each.
+   - If none apply, mark the item **Routine** and keep the brief to the Headline and What's Actually Happening.
 3. **Tone Rules**:
-   - Frame analysis around people-first policy.
-   - Use plain language: local control, ownership, affordability, people who own a stake in their place.
-   - Name real tradeoffs and where the policy has merit.
+   - Frame analysis around people-first policy (local control, widely held ownership, family self-reliance, accountability).
    - Never assert motive or coordination; judge effects and documented relationships only.
-   - Do not invent quotes, vote outcomes, or deadlines.
+   - Remove generic lines about public notice, accountability, or tax impacts unless explicitly documented in the source.
+   - Do not invent quotes, vote outcomes, dollar amounts, or deadlines.
 
-### The 8 Litmus Questions:
-1. **Subsidiarity**: Is this decided at the most local level that can handle it? If a higher body is driving it, say so.
-2. **Ownership**: Does it make it easier or harder for ordinary families to own and keep property (homes, land, shops, tools)?
-3. **Small and local vs. large and distant**: Who benefits more: local small businesses and farms, or large, outside, or institutional players?
-4. **Family and household**: Does it support what families and neighborhoods do for themselves, or replace it with a program or agency?
-5. **Cost and who pays**: Who bears the fees, taxes, or compliance burden, and who captures the benefit? Is the burden heaviest on those with the least room to absorb it?
-6. **Consent and process**: Were the people affected able to learn about this and respond in time? Is the language plain enough to understand?
-7. **Reversibility and accountability**: Can local people change this later, and is a named local official answerable for it?
-8. **Place**: Does it respect the existing character and history of the neighborhood, including people already living there (the lesson of Loretta Corcoran's home)?
+---
 
-## Required Output Format:
+## Required Output Structure:
 
 ```markdown
-# Brief: {{ item.title }}
+# {{ item.title }}
 
-**Date**: {{ item.meeting_date }}  
-**Jurisdiction**: {{ item.jurisdiction }}  
-**Source**: [Original Document]({{ item.url }})
+### Headline
+[One plain sentence on what is being decided.]
 
-## Summary (facts only)
-[Summary of policy facts]
+### What's Actually Happening
+[3-5 sentences strictly from the staff report, ordinance text, or attachments covering specific amounts, who is affected, vote, and date.]
 
-## Litmus Test
-1. **Subsidiarity**: [Rating]. [One-sentence reason] [Source reference]
-2. **Ownership**: [Rating]. [One-sentence reason] [Source reference]
-3. **Small and local vs. large and distant**: [Rating]. [One-sentence reason] [Source reference]
-4. **Family and household**: [Rating]. [One-sentence reason] [Source reference]
-5. **Cost and who pays**: [Rating]. [One-sentence reason] [Source reference]
-6. **Consent and process**: [Rating]. [One-sentence reason] [Source reference]
-7. **Reversibility and accountability**: [Rating]. [One-sentence reason] [Source reference]
-8. **Place**: [Rating]. [One-sentence reason] [Source reference]
+### Why It Matters
+- **[Engaged Principle 1]**: [What the documents show about this principle.]
+- **[Engaged Principle 2]**: [What the documents show about this principle.]
+<!-- Name only the 1-3 engaged principles. If none apply, state: "Routine: This is a routine or operational matter that does not significantly engage the core litmus policy principles." -->
 
-## Who's Behind This? (Upstream Influence)
-[Multi-step chain or actors with documented evidence, or "No upstream source identified in the documents reviewed."]
+### Who's Behind This
+[Upstream chain with evidence links, or "No upstream source identified in the documents reviewed."]
 
-## Overall Analysis
-[Two or three sentences, explicitly labeled as analysis]
+### What to Ask or Watch
+1. [Specific unanswered question from the documents]
+2. [Specific unanswered question from the documents]
 
-## Plain-Language Effect for Residents
-[Clear statement of what changes for ordinary residents and families]
-
-## Next Step for Citizens
-**Action**: [Date, hearing link, or comment contact]
+### What to Do
+- **Meeting Date**: {{ item.meeting_date }}
+- **Comment Deadline**: [Specific cutoff from source]
+- **How to Comment**: [Official instructions and submission links]
+- **Official Packet**: [Review Complete Packet]({{ item.url }})
 ```
-

@@ -1,60 +1,59 @@
 # Loretta's Ledger — Litmus Test
 
-Purpose: a consistent lens for analyzing Olympia and Thurston County policy. Used by every brief and by the AI drafting prompts. This is a first draft; revise it after testing on real items.
+Purpose: A consistent people-first lens for analyzing Olympia and Thurston County policy.
 
-## How to apply
+---
 
-For each policy item, answer the questions below using only what the source documents show. Give each a rating:
+## How to Apply: Directed Evaluation
 
-- **Supports**: the policy advances this principle
-- **Neutral / unclear**: no effect, or the documents don't say
-- **Cuts against**: the policy works against this principle
+Rather than mechanically rating all eight principles as a rigid template, **name only the 1 to 3 principles the source documents actually engage**, and state what the documents show about each.
 
-Every rating needs a one-sentence reason and a source link. If the documents don't answer a question, say so. Do not guess.
+- Do **not** list or rate the principles that do not apply.
+- If none apply (routine procurement, minor administrative business), mark the item **Routine** and limit the brief to the headline and factual summary.
+- Every statement must be grounded in the source documents (staff report, ordinance text, contracts, attachments).
+- Never use generic boilerplate about public notice, accountability, or property taxes unless the documents explicitly document a real notice, comment, or tax issue.
 
-## The questions
+---
 
-1. **Subsidiarity.** Is this decided at the most local level that can handle it? If a higher body is driving it, say so (see "Who's behind this?").
+## The Core Principles
 
-2. **Ownership.** Does it make it easier or harder for ordinary families to own and keep property (homes, land, shops, tools)?
+1. **Subsidiarity**: Is this decided at the most local practical level? If driven by an outside agency, state law, lawsuit, or funding strings, identify it.
+2. **Ownership**: Does it make it easier or harder for ordinary families and independent businesses to hold and improve real property?
+3. **Small and local vs. large and distant**: Who bears the burden and who captures the benefit—local independent operators and homeowners, or large, distant, or institutional entities?
+4. **Family and household**: Does it support what families and neighborhoods do for themselves, or does it substitute administrative agency programming and regulatory intrusions?
+5. **Cost and who pays**: Who bears the direct fees, rates, taxes, or compliance overhead? Is the burden transparently accounted for?
+6. **Consent and process**: Were affected residents provided timely notice, clear language, and a genuine hearing before decisions were enacted? (Only cite if there is a real notice or procedural issue).
+7. **Reversibility and accountability**: Can local voters hold named elected officials answerable for this, and can the action be repealed or amended later? (Only cite if there are binding multi-year terms or unique governance conditions).
+8. **Place**: Does it respect the physical shorelines, historic neighborhoods, and longstanding character of our local community (the lesson of Loretta Corcoran's home)?
 
-3. **Small and local vs. large and distant.** Who benefits more: local small businesses and farms, or large, outside, or institutional players?
+---
 
-4. **Family and household.** Does it support what families and neighborhoods do for themselves, or replace it with a program or agency?
+## Directed Output Format
 
-5. **Cost and who pays.** Who bears the fees, taxes, or compliance burden, and who captures the benefit? Is the burden heaviest on those with the least room to absorb it?
+```markdown
+# [Title]
 
-6. **Consent and process.** Were the people affected able to learn about this and respond in time? Is the language plain enough to understand?
+### Headline
+[One plain sentence on what is being decided.]
 
-7. **Reversibility and accountability.** Can local people change this later, and is a named local official answerable for it?
+### What's Actually Happening
+[3-5 sentences strictly from the staff report, ordinance text, or attachments covering amounts, who is affected, vote, and date.]
 
-8. **Place.** Does it respect the existing character and history of the neighborhood, including people already living there (the lesson of Loretta Corcoran's home)?
+### Why It Matters
+- **[Engaged Principle 1]**: [What the source documents show about this principle.]
+- **[Engaged Principle 2]**: [What the source documents show about this principle.]
+<!-- If none apply, state: "Routine: This is a routine or operational matter that does not significantly engage the core litmus policy principles." -->
 
-## Output format for each item
+### Who's Behind This
+[Upstream chain with evidence links, or "No upstream source identified in the documents reviewed."]
 
+### What to Ask or Watch
+1. [Specific unanswered question from the documents]
+2. [Specific unanswered question from the documents]
+
+### What to Do
+- **Meeting Date**: [Date and time]
+- **Comment Deadline**: [Specific cutoff from source]
+- **How to Comment**: [Official instructions and submission links]
+- **Official Packet**: [Review Complete Packet](URL)
 ```
-Item: [title, date, link]
-Summary (facts only): ...
-Litmus:
-1. Subsidiarity: [rating]. [reason] [source]
-2. Ownership: ...
-(through 8)
-Upstream: [who's behind this, with evidence, or "none identified"]
-Overall: [two or three sentences, labeled as analysis]
-Plain-language effect for residents: ...
-Next step for citizens: [date, email, hearing link]
-```
-
-## Rules for the analyst (human or AI)
-
-- Facts and analysis are separate. Label analysis as analysis.
-- Frame analysis around people-first policy. Use plain language such as local control, ownership, affordability.
-- Name real tradeoffs and where the policy has merit. A policy that cuts against a principle can still be justified.
-- Do not assert motive. Judge effects, not intentions.
-- No invented quotes, dates, or vote outcomes.
-- If a question can't be answered from the documents, say "not stated in source."
-
-## Revision process
-
-Test on 2 or 3 real Olympia or Thurston items. Write the briefs by hand. Wherever a question was awkward, redundant, or missed something important, revise it. Keep the list short (eight or fewer).
-

@@ -50,27 +50,25 @@ class TestAnalyzeAndReview(unittest.TestCase):
         ]
         brief = generate_brief_markdown(item, refs, "• HUD via funding_strings")
 
-        # Verify all 8 litmus questions are present
-        self.assertIn("1. **Subsidiarity**:", brief)
-        self.assertIn("2. **Ownership**:", brief)
-        self.assertIn("3. **Small and local vs. large and distant**:", brief)
-        self.assertIn("4. **Family and household**:", brief)
-        self.assertIn("5. **Cost and who pays**:", brief)
-        self.assertIn("6. **Consent and process**:", brief)
-        self.assertIn("7. **Reversibility and accountability**:", brief)
-        self.assertIn("8. **Place**:", brief)
+        # Verify the 6 directed brief sections are present
+        self.assertIn("### Headline", brief)
+        self.assertIn("### What's Actually Happening", brief)
+        self.assertIn("### Why It Matters", brief)
+        self.assertIn("### Who's Behind This", brief)
+        self.assertIn("### What to Ask or Watch", brief)
+        self.assertIn("### What to Do", brief)
+
+        # Verify only engaged principles are present (e.g. Cost and who pays)
+        self.assertIn("Cost and who pays", brief)
+        # Verify non-engaged principles are omitted
+        self.assertNotIn("Family and household", brief)
 
         # Verify upstream section
-        self.assertIn("Who's Behind This?", brief)
         self.assertIn("U.S. Department of Housing and Urban Development", brief)
 
-        # Verify citizen next step
-        self.assertIn("Next Step for Citizens", brief)
-
-        # Verify actionable way forward
-        self.assertIn("Recommended Response & A Way Forward", brief)
-        self.assertIn("For Citizens & Property Owners:", brief)
-        self.assertIn("For Local Elected Officials:", brief)
+        # Verify citizen action details
+        self.assertIn("Meeting Date", brief)
+        self.assertIn("How to Comment", brief)
 
     def test_design_rubric_evaluations(self):
         # Test critical areas evaluation
@@ -91,13 +89,20 @@ class TestAnalyzeAndReview(unittest.TestCase):
         }]
         cao_brief = generate_brief_markdown(cao_item, refs, "")
 
-        self.assertIn("1. **Subsidiarity**: [Rating: Cuts against]", cao_brief)
-        self.assertIn("2. **Ownership**: [Rating: Cuts against]", cao_brief)
-        self.assertIn("3. **Small and local vs. large and distant**: [Rating: Cuts against]", cao_brief)
-        self.assertIn("4. **Family and household**: [Rating: Cuts against]", cao_brief)
-        self.assertIn("5. **Cost and who pays**: [Rating: Cuts against]", cao_brief)
-        self.assertIn("Demand Small-Parcel Exemptions", cao_brief)
-        self.assertIn("Adopt Statutory Minimums Only", cao_brief)
+        # Verify headline and specific factual narrative
+        self.assertIn("### Headline", cao_brief)
+        self.assertIn("Site Potential Tree Height", cao_brief)
+
+        # Verify only the 3 engaged principles are highlighted
+        self.assertIn("**Ownership**:", cao_brief)
+        self.assertIn("**Subsidiarity**:", cao_brief)
+        self.assertIn("**Small and local vs. large and distant**:", cao_brief)
+        # Verify unengaged principles like Family and household or Place are not listed as headers
+        self.assertNotIn("**Family and household**:", cao_brief)
+
+        # Verify upstream and questions
+        self.assertIn("WDFW & Growth Management Act", cao_brief)
+        self.assertIn("Will the county remove prescriptive lawn size limitations", cao_brief)
 
     def test_draft_item_and_review_workflow(self):
         # 1. Generate drafts

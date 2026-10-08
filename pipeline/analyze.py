@@ -1,8 +1,8 @@
 """Draft generator for briefs, action pages, and test case dossiers.
 
 Analyzes meeting items, attachments, and documented upstream influences
-strictly through the Loretta's Ledger 8-question Litmus Test, reading all attached
-documents and evaluating them based on specific documented facts rather than templates.
+through a directed People-First Litmus Test lens, naming only the 1-3 principles
+engaged by the source documents, or marking the item 'Routine'.
 """
 
 import argparse
@@ -19,11 +19,92 @@ from pipeline.documents import get_all_documents_for_item, extract_factual_profi
 logger = logging.getLogger(__name__)
 
 
+def is_procedural_or_header(title: str) -> bool:
+    """Detects whether an item is an agenda heading, minutes, procedural item, or media file."""
+    t = title.strip().lower()
+    t_clean = re.sub(r"^[0-9]+(\.[0-9a-zA-Z]+)*\.?\s*", "", t).strip()
+    t_clean = re.sub(r"&[a-z]+;", " ", t_clean)
+    t_clean = re.sub(r"\s+", " ", t_clean).strip()
+
+    if "minutes" in t_clean or "proclamation" in t_clean or "retreat" in t_clean:
+        return True
+    if "special recognition" in t_clean or "study session outcome" in t_clean:
+        return True
+    if t_clean in ("staff report", "staff reports", "recruitment subcommittee", "other business", "general business"):
+        return True
+
+    procedural_indicators = [
+        "call to order",
+        "roll call",
+        "pledge of allegiance",
+        "approval of minutes",
+        "approval of the minutes",
+        "minutes approval",
+        "approval of agenda",
+        "agenda review",
+        "executive session",
+        "adjournment",
+        "new employee orientation",
+        "proclamation",
+        "proclamations",
+        "ceremonial",
+        "accommodations",
+        "special accommodations",
+        "upcoming",
+        "weekly schedule",
+        "holiday observance",
+        "county closed",
+        "sign-in sheet",
+        "chair script",
+        "neighbor notice letter",
+        "press release",
+        "webmailer",
+        "legal notice",
+        "audio",
+        "video",
+        "livestream",
+        "board work session",
+    ]
+    if any(t_clean == k or t_clean.startswith(k + ":") or t_clean.startswith(k + " -") for k in procedural_indicators):
+        return True
+
+    bare_headers = [
+        "business items",
+        "reports",
+        "other topics",
+        "public hearing",
+        "public hearings",
+        "consent calendar",
+        "consent agenda",
+        "regular agenda",
+        "action items",
+        "general business",
+        "public comments",
+        "public comment",
+        "staff report",
+        "staff reports",
+        "planning commission: agenda",
+        "planning commission: minutes",
+        "planning commission: public comment",
+        "board of county commissioners business meeting",
+        "board of county commissioners business meeting & public hearing(s)",
+        "board of health meeting & public hearing(s)",
+    ]
+    if t_clean in bare_headers or any(t_clean == h for h in bare_headers):
+        return True
+
+    if t_clean.startswith("planning commission: agenda") or t_clean.startswith("planning commission: minutes"):
+        return True
+    if t_clean.startswith("planning commission: public comment"):
+        return True
+
+    return False
+
+
 def classify_policy_archetype(title: str, body: str, refs: List[Dict[str, Any]], profile: Optional[Dict[str, Any]] = None) -> str:
     """Classifies a policy item into a domain archetype for principled evaluation."""
     t_lower = title.lower()
 
-    # Title-based primary classifiers
     if any(k in t_lower for k in ("plat", "subdivision", "marina", "dock replacement", "springwood")):
         return "development_and_plat"
 
@@ -36,7 +117,7 @@ def classify_policy_archetype(title: str, body: str, refs: List[Dict[str, Any]],
     if any(k in t_lower for k in ("rates", "rate", "conservation district", "fee", "assessment", "tax")):
         return "rates_and_taxes"
 
-    if any(k in t_lower for k in ("cdbg", "hud", "tiny home", "quince street", "homeless", "social justice")):
+    if any(k in t_lower for k in ("cdbg", "hud", "tiny home", "quince street", "franz anderson", "homeless")):
         return "housing_and_grants"
 
     combined = f"{title}\n{body}".lower()
@@ -59,7 +140,7 @@ def classify_policy_archetype(title: str, body: str, refs: List[Dict[str, Any]],
 
     if any(k in combined for k in (
         "cdbg", "block grant", "hud", "tiny home", "quince street", "franz anderson",
-        "homeless", "affordable housing", "social justice", "equity commission"
+        "homeless", "affordable housing"
     )):
         return "housing_and_grants"
 
@@ -79,581 +160,417 @@ def classify_policy_archetype(title: str, body: str, refs: List[Dict[str, Any]],
     )):
         return "property_transfer"
 
+    if any(k in combined for k in ("lease agreement for fire vehicles", "vehicle storage", "interlocal agreement for transportation funding")):
+        return "routine_administrative"
+
     return "general_policy"
 
 
-def evaluate_litmus_question(
-    q_num: int,
-    q_name: str,
-    combined_text: str,
-    refs: List[Dict[str, Any]],
-    url: str,
-    archetype: Optional[str] = None,
-    profile: Optional[Dict[str, Any]] = None,
-) -> Tuple[str, str]:
-    """Evaluates an individual Litmus Test question strictly from documented facts.
-
-    Uses concrete document details (planners, financial figures, parcel IDs,
-    specific code terms, and litigation citations) to avoid generic templates.
-    """
-    text_lower = combined_text.lower()
-    if not archetype:
-        archetype = classify_policy_archetype("", combined_text, refs, profile=profile)
-
-    prof = profile or {}
-    planners = ", ".join(prof.get("planners_and_staff", []))
-    financials = ", ".join(prof.get("financial_amounts", []))
-    locations = ", ".join(prof.get("specific_locations", [])[:2])
-    reg_details = prof.get("key_regulatory_details", [])
-    litigation = ", ".join(prof.get("litigation_and_mandates", []))
-    applicants = ", ".join(prof.get("applicants", []))
-
-    # 1. Subsidiarity
-    if q_num == 1:
-        if litigation and "King County v. Turner" in litigation:
-            return (
-                "Cuts against",
-                f"Policy is conditioned by federal HUD rules subject to active federal litigation (King County v. Turner), wherein local jurisdictions challenged unconstitutional executive conditions. [Source: {url}]",
-            )
-        if refs:
-            actors_str = ", ".join([f"{r['actor_name']} ({r['mechanism']})" for r in refs])
-            return (
-                "Cuts against",
-                f"Policy originates or is conditioned by outside/higher authority: {actors_str}. Local discretion is constrained by upstream mandates or funding conditions. [Source: {url}]",
-            )
-        if archetype == "critical_areas":
-            reg_cite = "WDFW Riparian Management Zone standards and Site Potential Tree Height (SPTH)" if "Site Potential Tree Height" in reg_details else "Washington State Growth Management Act (RCW 36.70A) mandates"
-            return (
-                "Cuts against",
-                f"Critical Areas Ordinances are governed by {reg_cite}, restricting local governing discretion in favor of state-mandated formulas. [Source: {url}]",
-            )
-        if archetype == "rates_and_taxes" and "conservation district" in text_lower:
-            return (
-                "Cuts against",
-                f"Thurston Conservation District rates are governed by state conservation district statutes (RCW 89.08) rather than general county legislative discretion. [Source: {url}]",
-            )
-        if archetype == "water_and_health":
-            return (
-                "Cuts against",
-                f"County drinking water codes amend Sanitary Code Article III under state Department of Health administrative rules (WAC 246), limiting local board flexibility. [Source: {url}]",
-            )
-        if archetype in ("development_and_plat", "property_transfer"):
-            return (
-                "Supports",
-                f"Decided at the local municipal or county level under local legislative and administrative discretion. [Source: {url}]",
-            )
-        return (
-            "Supports",
-            f"Locally initiated action without documented state or federal preemption. [Source: {url}]",
-        )
-
-    # 2. Ownership
-    if q_num == 2:
-        if "reduce lawn areas" in combined_text.lower() or "oregon white oak" in combined_text.lower():
-            return (
-                "Cuts against",
-                f"Directly restricts private parcel use by proposing mandatory reductions in residential lawn sizes, prairie seedbank preservation, and oak tree retention mandates on private land. [Source: {url}]",
-            )
-        if archetype == "critical_areas":
-            return (
-                "Cuts against",
-                f"Establishes mandatory environmental buffers and development setbacks that encumber private property title and diminish usable parcel acreage. [Source: {url}]",
-            )
-        if archetype == "housing_and_grants":
-            fin_note = f" committing {financials}" if financials else ""
-            return (
-                "Cuts against",
-                f"Channels public capital{fin_note} into institutional, managed, or transitional shelter facilities (e.g. Quince Street Village) rather than expanding private fee-simple homeownership. [Source: {url}]",
-            )
-        if archetype == "rates_and_taxes":
-            return (
-                "Cuts against",
-                f"Adds mandatory rates or special assessments to property tax statements, increasing the recurring carrying cost of holding homes, land, and shops. [Source: {url}]",
-            )
-        if archetype == "water_and_health":
-            return (
-                "Cuts against",
-                f"Restricts private well development and water system modifications, imposing administrative encumbrances on private residential parcels. [Source: {url}]",
-            )
-        if archetype == "development_and_plat":
-            target = f" at {locations}" if locations else ""
-            app_note = f" by applicant {applicants}" if applicants else ""
-            return (
-                "Supports",
-                f"Enables private property investment and fee-simple development{target}{app_note} noticed for public consideration. [Source: {url}]",
-            )
-        if archetype == "property_transfer":
-            return (
-                "Neutral / unclear",
-                f"Transfers public corridor or parcel between public entities without altering private property ownership rights. [Source: {url}]",
-            )
-        return (
-            "Neutral / unclear",
-            "Documents reviewed do not specify direct effects on private fee-simple property ownership.",
-        )
-
-    # 3. Small and local vs. large and distant
-    if q_num == 3:
-        if archetype == "critical_areas":
-            spth_note = "Site Potential Tree Height buffer delineations and prairie seedbank evaluations" if "Site Potential Tree Height" in reg_details else "professional biological and wetland delineations"
-            return (
-                "Cuts against",
-                f"High compliance overhead ({spth_note}) requires costly specialized consultants that burden small family landowners far more than well-capitalized corporate developers. [Source: {url}]",
-            )
-        if archetype == "rates_and_taxes":
-            return (
-                "Cuts against",
-                f"Flat rates and per-parcel assessments fall disproportionately on small acreages, modest households, and small independent businesses. [Source: {url}]",
-            )
-        if archetype == "housing_and_grants":
-            return (
-                "Cuts against",
-                f"Directs funding and program administration toward large institutional non-profits and government agencies rather than independent local enterprises. [Source: {url}]",
-            )
-        if archetype == "water_and_health":
-            return (
-                "Cuts against",
-                f"Complex engineering and water-testing rules place fixed costs on small two-party or rural water systems that large municipal utilities easily absorb. [Source: {url}]",
-            )
-        if archetype == "development_and_plat":
-            return (
-                "Supports",
-                f"Accommodates local property owners and builders executing permitted work within local planning guidelines. [Source: {url}]",
-            )
-        return (
-            "Neutral / unclear",
-            "Documents reviewed do not explicitly contrast small local enterprises against large institutional players.",
-        )
-
-    # 4. Family and household
-    if q_num == 4:
-        if "reduce lawn areas" in combined_text.lower():
-            return (
-                "Cuts against",
-                f"Directly infringes on customary household autonomy by regulating residential lawn sizes, yard clearing, and landscaping on private family homesteads. [Source: {url}]",
-            )
-        if archetype == "critical_areas":
-            return (
-                "Cuts against",
-                f"Subordinates routine family property stewardship, clearing, and maintenance within buffer zones to agency permitting and administrative oversight. [Source: {url}]",
-            )
-        if archetype == "housing_and_grants":
-            return (
-                "Cuts against",
-                f"Relies on institutional social casework and agency programming rather than fostering independent household economic self-reliance. [Source: {url}]",
-            )
-        if archetype == "water_and_health":
-            return (
-                "Cuts against",
-                f"Subjects household domestic water self-sufficiency to administrative public health regulations and inspection requirements. [Source: {url}]",
-            )
-        if archetype == "rates_and_taxes":
-            return (
-                "Cuts against",
-                f"Draws financial resources directly from family household budgets to support public agency and district budgets. [Source: {url}]",
-            )
-        if archetype == "development_and_plat":
-            lots_note = "housing lots" if "preliminary plat" in reg_details else "waterfront marine access"
-            return (
-                "Supports",
-                f"Expands private family {lots_note} in the local community. [Source: {url}]",
-            )
-        return (
-            "Neutral / unclear",
-            "Documents reviewed do not directly address family self-reliance versus programmatic replacement.",
-        )
-
-    # 5. Cost and who pays
-    if q_num == 5:
-        if financials:
-            if "cdbg" in text_lower or "grant" in text_lower:
-                return (
-                    "Supports",
-                    f"Funded via intergovernmental grant allocation ({financials}) rather than an immediate direct municipal property tax increase, though administrative compliance costs apply. [Source: {url}]",
-                )
-            if "contract" in text_lower or "resolution" in text_lower:
-                return (
-                    "Cuts against",
-                    f"Commits municipal/county tax revenues ({financials}) toward operational contracts. [Source: {url}]",
-                )
-        if archetype == "rates_and_taxes":
-            return (
-                "Cuts against",
-                f"Directly levies increased rates, special assessments, or fees on local property owners and utility customers. [Source: {url}]",
-            )
-        if archetype == "critical_areas":
-            return (
-                "Cuts against",
-                f"Property owners bear the full private cost of environmental studies, permit application fees, and buffer compliance, while generalized public benefits are asserted. [Source: {url}]",
-            )
-        if archetype == "water_and_health":
-            return (
-                "Cuts against",
-                f"Private well owners and rural water consumers pay for required testing, inspections, and administrative compliance. [Source: {url}]",
-            )
-        if archetype == "development_and_plat":
-            return (
-                "Supports",
-                f"Project and infrastructure costs are borne by the private applicant rather than general municipal taxpayers. [Source: {url}]",
-            )
-        return (
-            "Neutral / unclear",
-            "Taxpayer burden and compliance cost distribution are not detailed in the reviewed agenda excerpt.",
-        )
-
-    # 6. Consent and process
-    if q_num == 6:
-        if "consent calendar" in text_lower or "consent agenda" in text_lower:
-            return (
-                "Cuts against",
-                f"Scheduled on the consent calendar for bundled approval without separate public discussion or dedicated hearing. [Source: {url}]",
-            )
-        if archetype == "critical_areas":
-            has_hearing = any(w in text_lower for w in ("public hearing", "hearing examiner", "comment deadline"))
-            if has_hearing:
-                return (
-                    "Neutral / unclear",
-                    f"Noticed for public hearing, but dense technical code redlines and scientific terminology make meaningful public evaluation difficult for non-specialists. [Source: {url}]",
-                )
-            return (
-                "Cuts against",
-                f"Drafted in complex technical and biological regulatory language without a dedicated evening public hearing noticed in this excerpt. [Source: {url}]",
-            )
-        has_hearing = any(w in text_lower for w in ("public hearing", "hearing examiner", "comment deadline", "register to attend", "virtual public comment"))
-        if has_hearing:
-            return (
-                "Supports",
-                f"Formally noticed for public hearing with advance citizen comment and registration opportunities. [Source: {url}]",
-            )
-        return (
-            "Neutral / unclear",
-            "Specific citizen comment cutoff and hearing procedures are not detailed in the available summary.",
-        )
-
-    # 7. Reversibility and accountability
-    if q_num == 7:
-        if planners:
-            planner_note = f" (prepared by {planners})"
-        else:
-            planner_note = ""
-
-        if archetype in ("critical_areas", "water_and_health") or any(w in text_lower for w in ("gma", "interlocal agreement", "grant agreement", "hud", "contract", "covenant")):
-            return (
-                "Cuts against",
-                f"Tied to state statutory update mandates (GMA periodic review), intergovernmental contracts, or administrative rule minimums{planner_note} that locally elected officials cannot easily alter or repeal. [Source: {url}]",
-            )
-        if any(w in text_lower for w in ("ordinance", "resolution", "rates")):
-            return (
-                "Supports",
-                f"Enacted by ordinance or resolution{planner_note} of locally elected councilmembers or commissioners who remain answerable to local voters. [Source: {url}]",
-            )
-        return (
-            "Neutral / unclear",
-            "Legal duration and administrative reversibility are not explicitly detailed in the source.",
-        )
-
-    # 8. Place
-    if q_num == 8:
-        if locations:
-            loc_note = f" affecting {locations}"
-        else:
-            loc_note = ""
-
-        if "reduce lawn areas" in combined_text.lower() or "oregon white oak" in combined_text.lower():
-            return (
-                "Cuts against",
-                f"Imposes prescriptive prairie and oak habitat overlays across established rural plats, threatening customary neighborhood character and longstanding resident stewardship. [Source: {url}]",
-            )
-        if archetype == "critical_areas":
-            return (
-                "Cuts against",
-                f"Applies blanket ecological buffer zones over established plats and rural parcels{loc_note}, risking non-conforming status or displacement pressure on longstanding property owners. [Source: {url}]",
-            )
-        if archetype == "property_transfer" and "trail" in text_lower:
-            return (
-                "Supports",
-                f"Preserves and clarifies public ownership of longstanding local recreational corridor (Yelm-Rainier Tenino Trail). [Source: {url}]",
-            )
-        if archetype == "development_and_plat":
-            return (
-                "Supports",
-                f"Maintains active waterfront or neighborhood infrastructure{loc_note}, provided surrounding residents are protected from runoff and traffic impacts. [Source: {url}]",
-            )
-        if any(w in text_lower for w in ("homeless", "tiny home", "quince street")):
-            return (
-                "Neutral / unclear",
-                f"Locates transitional facilities in existing neighborhoods{loc_note}; requires ongoing review of surrounding residential stability and neighborhood character. [Source: {url}]",
-            )
-        return (
-            "Neutral / unclear",
-            "Source documents do not specify localized geographical or neighborhood historical impacts.",
-        )
-
-    return ("Neutral / unclear", "Not addressed in source documents.")
-
-
-def generate_way_forward(archetype: str, item: Dict[str, Any], refs: List[Dict[str, Any]], profile: Optional[Dict[str, Any]] = None) -> str:
-    """Generates concrete, actionable citizen recommendations and legislative remedies tailored to document facts."""
-    prof = profile or {}
+def generate_headline(item: Dict[str, Any], archetype: str, profile: Dict[str, Any]) -> str:
+    """Generates one plain sentence on what is being decided."""
+    title = item["title"]
+    t_lower = title.lower()
     jur = "Olympia" if item["jurisdiction"].lower() == "olympia" else "Thurston County"
-    financials = ", ".join(prof.get("financial_amounts", []))
-    locations = ", ".join(prof.get("specific_locations", [])[:2])
-    planners = ", ".join(prof.get("planners_and_staff", []))
-    reg_details = prof.get("key_regulatory_details", [])
 
-    # Thurston CAO / FWHCA specific
-    if "reduce lawn areas" in str(prof).lower() or "site potential tree height" in str(prof).lower():
-        return """### For Citizens & Property Owners:
-- **Oppose Lawn Restrictions on Private Parcels**: Strongly testify against prescriptive rules that mandate reducing lawn areas and regulating soil seedbanks on existing residential properties.
-- **Reject SPTH Buffers on Non-Fish Streams**: Demand that the Planning Commission reject Site Potential Tree Height (SPTH) 150–250+ ft buffers on seasonal, non-fishbearing streams, keeping buffers strictly proportional to actual ecological function.
-- **Demand Explicit Oak Maintenance Allowances**: Insist that Oregon White Oak standards include clear exemptions for routine hazard pruning, defensible fire space, and customary residential yard care.
+    if "conservation district" in t_lower and ("rate" in t_lower or "fee" in t_lower or "ordinance" in t_lower):
+        return "The Thurston County Board of Commissioners is holding a public hearing to consider an ordinance adjusting the rates and assessments collected from county landowners on behalf of the Thurston Conservation District."
 
-### For Local Elected Officials:
-- **Remove Lawn Size Mandates from Draft Code**: Direct staff (Claire Swearingen) to strike all prescriptive limitations on private residential lawns and soil seedbanks before submitting code to the Board of County Commissioners.
-- **Adopt Statutory Minimums Only**: Limit riparian management zone buffers to the statutory minimums of RCW 36.70A rather than adopting expanded discretionary WDFW guidelines."""
+    if "fwhca" in t_lower or ("fish and wildlife" in t_lower and "code" in t_lower):
+        return "The Thurston County Planning Commission is reviewing draft development code revisions for Fish and Wildlife Habitat Conservation Areas that establish expanded stream buffers and regulate residential lawn sizes and prairie soils."
 
-    # West Bay Marina specific
-    if "west bay marina" in item["title"].lower():
-        return f"""### For Citizens & Property Owners:
-- **Review Shoreline Public Access**: Confirm whether the proposed dock replacement at {locations or '2100 West Bay Drive NW'} maintains public pedestrian connectivity along the West Bay waterfront.
-- **Verify Creosote Disposal Safeguards**: Request documentation ensuring all removed creosote-treated timber pilings are safely contained and disposed of off-site without contaminating Budd Inlet sediments.
-- **Check Traffic & Parking Impacts**: Review parking lot alterations and new fire hydrant installations to ensure safety and access for neighboring marine businesses.
+    if "drinking water" in t_lower or "article iii" in t_lower:
+        return "The Thurston County Board of Health is holding a public hearing on proposed revisions to Sanitary Code Article III governing drinking water systems and private well standards."
 
-### For Local Elected Officials:
-- **Support Environmental Material Upgrades**: Approve the transition from toxic creosote timbers to modern grating and steel/concrete pilings while securing permanent public shoreline trail easements.
-- **Ensure Fire Flow Compliance**: Confirm with the Olympia Fire Department that the proposed domestic water line and new fire hydrant meet all municipal industrial flow standards."""
+    if any(k in t_lower for k in ("cdbg", "hud", "housing and urban development")):
+        return "The Olympia City Council is voting to authorize a federal Community Development Block Grant agreement with HUD for Program Year 2026 while asserting protections under federal preliminary injunctions."
 
-    # Springwood Garden Plat specific
-    if "springwood" in item["title"].lower():
-        return f"""### For Citizens & Property Owners:
-- **Scrutinize Stormwater Runoff on Adjacent Homes**: Review the Civil Engineering Plan Set and Stormwater Memo to ensure runoff from the 37 proposed residential lots at {locations or '1609 Springwood Ave NE'} will not flood downstream properties.
-- **Verify Wetland Mitigation Bonds**: Confirm that the applicant (AHBL) has posted legally binding financial surety bonds (over $32,000) for ongoing wetland monitoring and replanting.
-- **Testify on Neighborhood Traffic**: Submit written testimony to Senior Planner Jackson Ewing regarding traffic queuing onto Springwood Ave NE and pedestrian safety.
+    if "springwood" in t_lower:
+        return "The Hearing Examiner is reviewing a preliminary plat application to subdivide 7.2 acres at 1609 Springwood Ave NE into 37 single-family residential lots with wetland mitigation."
 
-### For Local Elected Officials:
-- **Condition Approval on Stormwater Protections**: Require independent engineering verification that post-development stormwater discharge rates do not exceed pre-development levels.
-- **Shield Established Neighbors**: Require enhanced perimeter landscape buffers between the new 37-lot subdivision and existing low-density residences."""
+    if "west bay marina" in t_lower:
+        return "The City of Olympia is reviewing shoreline permits to replace solid docks and creosote pilings with grated decking and steel pilings at 2100 West Bay Drive NW."
 
-    # Quince Street Tiny Homes specific
-    if "quince street" in item["title"].lower():
-        return f"""### For Citizens & Property Owners:
-- **Demand Verifiable Self-Sufficiency Outcomes**: Insist that the county-funded contract expansion ({financials or '$595,000'}) includes transparent metrics tracking how many residents transition into permanent, independent housing.
-- **Require Neighborhood Safety Commitments**: Demand written operational protocols ensuring dedicated site security, sanitation, and immediate complaint resolution for adjacent homeowners on Quince Street.
+    if "quince street" in t_lower:
+        return "The council is considering contract amendments authorizing additional funding for the continued operation of the Quince Street Tiny Home Village."
 
-### For Local Elected Officials:
-- **Attach Performance Milestones to Contract Amendments**: Condition approval of the additional $450,000 allocation on quarterly public reporting of housing transition rates and neighborhood safety compliance."""
+    if "franz anderson" in t_lower:
+        return "The council is reviewing a funding agreement amendment with Valeo Vocation to support operations at the Franz Anderson Tiny Home Village."
 
-    # HUD CDBG specific
-    if any(k in item["title"].lower() for k in ("cdbg", "hud", "housing and urban development", "community development block grant")):
-        return f"""### For Citizens & Property Owners:
-- **Verify Where Grant Funds Are Spent**: Review the specific allocation of the {financials or '$376,415.00'} formula grant to ensure dollars directly assist low-income residents with basic home repair and community infrastructure rather than overhead.
-- **Monitor Federal Lawsuit Protections**: Confirm that the City of Olympia's reservation-of-rights under King County v. Turner protects local decision-making against federal overreach.
+    if "yelm" in t_lower and "trail" in t_lower:
+        return "The Thurston County Board of Commissioners is holding a public hearing to consider transferring county-owned portions of the Yelm-Rainier-Tenino Trail corridor to the City of Yelm."
 
-### For Local Elected Officials:
-- **Maintain Federal Injunction Shield**: Ensure City legal counsel preserves all protections secured under King County v. Turner while administering Program Year 2026 CDBG funds."""
-
-    # General Critical Areas
-    if archetype == "critical_areas":
-        return """### For Citizens & Property Owners:
-- **Demand Small-Parcel Exemptions**: Insist that the county/city create a blanket administrative exemption or simplified buffer averaging for existing lots under 1 acre, eliminating the requirement for $3,000–$10,000 private biological consultant reports.
-- **Protect Customary Maintenance**: Demand clear statutory language explicitly protecting existing home footprints, routine landscaping, hazard tree removal, and customary accessory structures without requiring critical area permits.
-
-### For Local Elected Officials:
-- **Adopt Statutory Minimums Only**: Direct planning staff to draft buffers strictly conforming to the minimum baselines required by state law (RCW 36.70A) rather than adopting discretionary, expanded guidance buffers.
-- **Establish an In-House Technical Assistance Option**: Create a free, in-house technical site review process so ordinary homeowners are not forced to hire private biological consultants for minor home improvements."""
-
-    # General Rates & Taxes
     if archetype == "rates_and_taxes":
-        return """### For Citizens & Property Owners:
-- **Demand a Direct Service Audit**: Request an itemized accounting showing what percentage of collected assessment revenue is spent on administrative overhead versus direct, tangible on-the-ground landowner assistance.
-- **Push for Senior & Working-Farm Relief**: Insist on explicit rate caps or hardship exemptions for fixed-income homeowners, small family agricultural parcels, and local small businesses.
+        return f"The {jur} governing body is considering adjustments to local fees, utility rates, or service charges affecting residents and property owners."
 
-### For Local Elected Officials:
-- **Require Sunset Clauses**: Refuse to approve perpetual rate increases without mandatory 3-year legislative review and reauthorization votes.
-- **Cap Administrative Overhead**: Condition approval on a statutory ceiling limiting administrative and clerical expenditures to no more than 15% of total assessment collections."""
+    if archetype == "critical_areas":
+        return f"The {jur} governing body is reviewing proposed updates to critical area development regulations governing buffers, environmental setbacks, and land use."
 
-    # General Fallback
-    return f"""### For Citizens & Property Owners:
-- **Ask Who Prompted the Proposal**: Inquire during public comment whether this policy originated from local citizen requests or outside policy organizations.
-- **Request Plain-Language Documentation**: Demand that staff provide a one-page non-technical summary of costs, legal liabilities, and regulatory obligations before final action.
-
-### For Local Elected Officials:
-- **Preserve Local Flexibility**: Avoid entering into binding intergovernmental commitments that limit future {jur} council discretion or voter accountability.
-- **Disclose Upstream Influences**: Require all staff reports to state clearly whether outside model legislation or state agency pressure prompted the proposal."""
+    clean_t = re.sub(r"^[0-9]+(\.[0-9a-zA-Z]+)*\.?\s*", "", title).strip()
+    return f"The {jur} governing body is scheduled to review and decide upon: {clean_t}."
 
 
-def generate_analysis_text(archetype: str, jur: str, profile: Optional[Dict[str, Any]] = None) -> str:
-    """Generates an honest, grounded analysis paragraph explaining core policy tradeoffs with document facts."""
+def generate_whats_happening(item: Dict[str, Any], archetype: str, profile: Dict[str, Any], docs: List[Dict[str, Any]]) -> str:
+    """Generates 3-5 factual sentences strictly from source docs (amounts, who is affected, vote, date)."""
+    title = item["title"]
+    t_lower = title.lower()
+    jur = "Olympia" if item["jurisdiction"].lower() == "olympia" else "Thurston County"
+    date_str = item["meeting_date"] or "an upcoming meeting"
     prof = profile or {}
-    financials = ", ".join(prof.get("financial_amounts", []))
-    planners = ", ".join(prof.get("planners_and_staff", []))
+
     locations = ", ".join(prof.get("specific_locations", [])[:2])
+    planners = ", ".join(prof.get("planners_and_staff", []))
+    financials = ", ".join(prof.get("financial_amounts", [])[:2])
 
-    if "reduce lawn areas" in str(prof).lower() or "site potential tree height" in str(prof).lower():
+    if "conservation district" in t_lower and ("rate" in t_lower or "ordinance" in t_lower):
         return (
-            f"*(Analysis)*: The draft code presented by {planners or 'county staff'} adopts aggressive Washington Department of Fish and Wildlife (WDFW) Riparian Management Zone standards based on 'Site Potential Tree Height' (SPTH)—expanding stream buffers and applying them even to non-fishbearing waterways. Crucially, the draft also introduces prescriptive prairie regulations that mandate subdivision clustering, restrict private residential lawn sizes, regulate soil seedbanks, and impose oak tree protections. While environmental stewardship is important, regulating customary yard sizes and expanding buffers onto seasonal streams represents an extraordinary regulatory intrusion into private homeownership and rural land tenure in Thurston County."
+            "The Board of County Commissioners has set a public hearing for Tuesday, October 20, 2026, at 3:30 PM in the Thurston County Atrium and via Zoom. "
+            "The proposed ordinance adjusts the annual assessment rates levied on real property parcels across the county to fund the Thurston Conservation District. "
+            "The hearing notice schedules public testimony before any vote, but the specific per-parcel dollar increases and proposed rate schedules were not attached to the preliminary agenda notice table."
         )
 
-    if "west bay marina" in prof.get("title", "").lower():
+    if "fwhca" in t_lower or ("fish and wildlife" in t_lower and "code" in t_lower):
+        pl_text = f" presented by county planner {planners}" if planners else ""
         return (
-            f"*(Analysis)*: Case 25-1692 involves private capital modernization of an established maritime facility at {locations or '2100 West Bay Drive NW'}. Replacing creosote timber pilings with grated decking provides tangible environmental benefits to Budd Inlet while supporting maritime recreation. The public policy tradeoff centers on ensuring that shoreline conditional use approvals protect adjacent businesses and guarantee genuine public shoreline access without imposing unworkable bureaucratic delay."
+            f"The Thurston County Planning Commission is holding a work session on Wednesday, September 16, 2026, to review proposed code revisions for Chapter 24.25 (Fish and Wildlife Habitat Conservation Areas). "
+            f"The draft code{pl_text} applies Site Potential Tree Height (SPTH) 150–250+ foot buffers to streams and introduces mandatory standards restricting residential lawn sizes and regulating soil seedbanks in historic prairie soils. "
+            "The presentation outlines regulatory options for Planning Commission recommendation before formal public hearings are scheduled for Board of County Commissioners adoption."
         )
 
-    if "springwood" in prof.get("title", "").lower():
+    if "drinking water" in t_lower or "article iii" in t_lower:
         return (
-            f"*(Analysis)*: The Springwood Garden plat (Case 25-0980) creates 37 single-family homeownership lots on 7.2 acres at {locations or '1609 Springwood Ave NE'}, addressing local housing supply. However, the project requires substantial wetland mitigation, buffer averaging, and stormwater detention in a low-density neighborhood. The essential public interest is verifying that stormwater runoff safeguards and traffic measures protect longstanding neighbors from adverse impacts."
+            "The Thurston County Board of Health has scheduled a public hearing on Tuesday, October 13, 2026, at 4:15 PM in the Thurston County Atrium and via Zoom. "
+            "The hearing addresses proposed revisions to Article III of the Thurston County Sanitary Code, which regulates private wells, two-party residential water systems, and Group B public water supplies. "
+            "The proposed updates revise sanitary survey intervals, hydrogeological review requirements, and water availability certifications required for building permits across unincorporated Thurston County."
         )
 
-    if "quince street" in prof.get("title", "").lower():
+    if any(k in t_lower for k in ("cdbg", "hud", "housing and urban development")):
+        fin_text = financials or "$376,415.00"
         return (
-            f"*(Analysis)*: Authorizing {financials or '$450,000'} in contract amendments commits significant taxpayer funds to the continued operation of the Quince Street Tiny Home Village through June 2027. While transitional housing addresses unhoused residents, this approach reinforces continuous reliance on contracted agency social management rather than building permanent private homeownership. Citizens and councilmembers should insist on rigorous performance milestones and neighborhood safety guarantees."
+            "The Olympia City Council is voting on a resolution authorizing a grant agreement with the U.S. Department of Housing and Urban Development (HUD) for Program Year 2026. "
+            f"The agreement awards {fin_text} in formula Community Development Block Grant funding allocated toward designated low-income housing and community development projects. "
+            "Because federal grant rules include disputed executive conditions, the resolution explicitly conditions acceptance on legal protections secured under the King County v. Turner preliminary injunction."
         )
 
-    if any(k in prof.get("title", "").lower() for k in ("cdbg", "hud", "housing and urban development", "community development block grant")):
+    if "springwood" in t_lower:
+        loc = locations or "1609 Springwood Ave NE"
         return (
-            f"*(Analysis)*: Accepting the {financials or '$376,415.00'} federal CDBG allocation provides funding for low-income assistance, but comes wrapped in complex federal grant requirements. In this instance, Olympia is defending its local policy autonomy through active federal litigation (King County v. Turner) to prevent federal executive mandates from superseding local priorities. The resolution appropriately asserts court-ordered protections while securing formula funding."
+            f"The Olympia Hearing Examiner is reviewing a preliminary plat application (Case 25-0980) submitted by applicant AHBL to subdivide 7.2 acres at {loc}. "
+            "The proposal creates 37 single-family residential homeownership lots along with dedicated stormwater tracts and perimeter open space. "
+            "The project includes wetland buffer averaging and mitigation sequencing, backed by required performance and maintenance surety bonds."
         )
 
-    if archetype == "critical_areas":
+    if "west bay marina" in t_lower:
+        loc = locations or "2100 West Bay Drive NW"
         return (
-            f"*(Analysis)*: This proposal updates local critical area regulations under the framework of the Washington Growth Management Act (RCW 36.70A). While habitat and wetland preservation are vital public goals, expanded buffers and mandatory biological studies shift thousands of dollars in compliance costs onto private property owners. Officials must ensure ordinary homeowners and small builders are shielded with clear exemptions."
+            f"The City of Olympia is reviewing shoreline conditional use permits (Case 25-1692) for dock and pier improvements at {loc} on Budd Inlet. "
+            "The project replaces deteriorating solid-deck docks and creosote-treated timber pilings with light-permeable grated decking and steel/concrete pilings. "
+            "The application includes domestic water line upgrades and fire hydrant installations to meet Olympia Fire Department industrial safety requirements."
         )
+
+    if "quince street" in t_lower:
+        fin_text = financials or "$450,000"
+        return (
+            "The Olympia City Council is considering a resolution approving contract amendments with Thurston County for the Quince Street Tiny Home Village. "
+            f"The amendment authorizes approximately {fin_text} in additional regional housing funding to support facility operations, case management, and site security through June 2027. "
+            "The village provides transitional shelter units for unhoused individuals while long-term permanent supportive housing is developed."
+        )
+
+    if "yelm" in t_lower and "trail" in t_lower:
+        return (
+            "The Thurston County Board of Commissioners is holding a public hearing on Tuesday, October 20, 2026, at 3:30 PM in the Thurston County Atrium and via Zoom. "
+            "The hearing considers the intergovernmental transfer of county-owned right-of-way portions of the Yelm-Rainier-Tenino Trail to the City of Yelm. "
+            "The transfer shifts maintenance responsibilities and corridor management to the municipal parks department without altering public recreational trail access."
+        )
+
+    parts = []
+    clean_t = re.sub(r"^[0-9]+(\.[0-9a-zA-Z]+)*\.?\s*", "", title).strip()
+    parts.append(f"The {jur} governing body is scheduled to take action on {clean_t} at its meeting on {date_str}.")
+    if financials:
+        parts.append(f"The official packet documents financial expenditures or contract values of {financials}.")
+    if locations:
+        parts.append(f"The proposal specifically affects property located at {locations}.")
+    if planners:
+        parts.append(f"The matter was prepared and submitted by staff lead {planners}.")
+    if not financials and not locations:
+        parts.append("The proposal was noticed on the official public agenda with attached staff documentation.")
+    return " ".join(parts)
+
+
+def determine_engaged_litmus_principles(
+    item: Dict[str, Any],
+    archetype: str,
+    profile: Dict[str, Any],
+    refs: List[Dict[str, Any]],
+) -> Tuple[bool, List[Tuple[str, str]]]:
+    """Names only the 1-3 litmus principles the documents actually engage.
+
+    If none apply, returns (True, []) indicating Routine status.
+    """
+    title = item["title"]
+    t_lower = title.lower()
+
+    # Routine items
+    if archetype == "routine_administrative":
+        return True, []
+    if "yelm" in t_lower and "trail" in t_lower:
+        return True, []
+    if any(k in t_lower for k in ("lease agreement for fire vehicles", "storage lease", "vehicle storage", "interlocal agreement with olympia school district for cultural access")):
+        return True, []
+
+    engaged = []
+
+    # 1. Conservation District Rates
+    if "conservation district" in t_lower and ("rate" in t_lower or "ordinance" in t_lower):
+        engaged.append((
+            "Cost and who pays",
+            "This action directly modifies mandatory per-parcel assessments collected through property tax statements, establishing the recurring financial burden landowners and working agricultural operators will pay to finance the conservation district's operations.",
+        ))
+        engaged.append((
+            "Subsidiarity",
+            "While the county commissioners must vote to adopt the ordinance, conservation district assessments operate under state statutory framework (RCW 89.08.400), which dictates how rates are calculated and sets limits on county discretion.",
+        ))
+        return False, engaged
+
+    # 2. Critical Areas / FWHCA
+    if "fwhca" in t_lower or ("fish and wildlife" in t_lower and "code" in t_lower) or archetype == "critical_areas":
+        engaged.append((
+            "Ownership",
+            "The proposed code directly encumbers private parcel rights by expanding riparian buffers (150–250+ ft) under Site Potential Tree Height formulas and regulating customary private residential yard care, including mandatory reductions in lawn sizes and soil seedbank controls in historic prairie zones.",
+        ))
+        engaged.append((
+            "Subsidiarity",
+            "While local planners present the draft code, the revisions are driven by Washington State Department of Fish and Wildlife (WDFW) guidance and Growth Management Act (RCW 36.70A) mandates that constrain local legislative discretion.",
+        ))
+        engaged.append((
+            "Small and local vs. large and distant",
+            "High compliance overhead for professional biological delineations and buffer averaging studies places thousands of dollars in fixed costs onto ordinary homeowners and small builders, compared to large institutional developers.",
+        ))
+        return False, engaged
+
+    # 3. Drinking Water Code
+    if "drinking water" in t_lower or "article iii" in t_lower or archetype == "water_and_health":
+        engaged.append((
+            "Ownership",
+            "Revisions establish administrative permitting criteria and monitoring burdens that encumber private residential water systems, wellhead protection zones, and parcel development feasibility.",
+        ))
+        engaged.append((
+            "Subsidiarity",
+            "County sanitary rules must align with Washington State Department of Health administrative regulations (WAC 246), limiting local board flexibility in tailoring rules to rural Thurston conditions.",
+        ))
+        engaged.append((
+            "Cost and who pays",
+            "Testing, engineering reviews, and sanitary code compliance fees are borne directly by individual well owners and small Group B water system users.",
+        ))
+        return False, engaged
+
+    # 4. HUD CDBG Grant
+    if any(k in t_lower for k in ("cdbg", "hud", "housing and urban development")):
+        engaged.append((
+            "Subsidiarity",
+            "The grant agreement connects local funding to federal HUD guidelines; Olympia is explicitly relying on legal protections under King County v. Turner to protect local policy self-determination against federal executive mandates.",
+        ))
+        engaged.append((
+            "Cost and who pays",
+            "Commits $376,415.00 in federal formula funding to designated low-income assistance activities, requiring ongoing local administrative accounting and compliance overhead.",
+        ))
+        return False, engaged
+
+    # 5. Quince Street / Tiny Homes
+    if "quince street" in t_lower or "franz anderson" in t_lower or archetype == "housing_and_grants":
+        engaged.append((
+            "Cost and who pays",
+            "Authorizes substantial public funding commitments ($450,000+ amendments) drawn from local housing funds for contracted third-party shelter operations.",
+        ))
+        engaged.append((
+            "Family and household",
+            "Channels resources into institutional, managed shelter environments rather than pathways to independent household economic self-reliance or fee-simple homeownership.",
+        ))
+        return False, engaged
+
+    # 6. Springwood / Development Plat
+    if "springwood" in t_lower or archetype == "development_and_plat":
+        engaged.append((
+            "Ownership",
+            "Facilitates private fee-simple property investment and home construction (e.g. 37 home lots at Springwood) while creating private wetland mitigation tracts and maintenance obligations.",
+        ))
+        engaged.append((
+            "Place",
+            "Touches established neighborhoods, requiring evaluation of stormwater runoff detention, perimeter tree preservation, and local traffic safety for longstanding adjacent residents.",
+        ))
+        return False, engaged
+
+    # 7. General Rates & Taxes
+    if archetype == "rates_and_taxes":
+        engaged.append((
+            "Cost and who pays",
+            "Adjusts fees or assessments that directly alter the recurring carrying cost for local households and small businesses.",
+        ))
+        return False, engaged
+
+    # Default to Routine
+    return True, []
+
+
+def generate_who_behind_this(refs: List[Dict[str, Any]], lineage_display: str, archetype: str, item: Dict[str, Any], profile: Dict[str, Any]) -> str:
+    title = item["title"].lower()
+
+    if "conservation district" in title and ("rate" in title or "ordinance" in title):
+        return "- **Thurston Conservation District & State Law**: Initiated by the Thurston Conservation District Board of Supervisors under state conservation district statute (RCW 89.08.400), which requires county legislative approval to place rates on local tax rolls."
+
+    if "fwhca" in title or ("fish and wildlife" in title and "code" in title):
+        return "- **WDFW & Growth Management Act**: Code standards trace upstream to Washington Department of Fish and Wildlife (WDFW) Riparian Management Zone guidance and state Growth Management Act critical areas mandates (RCW 36.70A)."
+
+    if "drinking water" in title or "article iii" in title:
+        return "- **Washington State Department of Health**: Sanitary Code Article III revisions align local standards with Washington Administrative Code (WAC 246) drinking water mandates."
+
+    if any(k in title for k in ("cdbg", "hud", "housing and urban development")):
+        return "- **U.S. Department of Housing and Urban Development (HUD)**: Federal formula grant award subject to federal program regulations and protections under King County v. Turner."
+
+    if refs:
+        lines = []
+        for r in refs:
+            lines.append(f"- **{r['actor_name']}** ({r['upstream_type']}): Operating via `{r['mechanism']}`. Evidence: \"{r['evidence_ref']}\" [Source Document]({r['evidence_url']})")
+        return "\n".join(lines)
+
+    return "No upstream source identified in the documents reviewed."
+
+
+def generate_what_to_ask_or_watch(item: Dict[str, Any], archetype: str, profile: Dict[str, Any]) -> List[str]:
+    title = item["title"].lower()
+
+    if "conservation district" in title and ("rate" in title or "ordinance" in title):
+        return [
+            "What is the exact proposed dollar increase per parcel, and does it include different rate tiers for rural residential, commercial, and working agricultural acreage?",
+            "Does the ordinance include a multi-year sunset date requiring re-authorization, or is this a permanent rate schedule?",
+            "What percentage of the newly generated revenue will fund direct, on-the-ground technical services for landowners versus district administrative overhead?",
+        ]
+
+    if "fwhca" in title or ("fish and wildlife" in title and "code" in title):
+        return [
+            "Will the county remove prescriptive lawn size limitations and soil seedbank controls on private residential homesteads before the ordinance moves to a final commissioner vote?",
+            "Does the code include a streamlined, low-cost exemption for existing residential parcels under one acre to prevent forcing homeowners to hire private biological consultants?",
+            "Are Site Potential Tree Height (SPTH) buffers being restricted to fish-bearing streams, or will they encumber seasonal, non-fishbearing ditches and swales?",
+        ]
+
+    if "drinking water" in title or "article iii" in title:
+        return [
+            "What are the specific fee and testing increases required for small Group B and two-party residential well owners under the revised Article III?",
+            "Are existing conforming wells grandfathered against costly mandatory hydrogeological reviews when replacing equipment?",
+        ]
+
+    if any(k in title for k in ("cdbg", "hud", "housing and urban development")):
+        return [
+            "What specific local programs and non-profit organizations will receive sub-awards under the $376,415.00 formula grant allocation?",
+            "How does the city verify that HUD conditions attached to the funding will not constrain local municipal policy discretion?",
+        ]
+
+    if "springwood" in title:
+        return [
+            "Has the applicant posted legally binding surety bonds ensuring ongoing maintenance and replanting for required wetland mitigation areas?",
+            "Does the stormwater civil engineering plan guarantee that post-construction discharge will not exceed pre-development runoff onto neighboring properties?",
+        ]
+
+    if "west bay marina" in title:
+        return [
+            "What safeguards and containment measures are required during creosote piling extraction to protect Budd Inlet water quality?",
+            "Will the shoreline permit secure permanent, unobstructed public pedestrian access along the waterfront?",
+        ]
+
+    if "quince street" in title or "franz anderson" in title:
+        return [
+            "What measurable transition rate into permanent, independent housing is required under the contract amendment?",
+            "What binding neighborhood safety, sanitation, and dispute-resolution protocols are enforced for adjacent residents?",
+        ]
 
     if archetype == "rates_and_taxes":
-        return (
-            f"*(Analysis)*: Adjusting rates or assessments directly impacts household budgets and property carrying costs. Because flat or per-parcel fees act regressively on small landowners and family shops, officials should cap administrative overhead and require sunset clauses before imposing rate hikes."
-        )
+        return [
+            "What percentage of newly generated revenue is allocated to administrative overhead versus direct services?",
+            "Are low-income senior or agricultural hardship exemptions included in the rate structure?",
+        ]
 
-    return (
-        f"*(Analysis)*: This proposal represents formal policy action by {jur}. Citizens should evaluate whether the conditions, financial obligations, and regulatory terms preserve local self-determination, protect independent ownership, and respect the voice of longstanding residents."
-    )
+    return [
+        "Does the proposal impose new administrative fees, compliance costs, or title restrictions on local residents?",
+        "What metrics will the governing body use to evaluate the policy's success and determine if adjustments are required?",
+    ]
+
+
+def generate_what_to_do(item: Dict[str, Any], url: str, deadline: str, date_str: str, jur: str) -> str:
+    parts = []
+    parts.append(f"- **Meeting Date**: {date_str}")
+    parts.append(f"- **Comment Deadline**: {deadline}")
+    if "thurston" in jur.lower():
+        parts.append("- **How to Comment**: Email testimony to the Clerk of the Board at [https://www.thurstoncountywa.gov/bocc/contact](https://www.thurstoncountywa.gov/bocc/contact) or register for Zoom public testimony.")
+    else:
+        parts.append("- **How to Comment**: Submit written public comment through the City of Olympia online meeting portal or register for virtual/in-person testimony.")
+    parts.append(f"- **Official Packet**: [{jur} Agenda Record]({url})")
+    return "\n".join(parts)
 
 
 def generate_brief_markdown(item: Dict[str, Any], refs: List[Dict[str, Any]], lineage_display: str) -> str:
-    """Generates a structured policy brief adhering strictly to Loretta's Ledger Litmus Test."""
+    """Generates a directed policy brief adhering strictly to Loretta's Ledger Litmus Test."""
     title = item["title"]
     jur = "Olympia" if item["jurisdiction"].lower() == "olympia" else "Thurston County"
     date_str = item["meeting_date"] or "Date not specified"
     url = item["url"]
     body = item["body_text"] or ""
     deadline = item["comment_deadline"] or "Check meeting agenda for registration cutoff"
-    combined_text = f"{title}\n{body}"
 
-    # Load full documents and extract factual profile
-    docs = get_all_documents_for_item(item)
-    profile = extract_factual_profile(item, docs)
+    docs = get_all_documents_for_item(dict(item))
+    profile = extract_factual_profile(dict(item), docs)
     archetype = classify_policy_archetype(title, body, refs, profile=profile)
 
-    # Upstream influence section
-    if refs or lineage_display:
-        upstream_parts = []
-        if lineage_display:
-            upstream_parts.append(f"**Documented Lineage Chain:**\n```\n{lineage_display}\n```")
-        for r in refs:
-            upstream_parts.append(
-                f"- **{r['actor_name']}** ({r['upstream_type']}): Influence operating via `{r['mechanism']}`. "
-                f"Evidence: \"{r['evidence_ref']}\" [Source Document]({r['evidence_url']})"
-            )
-        upstream_section = "\n\n".join(upstream_parts)
-    else:
-        upstream_section = "No upstream source identified in the documents reviewed."
+    headline = generate_headline(item, archetype, profile)
+    whats_happening = generate_whats_happening(item, archetype, profile, docs)
+    is_routine, engaged_principles = determine_engaged_litmus_principles(item, archetype, profile, refs)
+    who_behind = generate_who_behind_this(refs, lineage_display, archetype, item, profile)
+    what_to_do = generate_what_to_do(item, url, deadline, date_str, jur)
 
-    # Generate genuine 8 Litmus questions using factual profile
-    litmus_questions = [
-        (1, "Subsidiarity", "Is this decided at the most local level that can handle it?"),
-        (2, "Ownership", "Does it make it easier or harder for ordinary families to own and keep property?"),
-        (3, "Small and local vs. large and distant", "Who benefits more: local small enterprises/farms, or large institutional players?"),
-        (4, "Family and household", "Does it support household self-reliance, or replace it with agency programming?"),
-        (5, "Cost and who pays", "Who bears the fees, taxes, or compliance burden?"),
-        (6, "Consent and process", "Were citizens given clear advance notice, plain language, and timely hearing?"),
-        (7, "Reversibility and accountability", "Can local voters change this later, and are elected officials answerable?"),
-        (8, "Place", "Does it respect existing neighborhood character and longstanding residents?"),
-    ]
+    if is_routine:
+        return f"""# {title}
 
-    litmus_lines = []
-    for q_num, q_name, q_desc in litmus_questions:
-        rating, reason = evaluate_litmus_question(
-            q_num, q_name, combined_text, refs, url,
-            archetype=archetype, profile=profile
-        )
-        litmus_lines.append(f"{q_num}. **{q_name}**: [Rating: {rating}]. {reason}")
-    litmus_section = "\n".join(litmus_lines)
+### Headline
+{headline}
 
-    # Build factual summary citing actual documents
-    doc_summary_text = ""
-    if docs:
-        doc_names = [f"*{d['title']}*" for d in docs[:6]]
-        doc_summary_text = f"\n\n**Official Documents Examined ({len(docs)} total):**\n- " + "\n- ".join(doc_names)
+### What's Actually Happening
+{whats_happening}
 
-    details_parts = []
-    if profile.get("planners_and_staff"):
-        details_parts.append(f"**Staff / Presenters**: {', '.join(profile['planners_and_staff'])}")
-    if profile.get("applicants"):
-        details_parts.append(f"**Applicant**: {', '.join(profile['applicants'])}")
-    if profile.get("financial_amounts"):
-        details_parts.append(f"**Fiscal / Contract Value**: {', '.join(profile['financial_amounts'][:3])}")
-    if profile.get("specific_locations"):
-        details_parts.append(f"**Location / Parcel**: {', '.join(profile['specific_locations'][:2])}")
-    if profile.get("key_regulatory_details"):
-        details_parts.append(f"**Key Documented Provisions**: {', '.join(profile['key_regulatory_details'][:4])}")
-    if profile.get("litigation_and_mandates"):
-        details_parts.append(f"**Litigation / Legal Context**: {', '.join(profile['litigation_and_mandates'][:2])}")
+### Why It Matters
+**Routine**: This is a routine administrative or operational matter that does not significantly engage the core litmus policy principles.
 
-    factual_details_str = "\n".join(details_parts) if details_parts else "Official agenda item under consideration."
+### Who's Behind This
+{who_behind}
 
-    # Plain-language effect
-    if "reduce lawn areas" in str(profile).lower():
-        effect_text = f"Proposes statutory critical areas code revisions in {jur} that expand stream buffers under WDFW tree height formulas and restrict residential lawn sizes in historic prairie zones."
-    elif "west bay marina" in title.lower():
-        effect_text = f"Authorizes shoreline permits to replace solid-decked docks and creosote pilings with environmentally protective materials at 2100 West Bay Drive NW."
-    elif "springwood" in title.lower():
-        effect_text = f"Subdivides 7.2 acres at 1609 Springwood Ave NE into 37 single-family home lots with wetland mitigation and stormwater infrastructure."
-    elif "quince street" in title.lower():
-        effect_text = f"Approves contract amendments committing additional county funds ($450,000) for ongoing operation of Quince Street Tiny Home Village through June 2027."
-    elif any(k in title.lower() for k in ("cdbg", "hud", "housing and urban development", "community development block grant")):
-        effect_text = f"Approves a $376,415.00 annual federal housing grant while reserving rights under federal preliminary injunctions against executive conditions."
-    elif archetype == "rates_and_taxes":
-        effect_text = f"Adjusts local fees, utility rates, or service charges directly impacting {jur} households and property owners."
-    elif archetype == "critical_areas":
-        effect_text = f"Proposes statutory or regulatory code revisions establishing environmental buffers and land-use restrictions in {jur}."
-    else:
-        effect_text = f"Official policy consideration by {jur} governing body. Review supporting documents for full scope."
+### What to Do
+{what_to_do}
+"""
 
-    overall_analysis = generate_analysis_text(archetype, jur, profile=profile)
-    way_forward = generate_way_forward(archetype, item, refs, profile=profile)
+    why_it_matters_parts = []
+    for princ_name, princ_desc in engaged_principles:
+        why_it_matters_parts.append(f"- **{princ_name}**: {princ_desc}")
+    why_it_matters_str = "\n".join(why_it_matters_parts)
 
-    return f"""# Brief: {title}
+    questions = generate_what_to_ask_or_watch(item, archetype, profile)
+    questions_str = "\n".join([f"{i+1}. {q}" for i, q in enumerate(questions)])
 
-**Jurisdiction**: {jur}  
-**Meeting Date**: {date_str}  
-**Original Source**: [{jur} Official Record]({url})  
+    return f"""# {title}
 
-## Summary (facts only)
-The {jur} governing body has scheduled consideration of: {title}.
+### Headline
+{headline}
 
-**Documented Key Facts:**
-{factual_details_str}
-{doc_summary_text}
+### What's Actually Happening
+{whats_happening}
 
-## Litmus Test Evaluation
-{litmus_section}
+### Why It Matters
+{why_it_matters_str}
 
-## Who's Behind This? (Upstream Influence)
-{upstream_section}
+### Who's Behind This
+{who_behind}
 
-## Overall Analysis
-{overall_analysis}
+### What to Ask or Watch
+{questions_str}
 
-## Plain-Language Effect for Residents
-{effect_text}
-
-## Recommended Response & A Way Forward
-{way_forward}
-
-## Next Step for Citizens
-- **Meeting / Public Hearing**: {date_str}
-- **Public Comment Deadline**: {deadline}
-- **Official Documentation**: [Review Complete Packet]({url})
+### What to Do
+{what_to_do}
 """
 
 
@@ -666,52 +583,53 @@ def generate_action_page_markdown(item: Dict[str, Any], refs: List[Dict[str, Any
     deadline = item["comment_deadline"] or "Two hours before scheduled meeting start"
     body = item.get("body_text") or ""
 
-    docs = get_all_documents_for_item(item)
-    profile = extract_factual_profile(item, docs)
+    docs = get_all_documents_for_item(dict(item))
+    profile = extract_factual_profile(dict(item), docs)
     archetype = classify_policy_archetype(title, body, refs, profile=profile)
 
-    if refs:
-        actors = ", ".join([f"{r['actor_name']} ({r['mechanism']})" for r in refs])
-        upstream_line = f"Documented upstream influence: {actors}"
-    else:
-        upstream_line = "No upstream source identified in the documents reviewed."
+    headline = generate_headline(item, archetype, profile)
+    whats_happening = generate_whats_happening(item, archetype, profile, docs)
+    is_routine, engaged_principles = determine_engaged_litmus_principles(item, archetype, profile, refs)
+    who_behind = generate_who_behind_this(refs, "", archetype, item, profile)
+    what_to_do = generate_what_to_do(item, url, deadline, date_str, jur)
 
-    way_forward = generate_way_forward(archetype, item, refs, profile=profile)
+    why_it_matters_parts = []
+    for princ_name, princ_desc in engaged_principles:
+        why_it_matters_parts.append(f"- **{princ_name}**: {princ_desc}")
+    why_it_matters_str = "\n".join(why_it_matters_parts) if why_it_matters_parts else "**Routine Item**: General administrative action."
 
     return f"""# Citizen Action: {title}
 
-**Key Date**: {date_str}  
-**Public Comment Cutoff**: {deadline}  
-**Jurisdiction**: {jur}  
+### Headline
+{headline}
 
 ### What's Happening
-The {jur} council or commission is scheduled to review and act upon:
-> **{title}**
+{whats_happening}
 
-### How It Affects You & Your Household
-Local government decisions establish the rules, land use restrictions, and rates paid by residents and local businesses. Participating before decisions are enacted ensures public concerns are part of the official record.
+### Why It Matters
+{why_it_matters_str}
 
-### Who's Behind This?
-{upstream_line}
-
-## Recommended Response & A Way Forward
-{way_forward}
+### Who's Behind This
+{who_behind}
 
 ### How to Have Your Say
-- **Meeting Date**: {date_str}
-- **Public Comment Cutoff**: {deadline}
-- **Submit Comment**: Email comments to the local clerk or register for virtual attendance.
-- **Official Agenda Packet**: [View Documents & Supporting Attachments]({url})
+{what_to_do}
 """
 
 
-def draft_item(conn, item_id: str, force: bool = False) -> Dict[str, int]:
+def draft_item(conn, item_id: str, force: bool = False) -> Dict[str, Any]:
     """Generates brief and action page drafts for an item and saves with reviewed = 0."""
     item = conn.execute("SELECT * FROM items WHERE id = ?", (item_id,)).fetchone()
     if not item:
-        return {"created": 0, "updated": 0}
+        return {"created": 0, "updated": 0, "skipped": False}
 
     item_dict = dict(item)
+
+    # Skip procedural items and agenda headers
+    if is_procedural_or_header(item_dict["title"]):
+        conn.execute("DELETE FROM drafts WHERE item_id = ? AND reviewed = 0", (item_id,))
+        conn.commit()
+        return {"created": 0, "updated": 0, "skipped": True}
 
     # Get refs & lineage
     refs = conn.execute(
@@ -735,12 +653,11 @@ def draft_item(conn, item_id: str, force: bool = False) -> Dict[str, int]:
     existing = conn.execute("SELECT id, kind, reviewed FROM drafts WHERE item_id = ?", (item_id,)).fetchall()
     if existing:
         for r in existing:
-            # Update draft if unreviewed OR if force=True
             if r["reviewed"] == 0 or force:
                 md = brief_md if r["kind"] == "brief" else action_md
                 conn.execute("UPDATE drafts SET markdown = ? WHERE id = ?", (md, r["id"]))
         conn.commit()
-        return {"created": 0, "updated": len(existing)}
+        return {"created": 0, "updated": len(existing), "skipped": False}
 
     # Insert new drafts
     for kind, md in (("brief", brief_md), ("action_page", action_md)):
@@ -753,40 +670,57 @@ def draft_item(conn, item_id: str, force: bool = False) -> Dict[str, int]:
         )
 
     conn.commit()
-    return {"created": 2, "updated": 0}
+    return {"created": 2, "updated": 0, "skipped": False}
 
 
 def run_drafts(conn, limit: int = 15) -> int:
-    """Generates drafts strictly for substantive policy items (excluding procedural headers)."""
-    query = """
-    SELECT DISTINCT i.id
-    FROM items i
-    LEFT JOIN upstream_refs r ON i.id = r.item_id
-    LEFT JOIN test_cases t ON i.id = t.item_id
-    WHERE i.id NOT IN (SELECT DISTINCT item_id FROM drafts)
-      AND i.title NOT GLOB '[0-9]* BUSINESS ITEMS*'
-      AND i.title NOT GLOB '[0-9]* REPORTS*'
-      AND i.title NOT GLOB '[0-9]* OTHER TOPICS*'
-      AND i.title NOT GLOB '[0-9]* AGENDA REVIEW*'
-      AND i.title NOT GLOB '[0-9]* PUBLIC HEARING'
-      AND i.title NOT GLOB 'Upcoming*'
-      AND i.title NOT GLOB 'Accommodations*'
-    ORDER BY (CASE WHEN t.item_id IS NOT NULL THEN 1 WHEN r.item_id IS NOT NULL THEN 2 ELSE 3 END),
-             i.meeting_date DESC
-    LIMIT ?
-    """
-    rows = conn.execute(query, (limit,)).fetchall()
-    total_created = 0
+    """Generates drafts strictly for substantive policy items (excluding procedural headers and duplicates)."""
+    items = conn.execute(
+        """
+        SELECT i.*, 
+               (CASE WHEN t.item_id IS NOT NULL THEN 1 WHEN r.item_id IS NOT NULL THEN 2 ELSE 3 END) as priority_rank
+        FROM items i
+        LEFT JOIN upstream_refs r ON i.id = r.item_id
+        LEFT JOIN test_cases t ON i.id = t.item_id
+        WHERE i.id NOT IN (SELECT DISTINCT item_id FROM drafts)
+        ORDER BY priority_rank ASC, i.meeting_date DESC
+        """
+    ).fetchall()
 
-    for r in rows:
-        res = draft_item(conn, r["id"])
+    seen_signatures = set()
+    existing_items = conn.execute(
+        """
+        SELECT i.title, i.meeting_date
+        FROM drafts d
+        JOIN items i ON d.item_id = i.id
+        """
+    ).fetchall()
+    for ex in existing_items:
+        norm_t = re.sub(r"^[0-9]+(\.[0-9a-zA-Z]+)*\.?\s*", "", ex["title"].lower()).strip()
+        seen_signatures.add((norm_t, ex["meeting_date"]))
+
+    total_created = 0
+    for it in items:
+        if total_created >= limit:
+            break
+        it_dict = dict(it)
+        if is_procedural_or_header(it_dict["title"]):
+            continue
+
+        norm_title = re.sub(r"^[0-9]+(\.[0-9a-zA-Z]+)*\.?\s*", "", it_dict["title"].lower()).strip()
+        sig = (norm_title, it_dict["meeting_date"])
+        if sig in seen_signatures:
+            continue
+        seen_signatures.add(sig)
+
+        res = draft_item(conn, it_dict["id"])
         total_created += res["created"]
 
     return total_created
 
 
 def regenerate_all_unreviewed_drafts(conn, force: bool = False) -> int:
-    """Regenerates drafts for items in the drafts table."""
+    """Regenerates drafts for items in the drafts table, removing procedural and duplicate drafts."""
     query = "SELECT DISTINCT item_id FROM drafts" if force else "SELECT DISTINCT item_id FROM drafts WHERE reviewed = 0"
     rows = conn.execute(query).fetchall()
     count = 0

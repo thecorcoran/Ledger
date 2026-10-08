@@ -205,16 +205,31 @@ def generate_html_dashboard(
         if d["test_case_reason"]:
             tc_flag = f'<span class="badge badge-testcase">&#9888; Test case: {html.escape(d["test_case_reason"])}</span>'
 
+        # Extract headline and routine status from markdown
+        md = d["markdown"] or ""
+        m_hl = re.search(r"### Headline\s*\n+([^\n#]+)", md)
+        headline_text = m_hl.group(1).strip() if m_hl else ""
+        is_routine = "**Routine**" in md or "### Why It Matters\n**Routine**" in md or "### Why It Matters\nRoutine:" in md
+
+        if is_routine:
+            status_badge = '<span class="badge badge-routine" style="background:#334155; color:#94a3b8; border:1px solid #475569;">Routine</span>'
+        else:
+            status_badge = '<span class="badge badge-engaged" style="background:rgba(56, 189, 248, 0.15); color:#38bdf8; border:1px solid rgba(56, 189, 248, 0.3);">Policy Focus</span>'
+
+        headline_html = f'<div class="draft-row-headline" style="font-size:13px; color:#cbd5e1; margin-top:6px; line-height:1.4;">{html.escape(headline_text)}</div>' if headline_text else ''
+
         needs_review_cards.append(f"""
         <div class="draft-row {'active-row' if is_selected else ''}">
             <div class="draft-row-meta">
                 <span class="badge badge-jur">{html.escape(jur_name)}</span>
+                {status_badge}
                 <span class="date-text">{html.escape(str(d['meeting_date'] or 'Upcoming'))}</span>
                 {tc_flag}
             </div>
             <div class="draft-row-title">
                 <a href="/?draft_id={d['id']}#draft-view">{html.escape(d['item_title'])}</a>
             </div>
+            {headline_html}
         </div>
         """)
 
