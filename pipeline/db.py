@@ -143,6 +143,42 @@ CREATE TABLE IF NOT EXISTS drafts (
 );
 
 CREATE INDEX IF NOT EXISTS idx_drafts_item ON drafts(item_id);
+
+CREATE TABLE IF NOT EXISTS matters (
+    id TEXT PRIMARY KEY,
+    title TEXT NOT NULL,
+    jurisdiction TEXT NOT NULL CHECK (jurisdiction IN ('olympia', 'thurston')),
+    matter_type TEXT,
+    primary_identifier TEXT,
+    origin_summary TEXT,
+    current_stage TEXT,
+    likely_next_step TEXT,
+    is_test_case INTEGER NOT NULL DEFAULT 0,
+    test_case_reason TEXT,
+    created_at TEXT NOT NULL DEFAULT (datetime('now')),
+    updated_at TEXT NOT NULL DEFAULT (datetime('now'))
+);
+
+CREATE INDEX IF NOT EXISTS idx_matters_jurisdiction ON matters(jurisdiction);
+CREATE INDEX IF NOT EXISTS idx_matters_primary_identifier ON matters(primary_identifier);
+
+CREATE TABLE IF NOT EXISTS matter_events (
+    id TEXT PRIMARY KEY,
+    matter_id TEXT NOT NULL,
+    item_id TEXT NOT NULL,
+    action_date TEXT NOT NULL,
+    action_type TEXT,
+    record_url TEXT NOT NULL,
+    confidence TEXT NOT NULL DEFAULT 'confirmed' CHECK (confidence IN ('confirmed', 'proposed')),
+    notes TEXT,
+    created_at TEXT NOT NULL DEFAULT (datetime('now')),
+    FOREIGN KEY (matter_id) REFERENCES matters(id) ON DELETE CASCADE,
+    FOREIGN KEY (item_id) REFERENCES items(id) ON DELETE CASCADE
+);
+
+CREATE INDEX IF NOT EXISTS idx_matter_events_matter ON matter_events(matter_id);
+CREATE INDEX IF NOT EXISTS idx_matter_events_item ON matter_events(item_id);
+CREATE INDEX IF NOT EXISTS idx_matter_events_confidence ON matter_events(confidence);
 """
 
 

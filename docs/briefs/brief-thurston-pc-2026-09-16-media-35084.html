@@ -6,250 +6,348 @@
     <title>Presentation - CAO Fish and Wildlife Habitat Conservation Areas (FWHCAs) Draft Code — Loretta's Ledger</title>
     <style>
         :root {
-            --bg: #0b1120;
-            --surface: #1e293b;
-            --surface-hover: #24344d;
-            --border: #334155;
-            --text: #f8fafc;
-            --muted: #94a3b8;
-            --accent: #38bdf8;
-            --accent-glow: rgba(56, 189, 248, 0.15);
-            --gold: #f59e0b;
-            --green: #10b981;
+            --bg: #fcfaf5;
+            --surface: #ffffff;
+            --ink: #1c1a17;
+            --ink-muted: #575249;
+            --ink-faint: #807a70;
+            --rule: #ded8cb;
+            --rule-dark: #2c2824;
+            --oxblood: #7b2a26;
+            --oxblood-tint: #f5ebea;
+            --font-serif: "Iowan Old Style", "Palatino Linotype", "URW Palladio L", Palatino, Georgia, serif;
+            --font-mono: "SF Mono", "Consolas", "Liberation Mono", Courier, monospace;
         }
+
+        * { box-sizing: border-box; }
+
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background: var(--bg);
-            color: var(--text);
+            font-family: var(--font-serif);
+            background-color: var(--bg);
+            color: var(--ink);
             margin: 0;
             padding: 0;
-            line-height: 1.6;
+            line-height: 1.55;
+            font-size: 16px;
+            -webkit-font-smoothing: antialiased;
         }
-        header {
-            background: rgba(15, 23, 42, 0.95);
-            border-bottom: 1px solid var(--border);
-            padding: 18px 24px;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            backdrop-filter: blur(8px);
+
+        header.broadsheet-masthead {
+            background: var(--bg);
+            border-bottom: 2px solid var(--rule-dark);
+            padding: 24px 20px 14px 20px;
         }
-        .header-inner {
-            max-width: 1100px;
+
+        .masthead-inner {
+            max-width: 1040px;
             margin: 0 auto;
+        }
+
+        .top-row {
             display: flex;
-            align-items: center;
             justify-content: space-between;
+            align-items: baseline;
+            border-bottom: 1px solid var(--rule);
+            padding-bottom: 8px;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--ink-muted);
         }
-        .logo {
-            font-size: 20px;
-            font-weight: 700;
-            color: #fff;
+
+        .top-row span.meta-date {
+            font-variant-numeric: tabular-nums;
+        }
+
+        .masthead-title {
+            text-align: center;
+            margin: 18px 0 6px 0;
+        }
+
+        .masthead-title a {
+            color: var(--ink);
             text-decoration: none;
-            letter-spacing: -0.02em;
+            font-size: 38px;
+            font-weight: 700;
+            letter-spacing: -0.01em;
+            text-transform: uppercase;
         }
-        .logo span { color: var(--accent); }
-        nav a {
-            color: var(--muted);
+
+        .masthead-subtitle {
+            text-align: center;
+            font-size: 14px;
+            font-style: italic;
+            color: var(--ink-muted);
+            margin: 0 0 16px 0;
+        }
+
+        nav.ledger-nav {
+            border-top: 1px solid var(--rule-dark);
+            border-bottom: 1px solid var(--rule-dark);
+            padding: 8px 0;
+            text-align: center;
+        }
+
+        nav.ledger-nav a {
+            color: var(--ink);
             text-decoration: none;
             font-size: 14px;
-            margin-left: 20px;
-            font-weight: 500;
-            transition: color 0.15s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            margin: 0 16px;
+            padding: 4px 2px;
+            font-weight: 600;
         }
-        nav a:hover, nav a.active { color: var(--accent); }
+
+        nav.ledger-nav a:hover, nav.ledger-nav a.active {
+            color: var(--oxblood);
+            border-bottom: 2px solid var(--oxblood);
+        }
+
         .container {
-            max-width: 1100px;
+            max-width: 1040px;
             margin: 0 auto;
-            padding: 32px 20px 60px 20px;
+            padding: 32px 20px 70px 20px;
         }
-        .hero {
-            border-bottom: 1px solid var(--border);
-            padding-bottom: 28px;
-            margin-bottom: 32px;
+
+        h1.headline-title {
+            font-size: 28px;
+            font-weight: 700;
+            line-height: 1.25;
+            margin: 0 0 16px 0;
+            color: var(--ink);
+            border-bottom: 2px solid var(--rule-dark);
+            padding-bottom: 10px;
         }
-        .hero h1 {
-            font-size: 32px;
-            margin: 0 0 10px 0;
-            font-weight: 800;
-            line-height: 1.2;
+
+        h2.section-label {
+            font-size: 17px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: var(--oxblood);
+            border-bottom: 1px solid var(--rule);
+            padding-bottom: 4px;
+            margin: 32px 0 14px 0;
         }
-        .hero p {
+
+        h3.subsection-label {
             font-size: 16px;
-            color: var(--muted);
-            margin: 0;
-            max-width: 800px;
+            font-weight: 700;
+            margin: 20px 0 8px 0;
+            color: var(--ink);
         }
-        .badge {
-            display: inline-block;
-            padding: 3px 8px;
-            border-radius: 4px;
+
+        p {
+            margin: 0 0 14px 0;
+        }
+
+        a {
+            color: var(--oxblood);
+            text-decoration: underline;
+            text-underline-offset: 2px;
+        }
+
+        a:hover {
+            color: #4a1715;
+        }
+
+        /* Ledger table styles */
+        table.ledger-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+            margin: 20px 0 32px 0;
+            border-top: 2px solid var(--rule-dark);
+            border-bottom: 2px solid var(--rule-dark);
+        }
+
+        table.ledger-table th {
+            text-align: left;
+            padding: 9px 12px;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.07em;
+            background: #f4eee2;
+            border-bottom: 1px solid var(--rule-dark);
+            color: var(--ink);
+        }
+
+        table.ledger-table td {
+            padding: 10px 12px;
+            border-bottom: 1px solid var(--rule);
+            vertical-align: top;
+            font-variant-numeric: tabular-nums;
+        }
+
+        table.ledger-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        /* Ruled boxes and entries */
+        .ledger-entry {
+            border-bottom: 1px solid var(--rule);
+            padding: 18px 0;
+        }
+
+        .ledger-entry:first-child {
+            padding-top: 0;
+        }
+
+        .ledger-meta {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: var(--ink-faint);
+            margin-bottom: 6px;
+        }
+
+        .tag-oxblood {
+            color: var(--oxblood);
+            font-weight: 700;
+        }
+
+        .tag-testcase {
+            background: var(--oxblood-tint);
+            color: var(--oxblood);
+            border: 1px solid var(--oxblood);
+            padding: 2px 6px;
             font-size: 11px;
             font-weight: 600;
             text-transform: uppercase;
-        }
-        .badge-jur { background: var(--accent-glow); color: var(--accent); }
-        .badge-testcase { background: rgba(245, 158, 11, 0.15); color: var(--gold); border: 1px solid rgba(245, 158, 11, 0.3); }
-        .badge-topic { background: #1e3a5f; color: #7dd3fc; margin-right: 4px; }
-        .card {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            padding: 20px;
-            margin-bottom: 20px;
-            transition: transform 0.15s ease, border-color 0.15s ease;
-        }
-        .card:hover { border-color: #475569; }
-        .card-title {
-            font-size: 18px;
-            font-weight: 700;
-            margin: 0 0 8px 0;
-        }
-        .card-title a {
-            color: #fff;
-            text-decoration: none;
-        }
-        .card-title a:hover { color: var(--accent); }
-        .card-meta {
-            font-size: 13px;
-            color: var(--muted);
-            margin-bottom: 12px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        .btn {
+            letter-spacing: 0.05em;
+            margin-right: 6px;
             display: inline-block;
-            background: var(--accent);
-            color: #0b1120;
-            font-weight: 600;
-            font-size: 13px;
-            padding: 8px 14px;
-            border-radius: 6px;
-            text-decoration: none;
-            margin-top: 10px;
         }
-        .btn:hover { opacity: 0.9; }
-        pre {
-            background: #060913;
-            border: 1px solid var(--border);
-            padding: 16px;
-            border-radius: 6px;
-            overflow-x: auto;
-            color: #cbd5e1;
-            font-size: 13px;
-        }
-        blockquote {
-            border-left: 3px solid var(--accent);
+
+        .timeline-block {
+            border-left: 2px solid var(--oxblood);
+            padding-left: 18px;
             margin: 16px 0;
-            padding-left: 16px;
-            color: #cbd5e1;
-            font-style: italic;
         }
-        footer {
-            border-top: 1px solid var(--border);
-            padding: 24px;
+
+        .timeline-item {
+            margin-bottom: 14px;
+        }
+
+        .memo-box {
+            background: #fff;
+            border: 1px solid var(--rule);
+            border-left: 4px solid var(--oxblood);
+            padding: 18px 20px;
+            margin: 20px 0;
+        }
+
+        ul.ledger-list {
+            margin: 8px 0 16px 20px;
+            padding: 0;
+        }
+
+        ul.ledger-list li {
+            margin-bottom: 6px;
+        }
+
+        .spacer { height: 10px; }
+
+        footer.broadsheet-footer {
+            border-top: 2px solid var(--rule-dark);
+            padding: 26px 20px;
             text-align: center;
-            color: var(--muted);
             font-size: 13px;
+            color: var(--ink-muted);
+            background: var(--bg);
         }
+
+        @media (max-width: 768px) {
+            .top-row { flex-direction: column; gap: 4px; }
+            nav.ledger-nav a { display: inline-block; margin: 4px 8px; font-size: 13px; }
+            .masthead-title a { font-size: 28px; }
+            table.ledger-table { display: block; overflow-x: auto; }
+        }
+
         @media print {
-            body { background: #fff; color: #000; }
-            header, footer, nav, .btn { display: none; }
+            body { background: #fff; color: #000; font-size: 11pt; }
+            header.broadsheet-masthead, footer.broadsheet-footer, nav.ledger-nav { display: none; }
             .container { max-width: 100%; padding: 0; }
-            .card { border: none; padding: 0; }
+            a { text-decoration: none; color: #000; }
+            .memo-box { border: 1px solid #ccc; }
         }
     </style>
 </head>
 <body>
-    <header>
-        <div class="header-inner">
-            <a href="../index.html" class="logo">Loretta's <span>Ledger</span></a>
-            <nav>
-                <a href="../index.html" class="">Home</a>
-                <a href="../briefs.html" class="active">Policy Briefs</a>
-                <a href="../action.html" class="">Citizen Action</a>
-                <a href="../test-cases.html" class="">Test Cases</a>
-                <a href="../influences.html" class="">Who's Behind This</a>
+    <header class="broadsheet-masthead">
+        <div class="masthead-inner">
+            <div class="top-row">
+                <span>Independent Public Account &bull; Olympia & Thurston County</span>
+                <span class="meta-date">Vol. I &bull; Record Current to October 2026</span>
+            </div>
+            <div class="masthead-title">
+                <a href="../index.html">Loretta's Ledger</a>
+            </div>
+            <div class="masthead-subtitle">
+                An Account of Local Decisions, Upstream Influences, and Public Trajectory
+            </div>
+            <nav class="ledger-nav">
+                <a href="../index.html" class="">This Week</a>
+                <a href="../matters.html" class="">Matters</a>
+                <a href="../actors.html" class="">Who's in the Room</a>
+                <a href="../archive.html" class="active">Archive</a>
+                <a href="../about.html" class="">About</a>
+                <a href="../method.html" class="">Method</a>
             </nav>
         </div>
     </header>
     <div class="container">
-        <h1>Brief: Presentation - CAO Fish and Wildlife Habitat Conservation Areas (FWHCAs) Draft Code</h1>
-<br>
-<p><strong>Jurisdiction</strong>: Thurston County</p>
-<p><strong>Meeting Date</strong>: 2026-09-16</p>
-<p><strong>Original Source</strong>: <a href="https://www.thurstoncountywa.gov/media/35084" target="_blank">Thurston County Official Record</a></p>
-<br>
-<h2>Summary (facts only)</h2>
-<p>The Thurston County governing body has scheduled consideration of: Presentation - CAO Fish and Wildlife Habitat Conservation Areas (FWHCAs) Draft Code.</p>
-<br>
-<p><strong>Documented Key Facts:</strong></p>
-<p><strong>Staff / Presenters</strong>: Claire Swearingen</p>
-<p><strong>Location / Parcel</strong>: 2027 Finalizing and Recommendation Overview of state guidance and BAS Geologic Hazard</p>
-<p><strong>Key Documented Provisions</strong>: Site Potential Tree Height, Riparian management zone, WDFW, PHS</p>
-<br>
-<br>
-<p><strong>Official Documents Examined (1 total):</strong></p>
-<ul>
-<li>*Presentation - CAO Fish and Wildlife Habitat Conservation Areas (FWHCAs) Draft Code*</li>
+        <h1 class="headline-title">Presentation - CAO Fish and Wildlife Habitat Conservation Areas (FWHCAs) Draft Code</h1>
+<div class="spacer"></div>
+<h2 class="section-label">For Staff</h2>
+<p><strong>Neutral Policy Memo &amp; Operational Considerations</strong></p>
+<ul class="ledger-list">
+<li><strong>Administrative Summary</strong>: The Thurston County Planning Commission is holding a work session on Wednesday, September 16, 2026, to review proposed code revisions for Chapter 24.25 (Fish and Wildlife Habitat Conservation Areas). The draft code presented by county planner Claire Swearingen applies Site Potential Tree Height (SPTH) 150–250+ foot buffers to streams and introduces mandatory standards restricting residential lawn sizes and regulating soil seedbanks in historic prairie soils. The presentation outlines regulatory options for Planning Commission recommendation before formal public hearings are scheduled for Board of County Commissioners adoption.</li>
+<li><strong>Upstream Requirements &amp; Statutory Constraints</strong>: Washington Growth Management Act (state_law): mechanism `mandate`; Washington Department of Fish and Wildlife (state_agency): mechanism `mandate`</li>
+<li><strong>Litmus Policy Checks</strong>: Ownership (The proposed code directly encumbers private parcel rights by expanding riparian buffers (150–250+ ft) under Site Potential Tree Height formulas and regulating customary private residential yard care, including mandatory reductions in lawn sizes and soil seedbank controls in historic prairie zones.); Subsidiarity (While local planners present the draft code, the revisions are driven by Washington State Department of Fish and Wildlife (WDFW) guidance and Growth Management Act (RCW 36.70A) mandates that constrain local legislative discretion.); Small and local vs. large and distant (High compliance overhead for professional biological delineations and buffer averaging studies places thousands of dollars in fixed costs onto ordinary homeowners and small builders, compared to large institutional developers.)</li>
+<li><strong>Key Dependencies &amp; Open Questions to Clarify</strong>:</li>
+<li>Will the county remove prescriptive lawn size limitations and soil seedbank controls on private residential homesteads before the ordinance moves to a final commissioner vote?</li>
+<li>Does the code include a streamlined, low-cost exemption for existing residential parcels under one acre to prevent forcing homeowners to hire private biological consultants?</li>
+<li>Are Site Potential Tree Height (SPTH) buffers being restricted to fish-bearing streams, or will they encumber seasonal, non-fishbearing ditches and swales?</li>
 </ul>
-<br>
-<h2>Litmus Test Evaluation</h2>
-<p>1. <strong>Subsidiarity</strong>: [Rating: Cuts against]. Policy originates or is conditioned by outside/higher authority: Washington Growth Management Act (mandate), Washington Department of Fish and Wildlife (mandate). Local discretion is constrained by upstream mandates or funding conditions. [Source: https://www.thurstoncountywa.gov/media/35084]</p>
-<p>2. <strong>Ownership</strong>: [Rating: Cuts against]. Establishes mandatory environmental buffers and development setbacks that encumber private property title and diminish usable parcel acreage. [Source: https://www.thurstoncountywa.gov/media/35084]</p>
-<p>3. <strong>Small and local vs. large and distant</strong>: [Rating: Cuts against]. High compliance overhead (Site Potential Tree Height buffer delineations and prairie seedbank evaluations) requires costly specialized consultants that burden small family landowners far more than well-capitalized corporate developers. [Source: https://www.thurstoncountywa.gov/media/35084]</p>
-<p>4. <strong>Family and household</strong>: [Rating: Cuts against]. Subordinates routine family property stewardship, clearing, and maintenance within buffer zones to agency permitting and administrative oversight. [Source: https://www.thurstoncountywa.gov/media/35084]</p>
-<p>5. <strong>Cost and who pays</strong>: [Rating: Cuts against]. Property owners bear the full private cost of environmental studies, permit application fees, and buffer compliance, while generalized public benefits are asserted. [Source: https://www.thurstoncountywa.gov/media/35084]</p>
-<p>6. <strong>Consent and process</strong>: [Rating: Cuts against]. Drafted in complex technical and biological regulatory language without a dedicated evening public hearing noticed in this excerpt. [Source: https://www.thurstoncountywa.gov/media/35084]</p>
-<p>7. <strong>Reversibility and accountability</strong>: [Rating: Cuts against]. Tied to state statutory update mandates (GMA periodic review), intergovernmental contracts, or administrative rule minimums (prepared by Claire Swearingen) that locally elected officials cannot easily alter or repeal. [Source: https://www.thurstoncountywa.gov/media/35084]</p>
-<p>8. <strong>Place</strong>: [Rating: Cuts against]. Applies blanket ecological buffer zones over established plats and rural parcels affecting 2027 Finalizing and Recommendation Overview of state guidance and BAS Geologic Hazard, risking non-conforming status or displacement pressure on longstanding property owners. [Source: https://www.thurstoncountywa.gov/media/35084]</p>
-<br>
-<h2>Who&#x27;s Behind This? (Upstream Influence)</h2>
-<p><strong>Documented Lineage Chain:</strong></p>
-<pre><code>
-• Washington Growth Management Act (state_law) via mandate
-• Washington Department of Fish and Wildlife (state_agency) via mandate
-</code></pre>
-<br>
-<ul>
-<li><strong>Washington Growth Management Act</strong> (state_law): Influence operating via `mandate`. Evidence: &quot;Presentation - CAO Fish and Wildlife Habitat Conservation Areas (FWHCAs) Draft Code Body: Thurston County Planning Commission Meeting...&quot; <a href="https://www.thurstoncountywa.gov/media/35084" target="_blank">Source Document</a></li>
+<div class="spacer"></div>
+<h2 class="section-label">For Residents</h2>
+<p><strong>What Is Happening</strong></p>
+<p>The Thurston County Planning Commission is reviewing draft development code revisions for Fish and Wildlife Habitat Conservation Areas that establish expanded stream buffers and regulate residential lawn sizes and prairie soils.</p>
+<div class="spacer"></div>
+<p>The Thurston County Planning Commission is holding a work session on Wednesday, September 16, 2026, to review proposed code revisions for Chapter 24.25 (Fish and Wildlife Habitat Conservation Areas). The draft code presented by county planner Claire Swearingen applies Site Potential Tree Height (SPTH) 150–250+ foot buffers to streams and introduces mandatory standards restricting residential lawn sizes and regulating soil seedbanks in historic prairie soils. The presentation outlines regulatory options for Planning Commission recommendation before formal public hearings are scheduled for Board of County Commissioners adoption.</p>
+<div class="spacer"></div>
+<p><strong>Why It May Matter</strong></p>
+<ul class="ledger-list">
+<li><strong>Ownership</strong>: The proposed code directly encumbers private parcel rights by expanding riparian buffers (150–250+ ft) under Site Potential Tree Height formulas and regulating customary private residential yard care, including mandatory reductions in lawn sizes and soil seedbank controls in historic prairie zones.</li>
+<li><strong>Subsidiarity</strong>: While local planners present the draft code, the revisions are driven by Washington State Department of Fish and Wildlife (WDFW) guidance and Growth Management Act (RCW 36.70A) mandates that constrain local legislative discretion.</li>
+<li><strong>Small and local vs. large and distant</strong>: High compliance overhead for professional biological delineations and buffer averaging studies places thousands of dollars in fixed costs onto ordinary homeowners and small builders, compared to large institutional developers.</li>
 </ul>
-<br>
-<ul>
-<li><strong>Washington Department of Fish and Wildlife</strong> (state_agency): Influence operating via `mandate`. Evidence: &quot;Presentation - CAO Fish and Wildlife Habitat Conservation Areas (FWHCAs) Draft Code Body: Thurston County Planning Commission Meeting Date: 2026-09-16 Document URL:...&quot; <a href="https://www.thurstoncountywa.gov/media/35084" target="_blank">Source Document</a></li>
+<div class="spacer"></div>
+<p><strong>What to Do &amp; How to Participate</strong></p>
+<ul class="ledger-list">
+<li><strong>Meeting Date</strong>: 2026-09-16</li>
+<li><strong>Comment Deadline</strong>: Check meeting agenda for registration cutoff</li>
+<li><strong>How to Comment</strong>: Email testimony to the Clerk of the Board at <a href="https://www.thurstoncountywa.gov/bocc/contact" target="_blank" rel="noopener">https://www.thurstoncountywa.gov/bocc/contact</a> or register for Zoom public testimony.</li>
+<li><strong>Official Packet</strong>: <a href="https://www.thurstoncountywa.gov/media/35084" target="_blank" rel="noopener">Thurston County Agenda Record</a></li>
 </ul>
-<br>
-<h2>Overall Analysis</h2>
-<p>*(Analysis)*: The draft code presented by Claire Swearingen adopts aggressive Washington Department of Fish and Wildlife (WDFW) Riparian Management Zone standards based on &#x27;Site Potential Tree Height&#x27; (SPTH)—expanding stream buffers and applying them even to non-fishbearing waterways. Crucially, the draft also introduces prescriptive prairie regulations that mandate subdivision clustering, restrict private residential lawn sizes, regulate soil seedbanks, and impose oak tree protections. While environmental stewardship is important, regulating customary yard sizes and expanding buffers onto seasonal streams represents an extraordinary regulatory intrusion into private homeownership and rural land tenure in Thurston County.</p>
-<br>
-<h2>Plain-Language Effect for Residents</h2>
-<p>Proposes statutory or regulatory code revisions establishing environmental buffers and land-use restrictions in Thurston County.</p>
-<br>
-<h2>Recommended Response &amp; A Way Forward</h2>
-<h3>For Citizens &amp; Property Owners:</h3>
-<ul>
-<li><strong>Oppose Lawn Restrictions on Private Parcels</strong>: Strongly testify against prescriptive rules that mandate reducing lawn areas and regulating soil seedbanks on existing residential properties.</li>
-<li><strong>Reject SPTH Buffers on Non-Fish Streams</strong>: Demand that the Planning Commission reject Site Potential Tree Height (SPTH) 150–250+ ft buffers on seasonal, non-fishbearing streams, keeping buffers strictly proportional to actual ecological function.</li>
-<li><strong>Demand Explicit Oak Maintenance Allowances</strong>: Insist that Oregon White Oak standards include clear exemptions for routine hazard pruning, defensible fire space, and customary residential yard care.</li>
+<div class="spacer"></div>
+<h2 class="section-label">Trajectory</h2>
+<ul class="ledger-list">
+<li><strong>Origin</strong>: - <strong>WDFW &amp; Growth Management Act</strong>: Code standards trace upstream to Washington Department of Fish and Wildlife (WDFW) Riparian Management Zone guidance and state Growth Management Act critical areas mandates (RCW 36.70A).</li>
+<li><strong>Current Stage</strong>: Scheduled for Public Deliberation (2026-09-16)</li>
+<li><strong>Documented Next Step</strong>: Action vote by governing body following public hearing and record close.</li>
 </ul>
-<br>
-<h3>For Local Elected Officials:</h3>
-<ul>
-<li><strong>Remove Lawn Size Mandates from Draft Code</strong>: Direct staff (Claire Swearingen) to strike all prescriptive limitations on private residential lawns and soil seedbanks before submitting code to the Board of County Commissioners.</li>
-<li><strong>Adopt Statutory Minimums Only</strong>: Limit riparian management zone buffers to the statutory minimums of RCW 36.70A rather than adopting expanded discretionary WDFW guidelines.</li>
+<div class="spacer"></div>
+<p><strong>Timeline &amp; Milestones</strong></p>
+<ul class="ledger-list">
+<li><strong>2026-09-16</strong>: Official legislative agenda review / public hearing scheduled (Thurston County). <a href="https://www.thurstoncountywa.gov/media/35084" target="_blank" rel="noopener">Official Record</a></li>
 </ul>
-<br>
-<h2>Next Step for Citizens</h2>
-<ul>
-<li><strong>Meeting / Public Hearing</strong>: 2026-09-16</li>
-<li><strong>Public Comment Deadline</strong>: Check meeting agenda for registration cutoff</li>
-<li><strong>Official Documentation</strong>: <a href="https://www.thurstoncountywa.gov/media/35084" target="_blank">Review Complete Packet</a></li>
-</ul>
-<br>
+<div class="spacer"></div>
     </div>
-    <footer>
-        Loretta's Ledger &bull; Independent local policy publication for Olympia and Thurston County &bull; People-First Policy Framework
+    <footer class="broadsheet-footer">
+        Loretta's Ledger &bull; Documented Public Record for Thurston County and City of Olympia &bull; Strictly Factual
     </footer>
 </body>
 </html>

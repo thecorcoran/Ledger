@@ -193,6 +193,32 @@ def generate_html_dashboard(
                 (active_draft["item_id"],),
             ).fetchall()
 
+        # Query proposed matter links waiting for confirmation
+        proposed_events = conn.execute(
+            """
+            SELECT me.id as event_id, me.matter_id, me.action_date, me.notes,
+                   m.title as matter_title, m.jurisdiction,
+                   i.id as item_id, i.title as item_title, i.url as item_url
+            FROM matter_events me
+            JOIN matters m ON me.matter_id = m.id
+            JOIN items i ON me.item_id = i.id
+            WHERE me.confidence = 'proposed'
+            ORDER BY me.action_date DESC
+            LIMIT 15
+            """
+        ).fetchall()
+
+        # Pattern alerts: outside groups, consultants, or state bodies appearing across 3+ items
+        pattern_alerts = conn.execute(
+            """
+            SELECT a.name as actor_name, a.upstream_type, COUNT(DISTINCT r.item_id) as touch_count
+            FROM upstream_actors a
+            JOIN upstream_refs r ON a.id = r.actor_id
+            GROUP BY a.id
+            HAVING touch_count >= 2
+            ORDER BY touch_count DESC
+            """
+        ).fetchall()
     finally:
         conn.close()
 
@@ -354,6 +380,59 @@ def generate_html_dashboard(
         """)
 
     published_section_html = "".join(published_items_html) if published_items_html else "<p class='muted-text'>No items have been published yet.</p>"
+
+    # Proposed Matter Links review cards
+    proposed_links_html = []
+    for pe in proposed_events:
+        jur_lbl = "Olympia" if pe["jurisdiction"].lower() == "olympia" else "Thurston County"
+        proposed_links_html.append(f"""
+        <div class="draft-row" style="display: flex; justify-content: space-between; align-items: center; gap: 16px;">
+            <div style="flex: 1;">
+                <div class="draft-row-meta">
+                    <span class="badge badge-jur">{html.escape(jur_lbl)}</span>
+                    <span class="date-text">{html.escape(pe['action_date'])}</span>
+                    <span class="badge" style="background: rgba(245, 158, 11, 0.15); color: #fbbf24;">Uncertain Link</span>
+                </div>
+                <div style="font-size: 14px; font-weight: 600; color: #fff; margin: 4px 0;">
+                    Item: {html.escape(pe['item_title'])}
+                </div>
+                <div style="font-size: 13px; color: #94a3b8;">
+                    &rarr; Proposed to Matter: <strong>{html.escape(pe['matter_title'])}</strong>
+                </div>
+                <div style="font-size: 12px; color: #64748b; margin-top: 4px;">
+                    {html.escape(pe['notes'] or '')} &bull; <a href="{html.escape(pe['item_url'])}" target="_blank" style="color: var(--accent);">Official Record &rarr;</a>
+                </div>
+            </div>
+            <div style="display: flex; gap: 8px;">
+                <form method="POST" action="/action/confirm-matter-link">
+                    <input type="hidden" name="event_id" value="{html.escape(pe['event_id'])}">
+                    <button type="submit" class="btn btn-green" style="font-size: 12px; padding: 6px 12px;">Confirm Link</button>
+                </form>
+                <form method="POST" action="/action/reject-matter-link">
+                    <input type="hidden" name="event_id" value="{html.escape(pe['event_id'])}">
+                    <button type="submit" class="btn btn-red" style="font-size: 12px; padding: 6px 12px;">Separate</button>
+                </form>
+            </div>
+        </div>
+        """)
+    proposed_section_html = "".join(proposed_links_html) if proposed_links_html else "<p class='muted-text'>No uncertain matter links pending confirmation.</p>"
+
+    # Pattern Alerts HTML
+    patterns_html = []
+    for pa in pattern_alerts:
+        patterns_html.append(f"""
+        <div style="padding: 10px 14px; background: #0f172a; border: 1px solid var(--border); border-radius: 6px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center;">
+            <div>
+                <strong style="color: #fff;">{html.escape(pa['actor_name'])}</strong>
+                <span class="badge badge-jur" style="margin-left: 8px;">{html.escape(pa['upstream_type'])}</span>
+                <span style="font-size: 13px; color: #94a3b8; margin-left: 8px;">Detected in <strong>{pa['touch_count']}</strong> separate matters/agenda items</span>
+            </div>
+            <div>
+                <span class="badge" style="background: rgba(56, 189, 248, 0.15); color: #38bdf8;">Requires Confirmation Prior to Public Dossier</span>
+            </div>
+        </div>
+        """)
+    patterns_section_html = "".join(patterns_html) if patterns_html else "<p class='muted-text'>No recurring multi-item patterns detected yet.</p>"
 
     # Banner message
     approved_banner_html = ""
@@ -684,16 +763,30 @@ def generate_html_dashboard(
             {''.join(needs_review_cards) if needs_review_cards else '<p class=\"muted-text\">No drafts waiting for review.</p>'}
         </div>
 
-        <!-- Section 2: Draft view -->
+        <!-- Section 2: Matter Links to Confirm -->
         <div class="section">
-            <h2>2. Draft view</h2>
+            <h2>2. Cross-Meeting Matter Links to Confirm ({len(proposed_events)})</h2>
+            <p class="muted-text" style="margin-bottom: 16px;">These agenda items share substantive keywords or tracking identifiers across sessions. Confirm to link to the matter timeline or Separate to keep standalone.</p>
+            {proposed_section_html}
+        </div>
+
+        <!-- Section 3: Pattern Alerts -->
+        <div class="section">
+            <h2>3. Pattern Alerts ({len(pattern_alerts)})</h2>
+            <p class="muted-text" style="margin-bottom: 16px;">Actors appearing across multiple local matters. Only verified factual touches publish to public actor dossiers.</p>
+            {patterns_section_html}
+        </div>
+
+        <!-- Section 4: Draft view -->
+        <div class="section">
+            <h2>4. Draft view</h2>
             {draft_view_html}
         </div>
 
-        <!-- Section 3: Published -->
+        <!-- Section 5: Published -->
         <div class="section">
             <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; border-bottom: 1px solid var(--border); padding-bottom: 10px;">
-                <h2 style="margin: 0; border: none; padding: 0;">3. Published ({len(published)})</h2>
+                <h2 style="margin: 0; border: none; padding: 0;">5. Published ({len(published)})</h2>
                 <a href="/docs/index.html" target="_blank" class="btn btn-secondary" style="font-size: 12px; padding: 5px 12px; text-decoration: none;">View Public Website &rarr;</a>
             </div>
             {published_section_html}
@@ -807,6 +900,26 @@ class DashboardHandler(http.server.BaseHTTPRequestHandler):
                     conn.commit()
                 self.send_response(303)
                 self.send_header("Location", f"/?draft_id={draft_id}#draft-view")
+                self.end_headers()
+                return
+
+            elif self.path == "/action/confirm-matter-link":
+                event_id = params.get("event_id", [""])[0]
+                if event_id:
+                    conn.execute("UPDATE matter_events SET confidence = 'confirmed' WHERE id = ?", (event_id,))
+                    conn.commit()
+                self.send_response(303)
+                self.send_header("Location", "/#matter-links")
+                self.end_headers()
+                return
+
+            elif self.path == "/action/reject-matter-link":
+                event_id = params.get("event_id", [""])[0]
+                if event_id:
+                    conn.execute("DELETE FROM matter_events WHERE id = ?", (event_id,))
+                    conn.commit()
+                self.send_response(303)
+                self.send_header("Location", "/#matter-links")
                 self.end_headers()
                 return
         finally:

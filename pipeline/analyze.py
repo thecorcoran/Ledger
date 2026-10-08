@@ -525,52 +525,68 @@ def generate_brief_markdown(item: Dict[str, Any], refs: List[Dict[str, Any]], li
     who_behind = generate_who_behind_this(refs, lineage_display, archetype, item, profile)
     what_to_do = generate_what_to_do(item, url, deadline, date_str, jur)
 
-    if is_routine:
-        return f"""# {title}
+    # Formulate "For Staff" section (neutral memo: open questions, dependencies, upstream requirements, litmus checks)
+    staff_memo_parts = []
+    staff_memo_parts.append("**Neutral Policy Memo & Operational Considerations**")
+    staff_memo_parts.append(f"- **Administrative Summary**: {whats_happening}")
+    if upstream_reqs := [f"{r['actor_name']} ({r['upstream_type']}): mechanism `{r['mechanism']}`" for r in refs]:
+        staff_memo_parts.append(f"- **Upstream Requirements & Statutory Constraints**: {'; '.join(upstream_reqs)}")
+    else:
+        staff_memo_parts.append("- **Upstream Requirements**: Governed under local discretion; no preemptive state mandate identified in agenda packet.")
+    
+    if engaged_principles:
+        litmus_notes = "; ".join([f"{name} ({desc})" for name, desc in engaged_principles])
+        staff_memo_parts.append(f"- **Litmus Policy Checks**: {litmus_notes}")
+    else:
+        staff_memo_parts.append("- **Litmus Policy Checks**: Routine administrative item; no acute policy conflicts identified.")
 
-### Headline
-{headline}
+    questions = generate_what_to_ask_or_watch(item, archetype, profile)
+    if questions:
+        staff_memo_parts.append("- **Key Dependencies & Open Questions to Clarify**:")
+        for q in questions:
+            staff_memo_parts.append(f"  * {q}")
 
-### What's Actually Happening
-{whats_happening}
+    for_staff_str = "\n".join(staff_memo_parts)
 
-### Why It Matters
-**Routine**: This is a routine administrative or operational matter that does not significantly engage the core litmus policy principles.
-
-### Who's Behind This
-{who_behind}
-
-### What to Do
-{what_to_do}
-"""
-
+    # Formulate "For Residents" section (what's happening, why it may matter, what to do)
     why_it_matters_parts = []
     for princ_name, princ_desc in engaged_principles:
         why_it_matters_parts.append(f"- **{princ_name}**: {princ_desc}")
-    why_it_matters_str = "\n".join(why_it_matters_parts)
+    why_it_matters_str = "\n".join(why_it_matters_parts) if why_it_matters_parts else "Routine local government action."
 
-    questions = generate_what_to_ask_or_watch(item, archetype, profile)
-    questions_str = "\n".join([f"{i+1}. {q}" for i, q in enumerate(questions)])
+    for_residents_str = f"""**What Is Happening**
+{headline}
+
+{whats_happening}
+
+**Why It May Matter**
+{why_it_matters_str}
+
+**What to Do & How to Participate**
+{what_to_do}"""
+
+    # Formulate "Trajectory" section (timeline, origin, stage, stated next steps)
+    timeline_events = []
+    if date_str:
+        timeline_events.append(f"- **{date_str}**: Official legislative agenda review / public hearing scheduled ({jur}). [Official Record]({url})")
+    
+    trajectory_str = f"""- **Origin**: {who_behind}
+- **Current Stage**: Scheduled for Public Deliberation ({date_str})
+- **Documented Next Step**: Action vote by governing body following public hearing and record close.
+
+**Timeline & Milestones**
+{"".join(timeline_events)}"""
 
     return f"""# {title}
 
-### Headline
-{headline}
+## For Staff
+{for_staff_str}
 
-### What's Actually Happening
-{whats_happening}
+## For Residents
+{for_residents_str}
 
-### Why It Matters
-{why_it_matters_str}
-
-### Who's Behind This
-{who_behind}
-
-### What to Ask or Watch
-{questions_str}
-
-### What to Do
-{what_to_do}
+## Trajectory
+{trajectory_str}
 """
 
 

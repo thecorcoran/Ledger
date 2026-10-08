@@ -50,13 +50,10 @@ class TestAnalyzeAndReview(unittest.TestCase):
         ]
         brief = generate_brief_markdown(item, refs, "• HUD via funding_strings")
 
-        # Verify the 6 directed brief sections are present
-        self.assertIn("### Headline", brief)
-        self.assertIn("### What's Actually Happening", brief)
-        self.assertIn("### Why It Matters", brief)
-        self.assertIn("### Who's Behind This", brief)
-        self.assertIn("### What to Ask or Watch", brief)
-        self.assertIn("### What to Do", brief)
+        # Verify the 3 labeled sections are present
+        self.assertIn("## For Staff", brief)
+        self.assertIn("## For Residents", brief)
+        self.assertIn("## Trajectory", brief)
 
         # Verify only engaged principles are present (e.g. Cost and who pays)
         self.assertIn("Cost and who pays", brief)
@@ -89,8 +86,10 @@ class TestAnalyzeAndReview(unittest.TestCase):
         }]
         cao_brief = generate_brief_markdown(cao_item, refs, "")
 
-        # Verify headline and specific factual narrative
-        self.assertIn("### Headline", cao_brief)
+        # Verify the 3 labeled sections and specific factual narrative
+        self.assertIn("## For Staff", cao_brief)
+        self.assertIn("## For Residents", cao_brief)
+        self.assertIn("## Trajectory", cao_brief)
         self.assertIn("Site Potential Tree Height", cao_brief)
 
         # Verify only the 3 engaged principles are highlighted

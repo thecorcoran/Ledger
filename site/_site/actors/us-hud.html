@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>U.S. Department of Housing and Urban Development — Loretta's Ledger</title>
+    <style>
+        :root {
+            --bg: #fcfaf5;
+            --surface: #ffffff;
+            --ink: #1c1a17;
+            --ink-muted: #575249;
+            --ink-faint: #807a70;
+            --rule: #ded8cb;
+            --rule-dark: #2c2824;
+            --oxblood: #7b2a26;
+            --oxblood-tint: #f5ebea;
+            --font-serif: "Iowan Old Style", "Palatino Linotype", "URW Palladio L", Palatino, Georgia, serif;
+            --font-mono: "SF Mono", "Consolas", "Liberation Mono", Courier, monospace;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            font-family: var(--font-serif);
+            background-color: var(--bg);
+            color: var(--ink);
+            margin: 0;
+            padding: 0;
+            line-height: 1.55;
+            font-size: 16px;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        header.broadsheet-masthead {
+            background: var(--bg);
+            border-bottom: 2px solid var(--rule-dark);
+            padding: 24px 20px 14px 20px;
+        }
+
+        .masthead-inner {
+            max-width: 1040px;
+            margin: 0 auto;
+        }
+
+        .top-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            border-bottom: 1px solid var(--rule);
+            padding-bottom: 8px;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--ink-muted);
+        }
+
+        .top-row span.meta-date {
+            font-variant-numeric: tabular-nums;
+        }
+
+        .masthead-title {
+            text-align: center;
+            margin: 18px 0 6px 0;
+        }
+
+        .masthead-title a {
+            color: var(--ink);
+            text-decoration: none;
+            font-size: 38px;
+            font-weight: 700;
+            letter-spacing: -0.01em;
+            text-transform: uppercase;
+        }
+
+        .masthead-subtitle {
+            text-align: center;
+            font-size: 14px;
+            font-style: italic;
+            color: var(--ink-muted);
+            margin: 0 0 16px 0;
+        }
+
+        nav.ledger-nav {
+            border-top: 1px solid var(--rule-dark);
+            border-bottom: 1px solid var(--rule-dark);
+            padding: 8px 0;
+            text-align: center;
+        }
+
+        nav.ledger-nav a {
+            color: var(--ink);
+            text-decoration: none;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            margin: 0 16px;
+            padding: 4px 2px;
+            font-weight: 600;
+        }
+
+        nav.ledger-nav a:hover, nav.ledger-nav a.active {
+            color: var(--oxblood);
+            border-bottom: 2px solid var(--oxblood);
+        }
+
+        .container {
+            max-width: 1040px;
+            margin: 0 auto;
+            padding: 32px 20px 70px 20px;
+        }
+
+        h1.headline-title {
+            font-size: 28px;
+            font-weight: 700;
+            line-height: 1.25;
+            margin: 0 0 16px 0;
+            color: var(--ink);
+            border-bottom: 2px solid var(--rule-dark);
+            padding-bottom: 10px;
+        }
+
+        h2.section-label {
+            font-size: 17px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: var(--oxblood);
+            border-bottom: 1px solid var(--rule);
+            padding-bottom: 4px;
+            margin: 32px 0 14px 0;
+        }
+
+        h3.subsection-label {
+            font-size: 16px;
+            font-weight: 700;
+            margin: 20px 0 8px 0;
+            color: var(--ink);
+        }
+
+        p {
+            margin: 0 0 14px 0;
+        }
+
+        a {
+            color: var(--oxblood);
+            text-decoration: underline;
+            text-underline-offset: 2px;
+        }
+
+        a:hover {
+            color: #4a1715;
+        }
+
+        /* Ledger table styles */
+        table.ledger-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+            margin: 20px 0 32px 0;
+            border-top: 2px solid var(--rule-dark);
+            border-bottom: 2px solid var(--rule-dark);
+        }
+
+        table.ledger-table th {
+            text-align: left;
+            padding: 9px 12px;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.07em;
+            background: #f4eee2;
+            border-bottom: 1px solid var(--rule-dark);
+            color: var(--ink);
+        }
+
+        table.ledger-table td {
+            padding: 10px 12px;
+            border-bottom: 1px solid var(--rule);
+            vertical-align: top;
+            font-variant-numeric: tabular-nums;
+        }
+
+        table.ledger-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        /* Ruled boxes and entries */
+        .ledger-entry {
+            border-bottom: 1px solid var(--rule);
+            padding: 18px 0;
+        }
+
+        .ledger-entry:first-child {
+            padding-top: 0;
+        }
+
+        .ledger-meta {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: var(--ink-faint);
+            margin-bottom: 6px;
+        }
+
+        .tag-oxblood {
+            color: var(--oxblood);
+            font-weight: 700;
+        }
+
+        .tag-testcase {
+            background: var(--oxblood-tint);
+            color: var(--oxblood);
+            border: 1px solid var(--oxblood);
+            padding: 2px 6px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-right: 6px;
+            display: inline-block;
+        }
+
+        .timeline-block {
+            border-left: 2px solid var(--oxblood);
+            padding-left: 18px;
+            margin: 16px 0;
+        }
+
+        .timeline-item {
+            margin-bottom: 14px;
+        }
+
+        .memo-box {
+            background: #fff;
+            border: 1px solid var(--rule);
+            border-left: 4px solid var(--oxblood);
+            padding: 18px 20px;
+            margin: 20px 0;
+        }
+
+        ul.ledger-list {
+            margin: 8px 0 16px 20px;
+            padding: 0;
+        }
+
+        ul.ledger-list li {
+            margin-bottom: 6px;
+        }
+
+        .spacer { height: 10px; }
+
+        footer.broadsheet-footer {
+            border-top: 2px solid var(--rule-dark);
+            padding: 26px 20px;
+            text-align: center;
+            font-size: 13px;
+            color: var(--ink-muted);
+            background: var(--bg);
+        }
+
+        @media (max-width: 768px) {
+            .top-row { flex-direction: column; gap: 4px; }
+            nav.ledger-nav a { display: inline-block; margin: 4px 8px; font-size: 13px; }
+            .masthead-title a { font-size: 28px; }
+            table.ledger-table { display: block; overflow-x: auto; }
+        }
+
+        @media print {
+            body { background: #fff; color: #000; font-size: 11pt; }
+            header.broadsheet-masthead, footer.broadsheet-footer, nav.ledger-nav { display: none; }
+            .container { max-width: 100%; padding: 0; }
+            a { text-decoration: none; color: #000; }
+            .memo-box { border: 1px solid #ccc; }
+        }
+    </style>
+</head>
+<body>
+    <header class="broadsheet-masthead">
+        <div class="masthead-inner">
+            <div class="top-row">
+                <span>Independent Public Account &bull; Olympia & Thurston County</span>
+                <span class="meta-date">Vol. I &bull; Record Current to October 2026</span>
+            </div>
+            <div class="masthead-title">
+                <a href="../index.html">Loretta's Ledger</a>
+            </div>
+            <div class="masthead-subtitle">
+                An Account of Local Decisions, Upstream Influences, and Public Trajectory
+            </div>
+            <nav class="ledger-nav">
+                <a href="../index.html" class="">This Week</a>
+                <a href="../matters.html" class="">Matters</a>
+                <a href="../actors.html" class="active">Who's in the Room</a>
+                <a href="../archive.html" class="">Archive</a>
+                <a href="../about.html" class="">About</a>
+                <a href="../method.html" class="">Method</a>
+            </nav>
+        </div>
+    </header>
+    <div class="container">
+        
+        <div class="ledger-meta">
+            <a href="../actors.html">&larr; Back to Who's in the Room</a> &bull; Federal
+        </div>
+        <h1 class="headline-title" style="margin-top: 8px;">U.S. Department of Housing and Urban Development</h1>
+        
+        <div class="memo-box">
+            <p><strong>Documented Classification:</strong> Federal</p>
+            <p><strong>Factual Record:</strong> Federal housing funding and CDBG grant conditions.</p>
+            <p><a href="https://www.hud.gov/" target="_blank" rel="noopener">Official Public Site &rarr;</a></p>
+        </div>
+
+        <h2 class="section-label">Documented Local Matters Touched (1)</h2>
+        <p style="font-size: 13px; color: var(--ink-muted);">State documented facts only. This table records formal statutory, advisory, financial, or regulatory references in official agenda files.</p>
+        
+        <table class="ledger-table">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Jurisdiction</th>
+                    <th>Matter / Item</th>
+                    <th>Documented Relationship</th>
+                    <th>Source Verification</th>
+                </tr>
+            </thead>
+            <tbody>
+                
+            <tr>
+                <td>2026-10-06</td>
+                <td>OLYMPIA</td>
+                <td><strong>4.J Approval of a Resolution Authorizing a Grant Agreement with the U.S. Department of Housing and Urban Development for the Program Year 2026 Community Development Block Grant Award</strong></td>
+                <td><code>funding_strings</code></td>
+                <td><a href="https://olympia.legistar.com/MeetingDetail.aspx?LEGID=7131&amp;GID=218&amp;G=19510D34-31FB-48B8-9C02-4D026953451C" target="_blank" rel="noopener">Official Source Record &rarr;</a></td>
+            </tr>
+            
+            </tbody>
+        </table>
+        
+    </div>
+    <footer class="broadsheet-footer">
+        Loretta's Ledger &bull; Documented Public Record for Thurston County and City of Olympia &bull; Strictly Factual
+    </footer>
+</body>
+</html>

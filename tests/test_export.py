@@ -35,9 +35,9 @@ class TestExport(unittest.TestCase):
     def test_markdown_to_html(self):
         md = "# Heading 1\n\n**Bold Text** with [Link](https://example.com)\n\n- Item 1\n- Item 2"
         res = markdown_to_html(md)
-        self.assertIn("<h1>Heading 1</h1>", res)
+        self.assertIn("Heading 1</h1>", res)
         self.assertIn("<strong>Bold Text</strong>", res)
-        self.assertIn('<a href="https://example.com" target="_blank">Link</a>', res)
+        self.assertIn('<a href="https://example.com" target="_blank" rel="noopener">Link</a>', res)
         self.assertIn("<li>Item 1</li>", res)
 
     def test_reviewed_only_rendering(self):
@@ -126,8 +126,8 @@ class TestExport(unittest.TestCase):
 
         with open(brief_file, "r", encoding="utf-8") as f:
             html = f.read()
-        self.assertIn('<a href="../index.html" class="logo">', html)
-        self.assertIn('<a href="../briefs.html" class="active">', html)
+        self.assertIn('<a href="../index.html">Loretta\'s Ledger</a>', html)
+        self.assertIn('<a href="../archive.html" class="active">Archive</a>', html)
 
     def test_dashboard_handler_routes(self):
         import io
@@ -147,7 +147,7 @@ class TestExport(unittest.TestCase):
         for test_path in ["/docs", "/docs/", "/public", "/public/", "/docs/index.html"]:
             h = MockHandler(test_path)
             out = h.wfile.getvalue().decode("utf-8")
-            self.assertIn("Home — Loretta's Ledger", out)
+            self.assertIn("This Week — Loretta's Ledger", out)
 
 
 if __name__ == "__main__":

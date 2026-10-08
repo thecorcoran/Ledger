@@ -6,257 +6,347 @@
     <title>2.B PUBLIC HEARING - Case:  25-0980, Springwood Garden plat — Loretta's Ledger</title>
     <style>
         :root {
-            --bg: #0b1120;
-            --surface: #1e293b;
-            --surface-hover: #24344d;
-            --border: #334155;
-            --text: #f8fafc;
-            --muted: #94a3b8;
-            --accent: #38bdf8;
-            --accent-glow: rgba(56, 189, 248, 0.15);
-            --gold: #f59e0b;
-            --green: #10b981;
+            --bg: #fcfaf5;
+            --surface: #ffffff;
+            --ink: #1c1a17;
+            --ink-muted: #575249;
+            --ink-faint: #807a70;
+            --rule: #ded8cb;
+            --rule-dark: #2c2824;
+            --oxblood: #7b2a26;
+            --oxblood-tint: #f5ebea;
+            --font-serif: "Iowan Old Style", "Palatino Linotype", "URW Palladio L", Palatino, Georgia, serif;
+            --font-mono: "SF Mono", "Consolas", "Liberation Mono", Courier, monospace;
         }
+
+        * { box-sizing: border-box; }
+
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background: var(--bg);
-            color: var(--text);
+            font-family: var(--font-serif);
+            background-color: var(--bg);
+            color: var(--ink);
             margin: 0;
             padding: 0;
-            line-height: 1.6;
+            line-height: 1.55;
+            font-size: 16px;
+            -webkit-font-smoothing: antialiased;
         }
-        header {
-            background: rgba(15, 23, 42, 0.95);
-            border-bottom: 1px solid var(--border);
-            padding: 18px 24px;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            backdrop-filter: blur(8px);
+
+        header.broadsheet-masthead {
+            background: var(--bg);
+            border-bottom: 2px solid var(--rule-dark);
+            padding: 24px 20px 14px 20px;
         }
-        .header-inner {
-            max-width: 1100px;
+
+        .masthead-inner {
+            max-width: 1040px;
             margin: 0 auto;
+        }
+
+        .top-row {
             display: flex;
-            align-items: center;
             justify-content: space-between;
+            align-items: baseline;
+            border-bottom: 1px solid var(--rule);
+            padding-bottom: 8px;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--ink-muted);
         }
-        .logo {
-            font-size: 20px;
-            font-weight: 700;
-            color: #fff;
+
+        .top-row span.meta-date {
+            font-variant-numeric: tabular-nums;
+        }
+
+        .masthead-title {
+            text-align: center;
+            margin: 18px 0 6px 0;
+        }
+
+        .masthead-title a {
+            color: var(--ink);
             text-decoration: none;
-            letter-spacing: -0.02em;
+            font-size: 38px;
+            font-weight: 700;
+            letter-spacing: -0.01em;
+            text-transform: uppercase;
         }
-        .logo span { color: var(--accent); }
-        nav a {
-            color: var(--muted);
+
+        .masthead-subtitle {
+            text-align: center;
+            font-size: 14px;
+            font-style: italic;
+            color: var(--ink-muted);
+            margin: 0 0 16px 0;
+        }
+
+        nav.ledger-nav {
+            border-top: 1px solid var(--rule-dark);
+            border-bottom: 1px solid var(--rule-dark);
+            padding: 8px 0;
+            text-align: center;
+        }
+
+        nav.ledger-nav a {
+            color: var(--ink);
             text-decoration: none;
             font-size: 14px;
-            margin-left: 20px;
-            font-weight: 500;
-            transition: color 0.15s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            margin: 0 16px;
+            padding: 4px 2px;
+            font-weight: 600;
         }
-        nav a:hover, nav a.active { color: var(--accent); }
+
+        nav.ledger-nav a:hover, nav.ledger-nav a.active {
+            color: var(--oxblood);
+            border-bottom: 2px solid var(--oxblood);
+        }
+
         .container {
-            max-width: 1100px;
+            max-width: 1040px;
             margin: 0 auto;
-            padding: 32px 20px 60px 20px;
+            padding: 32px 20px 70px 20px;
         }
-        .hero {
-            border-bottom: 1px solid var(--border);
-            padding-bottom: 28px;
-            margin-bottom: 32px;
+
+        h1.headline-title {
+            font-size: 28px;
+            font-weight: 700;
+            line-height: 1.25;
+            margin: 0 0 16px 0;
+            color: var(--ink);
+            border-bottom: 2px solid var(--rule-dark);
+            padding-bottom: 10px;
         }
-        .hero h1 {
-            font-size: 32px;
-            margin: 0 0 10px 0;
-            font-weight: 800;
-            line-height: 1.2;
+
+        h2.section-label {
+            font-size: 17px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: var(--oxblood);
+            border-bottom: 1px solid var(--rule);
+            padding-bottom: 4px;
+            margin: 32px 0 14px 0;
         }
-        .hero p {
+
+        h3.subsection-label {
             font-size: 16px;
-            color: var(--muted);
-            margin: 0;
-            max-width: 800px;
+            font-weight: 700;
+            margin: 20px 0 8px 0;
+            color: var(--ink);
         }
-        .badge {
-            display: inline-block;
-            padding: 3px 8px;
-            border-radius: 4px;
+
+        p {
+            margin: 0 0 14px 0;
+        }
+
+        a {
+            color: var(--oxblood);
+            text-decoration: underline;
+            text-underline-offset: 2px;
+        }
+
+        a:hover {
+            color: #4a1715;
+        }
+
+        /* Ledger table styles */
+        table.ledger-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+            margin: 20px 0 32px 0;
+            border-top: 2px solid var(--rule-dark);
+            border-bottom: 2px solid var(--rule-dark);
+        }
+
+        table.ledger-table th {
+            text-align: left;
+            padding: 9px 12px;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.07em;
+            background: #f4eee2;
+            border-bottom: 1px solid var(--rule-dark);
+            color: var(--ink);
+        }
+
+        table.ledger-table td {
+            padding: 10px 12px;
+            border-bottom: 1px solid var(--rule);
+            vertical-align: top;
+            font-variant-numeric: tabular-nums;
+        }
+
+        table.ledger-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        /* Ruled boxes and entries */
+        .ledger-entry {
+            border-bottom: 1px solid var(--rule);
+            padding: 18px 0;
+        }
+
+        .ledger-entry:first-child {
+            padding-top: 0;
+        }
+
+        .ledger-meta {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: var(--ink-faint);
+            margin-bottom: 6px;
+        }
+
+        .tag-oxblood {
+            color: var(--oxblood);
+            font-weight: 700;
+        }
+
+        .tag-testcase {
+            background: var(--oxblood-tint);
+            color: var(--oxblood);
+            border: 1px solid var(--oxblood);
+            padding: 2px 6px;
             font-size: 11px;
             font-weight: 600;
             text-transform: uppercase;
-        }
-        .badge-jur { background: var(--accent-glow); color: var(--accent); }
-        .badge-testcase { background: rgba(245, 158, 11, 0.15); color: var(--gold); border: 1px solid rgba(245, 158, 11, 0.3); }
-        .badge-topic { background: #1e3a5f; color: #7dd3fc; margin-right: 4px; }
-        .card {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            padding: 20px;
-            margin-bottom: 20px;
-            transition: transform 0.15s ease, border-color 0.15s ease;
-        }
-        .card:hover { border-color: #475569; }
-        .card-title {
-            font-size: 18px;
-            font-weight: 700;
-            margin: 0 0 8px 0;
-        }
-        .card-title a {
-            color: #fff;
-            text-decoration: none;
-        }
-        .card-title a:hover { color: var(--accent); }
-        .card-meta {
-            font-size: 13px;
-            color: var(--muted);
-            margin-bottom: 12px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        .btn {
+            letter-spacing: 0.05em;
+            margin-right: 6px;
             display: inline-block;
-            background: var(--accent);
-            color: #0b1120;
-            font-weight: 600;
-            font-size: 13px;
-            padding: 8px 14px;
-            border-radius: 6px;
-            text-decoration: none;
-            margin-top: 10px;
         }
-        .btn:hover { opacity: 0.9; }
-        pre {
-            background: #060913;
-            border: 1px solid var(--border);
-            padding: 16px;
-            border-radius: 6px;
-            overflow-x: auto;
-            color: #cbd5e1;
-            font-size: 13px;
-        }
-        blockquote {
-            border-left: 3px solid var(--accent);
+
+        .timeline-block {
+            border-left: 2px solid var(--oxblood);
+            padding-left: 18px;
             margin: 16px 0;
-            padding-left: 16px;
-            color: #cbd5e1;
-            font-style: italic;
         }
-        footer {
-            border-top: 1px solid var(--border);
-            padding: 24px;
+
+        .timeline-item {
+            margin-bottom: 14px;
+        }
+
+        .memo-box {
+            background: #fff;
+            border: 1px solid var(--rule);
+            border-left: 4px solid var(--oxblood);
+            padding: 18px 20px;
+            margin: 20px 0;
+        }
+
+        ul.ledger-list {
+            margin: 8px 0 16px 20px;
+            padding: 0;
+        }
+
+        ul.ledger-list li {
+            margin-bottom: 6px;
+        }
+
+        .spacer { height: 10px; }
+
+        footer.broadsheet-footer {
+            border-top: 2px solid var(--rule-dark);
+            padding: 26px 20px;
             text-align: center;
-            color: var(--muted);
             font-size: 13px;
+            color: var(--ink-muted);
+            background: var(--bg);
         }
+
+        @media (max-width: 768px) {
+            .top-row { flex-direction: column; gap: 4px; }
+            nav.ledger-nav a { display: inline-block; margin: 4px 8px; font-size: 13px; }
+            .masthead-title a { font-size: 28px; }
+            table.ledger-table { display: block; overflow-x: auto; }
+        }
+
         @media print {
-            body { background: #fff; color: #000; }
-            header, footer, nav, .btn { display: none; }
+            body { background: #fff; color: #000; font-size: 11pt; }
+            header.broadsheet-masthead, footer.broadsheet-footer, nav.ledger-nav { display: none; }
             .container { max-width: 100%; padding: 0; }
-            .card { border: none; padding: 0; }
+            a { text-decoration: none; color: #000; }
+            .memo-box { border: 1px solid #ccc; }
         }
     </style>
 </head>
 <body>
-    <header>
-        <div class="header-inner">
-            <a href="../index.html" class="logo">Loretta's <span>Ledger</span></a>
-            <nav>
-                <a href="../index.html" class="">Home</a>
-                <a href="../briefs.html" class="active">Policy Briefs</a>
-                <a href="../action.html" class="">Citizen Action</a>
-                <a href="../test-cases.html" class="">Test Cases</a>
-                <a href="../influences.html" class="">Who's Behind This</a>
+    <header class="broadsheet-masthead">
+        <div class="masthead-inner">
+            <div class="top-row">
+                <span>Independent Public Account &bull; Olympia & Thurston County</span>
+                <span class="meta-date">Vol. I &bull; Record Current to October 2026</span>
+            </div>
+            <div class="masthead-title">
+                <a href="../index.html">Loretta's Ledger</a>
+            </div>
+            <div class="masthead-subtitle">
+                An Account of Local Decisions, Upstream Influences, and Public Trajectory
+            </div>
+            <nav class="ledger-nav">
+                <a href="../index.html" class="">This Week</a>
+                <a href="../matters.html" class="">Matters</a>
+                <a href="../actors.html" class="">Who's in the Room</a>
+                <a href="../archive.html" class="active">Archive</a>
+                <a href="../about.html" class="">About</a>
+                <a href="../method.html" class="">Method</a>
             </nav>
         </div>
     </header>
     <div class="container">
-        <h1>Brief: 2.B PUBLIC HEARING - Case:  25-0980, Springwood Garden plat</h1>
-<br>
-<p><strong>Jurisdiction</strong>: Olympia</p>
-<p><strong>Meeting Date</strong>: 2026-09-28</p>
-<p><strong>Original Source</strong>: <a href="https://olympia.legistar.com/MeetingDetail.aspx?LEGID=6984&amp;GID=218&amp;G=19510D34-31FB-48B8-9C02-4D026953451C" target="_blank">Olympia Official Record</a></p>
-<br>
-<h2>Summary (facts only)</h2>
-<p>The Olympia governing body has scheduled consideration of: 2.B PUBLIC HEARING - Case:  25-0980, Springwood Garden plat.</p>
-<br>
-<p><strong>Documented Key Facts:</strong></p>
-<p><strong>Staff / Presenters</strong>: Jackson Ewing, Senior Planner Phone, Jackson Ewing</p>
-<p><strong>Applicant</strong>: Sheri Green, AHBL</p>
-<p><strong>Fiscal / Contract Value</strong>: $2,200.00, $1,500.00, $3,115.00</p>
-<p><strong>Location / Parcel</strong>: 7.2 acres, Parcel Number 09680073000</p>
-<p><strong>Key Documented Provisions</strong>: WDFW, PHS, Oregon White Oak, Determination of Non-significance</p>
-<br>
-<br>
-<p><strong>Official Documents Examined (6 total):</strong></p>
-<ul>
-<li>*Attachment C1 - Continued Hearing Staff Rerport*</li>
-<li>*Attachment C2 - Exhibit 29 - Order Continuing Hearing; dated 5.4.2026*</li>
-<li>*Attachment C4 - Stormwater Memo; dated 8.24.2026*</li>
-<li>*Attachment C5 - Wetland Report &amp; Mitigation Plan; dated 7.22.2026*</li>
-<li>*Attachment C6 - Hearing Examiner Springwood Gardens Staff Report; dated 4.13.2026*</li>
-<li>*Attachment C7 - Department of Ecology Consultation Email; dated 6.12.2026*</li>
+        <h1 class="headline-title">2.B PUBLIC HEARING - Case:  25-0980, Springwood Garden plat</h1>
+<div class="spacer"></div>
+<h2 class="section-label">For Staff</h2>
+<p><strong>Neutral Policy Memo &amp; Operational Considerations</strong></p>
+<ul class="ledger-list">
+<li><strong>Administrative Summary</strong>: The Olympia Hearing Examiner is reviewing a preliminary plat application (Case 25-0980) submitted by applicant AHBL to subdivide 7.2 acres at 7.2 acres, Parcel Number 09680073000. The proposal creates 37 single-family residential homeownership lots along with dedicated stormwater tracts and perimeter open space. The project includes wetland buffer averaging and mitigation sequencing, backed by required performance and maintenance surety bonds.</li>
+<li><strong>Upstream Requirements &amp; Statutory Constraints</strong>: Washington State Department of Ecology (state_agency): mechanism `unknown`; Washington Growth Management Act (state_law): mechanism `mandate`</li>
+<li><strong>Litmus Policy Checks</strong>: Ownership (Facilitates private fee-simple property investment and home construction (e.g. 37 home lots at Springwood) while creating private wetland mitigation tracts and maintenance obligations.); Place (Touches established neighborhoods, requiring evaluation of stormwater runoff detention, perimeter tree preservation, and local traffic safety for longstanding adjacent residents.)</li>
+<li><strong>Key Dependencies &amp; Open Questions to Clarify</strong>:</li>
+<li>Has the applicant posted legally binding surety bonds ensuring ongoing maintenance and replanting for required wetland mitigation areas?</li>
+<li>Does the stormwater civil engineering plan guarantee that post-construction discharge will not exceed pre-development runoff onto neighboring properties?</li>
 </ul>
-<br>
-<h2>Litmus Test Evaluation</h2>
-<p>1. <strong>Subsidiarity</strong>: [Rating: Cuts against]. Policy originates or is conditioned by outside/higher authority: Washington State Department of Ecology (unknown), Washington Growth Management Act (mandate). Local discretion is constrained by upstream mandates or funding conditions. [Source: https://olympia.legistar.com/MeetingDetail.aspx?LEGID=6984&amp;GID=218&amp;G=19510D34-31FB-48B8-9C02-4D026953451C]</p>
-<p>2. <strong>Ownership</strong>: [Rating: Supports]. Enables private property investment and fee-simple development at 7.2 acres, Parcel Number 09680073000 by applicant Sheri Green, AHBL noticed for public consideration. [Source: https://olympia.legistar.com/MeetingDetail.aspx?LEGID=6984&amp;GID=218&amp;G=19510D34-31FB-48B8-9C02-4D026953451C]</p>
-<p>3. <strong>Small and local vs. large and distant</strong>: [Rating: Supports]. Accommodates local property owners and builders executing permitted work within local planning guidelines. [Source: https://olympia.legistar.com/MeetingDetail.aspx?LEGID=6984&amp;GID=218&amp;G=19510D34-31FB-48B8-9C02-4D026953451C]</p>
-<p>4. <strong>Family and household</strong>: [Rating: Supports]. Expands private family housing lots in the local community. [Source: https://olympia.legistar.com/MeetingDetail.aspx?LEGID=6984&amp;GID=218&amp;G=19510D34-31FB-48B8-9C02-4D026953451C]</p>
-<p>5. <strong>Cost and who pays</strong>: [Rating: Supports]. Project and infrastructure costs are borne by the private applicant rather than general municipal taxpayers. [Source: https://olympia.legistar.com/MeetingDetail.aspx?LEGID=6984&amp;GID=218&amp;G=19510D34-31FB-48B8-9C02-4D026953451C]</p>
-<p>6. <strong>Consent and process</strong>: [Rating: Supports]. Formally noticed for public hearing with advance citizen comment and registration opportunities. [Source: https://olympia.legistar.com/MeetingDetail.aspx?LEGID=6984&amp;GID=218&amp;G=19510D34-31FB-48B8-9C02-4D026953451C]</p>
-<p>7. <strong>Reversibility and accountability</strong>: [Rating: Neutral / unclear]. Legal duration and administrative reversibility are not explicitly detailed in the source.</p>
-<p>8. <strong>Place</strong>: [Rating: Supports]. Maintains active waterfront or neighborhood infrastructure affecting 7.2 acres, Parcel Number 09680073000, provided surrounding residents are protected from runoff and traffic impacts. [Source: https://olympia.legistar.com/MeetingDetail.aspx?LEGID=6984&amp;GID=218&amp;G=19510D34-31FB-48B8-9C02-4D026953451C]</p>
-<br>
-<h2>Who&#x27;s Behind This? (Upstream Influence)</h2>
-<p><strong>Documented Lineage Chain:</strong></p>
-<pre><code>
-• Washington Growth Management Act (state_law) via mandate (inferred)
-  └── Washington State Department of Ecology (state_agency) via unknown
-</code></pre>
-<br>
-<ul>
-<li><strong>Washington State Department of Ecology</strong> (state_agency): Influence operating via `unknown`. Evidence: &quot;...<a href="https://olympia.legistar.com/MeetingDetail.aspx?LEGID=6984&amp;GID=218&amp;G=19510D34-31FB-48B8-9C02-4D026953451C" target="_blank">Attachment C7 - Department of Ecology Consultation Email; dated...&quot; [Source Document</a></li>
+<div class="spacer"></div>
+<h2 class="section-label">For Residents</h2>
+<p><strong>What Is Happening</strong></p>
+<p>The Hearing Examiner is reviewing a preliminary plat application to subdivide 7.2 acres at 1609 Springwood Ave NE into 37 single-family residential lots with wetland mitigation.</p>
+<div class="spacer"></div>
+<p>The Olympia Hearing Examiner is reviewing a preliminary plat application (Case 25-0980) submitted by applicant AHBL to subdivide 7.2 acres at 7.2 acres, Parcel Number 09680073000. The proposal creates 37 single-family residential homeownership lots along with dedicated stormwater tracts and perimeter open space. The project includes wetland buffer averaging and mitigation sequencing, backed by required performance and maintenance surety bonds.</p>
+<div class="spacer"></div>
+<p><strong>Why It May Matter</strong></p>
+<ul class="ledger-list">
+<li><strong>Ownership</strong>: Facilitates private fee-simple property investment and home construction (e.g. 37 home lots at Springwood) while creating private wetland mitigation tracts and maintenance obligations.</li>
+<li><strong>Place</strong>: Touches established neighborhoods, requiring evaluation of stormwater runoff detention, perimeter tree preservation, and local traffic safety for longstanding adjacent residents.</li>
 </ul>
-<br>
-<ul>
-<li><strong>Washington Growth Management Act</strong> (state_law): Influence operating via `mandate`. Evidence: &quot;Authorizing state statute (RCW 36.70A: Growth Management Act / SMA) underlying agency administrative action.&quot; <a href="None" target="_blank">Source Document</a></li>
+<div class="spacer"></div>
+<p><strong>What to Do &amp; How to Participate</strong></p>
+<ul class="ledger-list">
+<li><strong>Meeting Date</strong>: 2026-09-28</li>
+<li><strong>Comment Deadline</strong>: Check meeting agenda for registration cutoff</li>
+<li><strong>How to Comment</strong>: Submit written public comment through the City of Olympia online meeting portal or register for virtual/in-person testimony.</li>
+<li><strong>Official Packet</strong>: <a href="https://olympia.legistar.com/MeetingDetail.aspx?LEGID=6984&amp;GID=218&amp;G=19510D34-31FB-48B8-9C02-4D026953451C" target="_blank" rel="noopener">Olympia Agenda Record</a></li>
 </ul>
-<br>
-<h2>Overall Analysis</h2>
-<p>*(Analysis)*: The Springwood Garden plat (Case 25-0980) creates 37 single-family homeownership lots on 7.2 acres at 7.2 acres, Parcel Number 09680073000, addressing local housing supply. However, the project requires substantial wetland mitigation, buffer averaging, and stormwater detention in a low-density neighborhood. The essential public interest is verifying that stormwater runoff safeguards and traffic measures protect longstanding neighbors from adverse impacts.</p>
-<br>
-<h2>Plain-Language Effect for Residents</h2>
-<p>Subdivides 7.2 acres at 1609 Springwood Ave NE into 37 single-family home lots with wetland mitigation and stormwater infrastructure.</p>
-<br>
-<h2>Recommended Response &amp; A Way Forward</h2>
-<h3>For Citizens &amp; Property Owners:</h3>
-<ul>
-<li><strong>Scrutinize Stormwater Runoff on Adjacent Homes</strong>: Review the Civil Engineering Plan Set and Stormwater Memo to ensure runoff from the 37 proposed residential lots at 7.2 acres, Parcel Number 09680073000 will not flood downstream properties.</li>
-<li><strong>Verify Wetland Mitigation Bonds</strong>: Confirm that the applicant (AHBL) has posted legally binding financial surety bonds (over $32,000) for ongoing wetland monitoring and replanting.</li>
-<li><strong>Testify on Neighborhood Traffic</strong>: Submit written testimony to Senior Planner Jackson Ewing regarding traffic queuing onto Springwood Ave NE and pedestrian safety.</li>
+<div class="spacer"></div>
+<h2 class="section-label">Trajectory</h2>
+<ul class="ledger-list">
+<li><strong>Origin</strong>: - <strong>Washington State Department of Ecology</strong> (state_agency): Operating via `unknown`. Evidence: &quot;...<a href="https://olympia.legistar.com/MeetingDetail.aspx?LEGID=6984&amp;GID=218&amp;G=19510D34-31FB-48B8-9C02-4D026953451C" target="_blank" rel="noopener">Attachment C7 - Department of Ecology Consultation Email; dated...&quot; [Source Document</a></li>
+<li><strong>Washington Growth Management Act</strong> (state_law): Operating via `mandate`. Evidence: &quot;Authorizing state statute (RCW 36.70A: Growth Management Act / SMA) underlying agency administrative action.&quot; <a href="None" target="_blank" rel="noopener">Source Document</a></li>
+<li><strong>Current Stage</strong>: Scheduled for Public Deliberation (2026-09-28)</li>
+<li><strong>Documented Next Step</strong>: Action vote by governing body following public hearing and record close.</li>
 </ul>
-<br>
-<h3>For Local Elected Officials:</h3>
-<ul>
-<li><strong>Condition Approval on Stormwater Protections</strong>: Require independent engineering verification that post-development stormwater discharge rates do not exceed pre-development levels.</li>
-<li><strong>Shield Established Neighbors</strong>: Require enhanced perimeter landscape buffers between the new 37-lot subdivision and existing low-density residences.</li>
+<div class="spacer"></div>
+<p><strong>Timeline &amp; Milestones</strong></p>
+<ul class="ledger-list">
+<li><strong>2026-09-28</strong>: Official legislative agenda review / public hearing scheduled (Olympia). <a href="https://olympia.legistar.com/MeetingDetail.aspx?LEGID=6984&amp;GID=218&amp;G=19510D34-31FB-48B8-9C02-4D026953451C" target="_blank" rel="noopener">Official Record</a></li>
 </ul>
-<br>
-<h2>Next Step for Citizens</h2>
-<ul>
-<li><strong>Meeting / Public Hearing</strong>: 2026-09-28</li>
-<li><strong>Public Comment Deadline</strong>: Check meeting agenda for registration cutoff</li>
-<li><strong>Official Documentation</strong>: <a href="https://olympia.legistar.com/MeetingDetail.aspx?LEGID=6984&amp;GID=218&amp;G=19510D34-31FB-48B8-9C02-4D026953451C" target="_blank">Review Complete Packet</a></li>
-</ul>
-<br>
+<div class="spacer"></div>
     </div>
-    <footer>
-        Loretta's Ledger &bull; Independent local policy publication for Olympia and Thurston County &bull; People-First Policy Framework
+    <footer class="broadsheet-footer">
+        Loretta's Ledger &bull; Documented Public Record for Thurston County and City of Olympia &bull; Strictly Factual
     </footer>
 </body>
 </html>

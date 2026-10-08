@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Why This Exists — Loretta's Ledger</title>
+    <style>
+        :root {
+            --bg: #fcfaf5;
+            --surface: #ffffff;
+            --ink: #1c1a17;
+            --ink-muted: #575249;
+            --ink-faint: #807a70;
+            --rule: #ded8cb;
+            --rule-dark: #2c2824;
+            --oxblood: #7b2a26;
+            --oxblood-tint: #f5ebea;
+            --font-serif: "Iowan Old Style", "Palatino Linotype", "URW Palladio L", Palatino, Georgia, serif;
+            --font-mono: "SF Mono", "Consolas", "Liberation Mono", Courier, monospace;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            font-family: var(--font-serif);
+            background-color: var(--bg);
+            color: var(--ink);
+            margin: 0;
+            padding: 0;
+            line-height: 1.55;
+            font-size: 16px;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        header.broadsheet-masthead {
+            background: var(--bg);
+            border-bottom: 2px solid var(--rule-dark);
+            padding: 24px 20px 14px 20px;
+        }
+
+        .masthead-inner {
+            max-width: 1040px;
+            margin: 0 auto;
+        }
+
+        .top-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            border-bottom: 1px solid var(--rule);
+            padding-bottom: 8px;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--ink-muted);
+        }
+
+        .top-row span.meta-date {
+            font-variant-numeric: tabular-nums;
+        }
+
+        .masthead-title {
+            text-align: center;
+            margin: 18px 0 6px 0;
+        }
+
+        .masthead-title a {
+            color: var(--ink);
+            text-decoration: none;
+            font-size: 38px;
+            font-weight: 700;
+            letter-spacing: -0.01em;
+            text-transform: uppercase;
+        }
+
+        .masthead-subtitle {
+            text-align: center;
+            font-size: 14px;
+            font-style: italic;
+            color: var(--ink-muted);
+            margin: 0 0 16px 0;
+        }
+
+        nav.ledger-nav {
+            border-top: 1px solid var(--rule-dark);
+            border-bottom: 1px solid var(--rule-dark);
+            padding: 8px 0;
+            text-align: center;
+        }
+
+        nav.ledger-nav a {
+            color: var(--ink);
+            text-decoration: none;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            margin: 0 16px;
+            padding: 4px 2px;
+            font-weight: 600;
+        }
+
+        nav.ledger-nav a:hover, nav.ledger-nav a.active {
+            color: var(--oxblood);
+            border-bottom: 2px solid var(--oxblood);
+        }
+
+        .container {
+            max-width: 1040px;
+            margin: 0 auto;
+            padding: 32px 20px 70px 20px;
+        }
+
+        h1.headline-title {
+            font-size: 28px;
+            font-weight: 700;
+            line-height: 1.25;
+            margin: 0 0 16px 0;
+            color: var(--ink);
+            border-bottom: 2px solid var(--rule-dark);
+            padding-bottom: 10px;
+        }
+
+        h2.section-label {
+            font-size: 17px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: var(--oxblood);
+            border-bottom: 1px solid var(--rule);
+            padding-bottom: 4px;
+            margin: 32px 0 14px 0;
+        }
+
+        h3.subsection-label {
+            font-size: 16px;
+            font-weight: 700;
+            margin: 20px 0 8px 0;
+            color: var(--ink);
+        }
+
+        p {
+            margin: 0 0 14px 0;
+        }
+
+        a {
+            color: var(--oxblood);
+            text-decoration: underline;
+            text-underline-offset: 2px;
+        }
+
+        a:hover {
+            color: #4a1715;
+        }
+
+        /* Ledger table styles */
+        table.ledger-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+            margin: 20px 0 32px 0;
+            border-top: 2px solid var(--rule-dark);
+            border-bottom: 2px solid var(--rule-dark);
+        }
+
+        table.ledger-table th {
+            text-align: left;
+            padding: 9px 12px;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.07em;
+            background: #f4eee2;
+            border-bottom: 1px solid var(--rule-dark);
+            color: var(--ink);
+        }
+
+        table.ledger-table td {
+            padding: 10px 12px;
+            border-bottom: 1px solid var(--rule);
+            vertical-align: top;
+            font-variant-numeric: tabular-nums;
+        }
+
+        table.ledger-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        /* Ruled boxes and entries */
+        .ledger-entry {
+            border-bottom: 1px solid var(--rule);
+            padding: 18px 0;
+        }
+
+        .ledger-entry:first-child {
+            padding-top: 0;
+        }
+
+        .ledger-meta {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: var(--ink-faint);
+            margin-bottom: 6px;
+        }
+
+        .tag-oxblood {
+            color: var(--oxblood);
+            font-weight: 700;
+        }
+
+        .tag-testcase {
+            background: var(--oxblood-tint);
+            color: var(--oxblood);
+            border: 1px solid var(--oxblood);
+            padding: 2px 6px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-right: 6px;
+            display: inline-block;
+        }
+
+        .timeline-block {
+            border-left: 2px solid var(--oxblood);
+            padding-left: 18px;
+            margin: 16px 0;
+        }
+
+        .timeline-item {
+            margin-bottom: 14px;
+        }
+
+        .memo-box {
+            background: #fff;
+            border: 1px solid var(--rule);
+            border-left: 4px solid var(--oxblood);
+            padding: 18px 20px;
+            margin: 20px 0;
+        }
+
+        ul.ledger-list {
+            margin: 8px 0 16px 20px;
+            padding: 0;
+        }
+
+        ul.ledger-list li {
+            margin-bottom: 6px;
+        }
+
+        .spacer { height: 10px; }
+
+        footer.broadsheet-footer {
+            border-top: 2px solid var(--rule-dark);
+            padding: 26px 20px;
+            text-align: center;
+            font-size: 13px;
+            color: var(--ink-muted);
+            background: var(--bg);
+        }
+
+        @media (max-width: 768px) {
+            .top-row { flex-direction: column; gap: 4px; }
+            nav.ledger-nav a { display: inline-block; margin: 4px 8px; font-size: 13px; }
+            .masthead-title a { font-size: 28px; }
+            table.ledger-table { display: block; overflow-x: auto; }
+        }
+
+        @media print {
+            body { background: #fff; color: #000; font-size: 11pt; }
+            header.broadsheet-masthead, footer.broadsheet-footer, nav.ledger-nav { display: none; }
+            .container { max-width: 100%; padding: 0; }
+            a { text-decoration: none; color: #000; }
+            .memo-box { border: 1px solid #ccc; }
+        }
+    </style>
+</head>
+<body>
+    <header class="broadsheet-masthead">
+        <div class="masthead-inner">
+            <div class="top-row">
+                <span>Independent Public Account &bull; Olympia & Thurston County</span>
+                <span class="meta-date">Vol. I &bull; Record Current to October 2026</span>
+            </div>
+            <div class="masthead-title">
+                <a href="index.html">Loretta's Ledger</a>
+            </div>
+            <div class="masthead-subtitle">
+                An Account of Local Decisions, Upstream Influences, and Public Trajectory
+            </div>
+            <nav class="ledger-nav">
+                <a href="index.html" class="">This Week</a>
+                <a href="matters.html" class="">Matters</a>
+                <a href="actors.html" class="">Who's in the Room</a>
+                <a href="archive.html" class="">Archive</a>
+                <a href="about.html" class="active">About</a>
+                <a href="method.html" class="">Method</a>
+            </nav>
+        </div>
+    </header>
+    <div class="container">
+        
+    <h1 class="headline-title">Why This Exists</h1>
+    
+    <p>Loretta's Ledger is named for my grandmother, Loretta Corcoran. She ran Loretta's Cafe at 213 North Capitol Way in downtown Olympia for many years, and she made meals for the Olympia jail. The café closed when its building was demolished to make way for the Olympia Center.</p>
+
+    <div class="memo-box" style="font-style: italic; color: var(--ink-muted); margin: 20px 0;">
+        <p style="margin-bottom: 6px;">[Photo: Loretta Corcoran at the grill, Loretta's Cafe, 213 North Capitol Way, Olympia, 1959. Corcoran family collection.]</p>
+        <p style="margin: 0;">[Image: Newspaper advertisement, Loretta's Cafe, undated.]</p>
+    </div>
+
+    <p>The Olympia Center has been a great benefit to the community. It also took the place of an establishment that was part of the city. Both are true, and the Ledger exists to keep both in view. Decisions made in meeting rooms about land have real impacts on real households.</p>
+
+    <p>Most of those decisions are made in public, in documents and meetings that few of us have time to read. The Ledger reads them, says plainly what is being decided and why it might matter, and shows where the decision came from and where it is headed.</p>
+
+    <p>Our city and county governments are good, and the work they do is mundane and necessary. We need them to keep decisions as close to the people they affect as they can, and to count the cost to a household as carefully as the benefit to the city.</p>
+
+    <h2 class="section-label">What we hold ourselves to</h2>
+
+    <p><strong>Start from the record.</strong> Every claim links to the public document it comes from. If the documents don't say, we say so.</p>
+
+    <p><strong>Separate what's known from what's argued.</strong> Facts come first. Analysis is labeled as analysis.</p>
+
+    <p><strong>Count both sides.</strong> We name what a policy does well and what it costs, and who pays.</p>
+
+    <p><strong>Describe relationships, not motives.</strong> We track who is in the room: the consultants, advisory bodies, funders, state and regional agencies, and outside groups that shape local decisions. We report only the relationships the public record shows, and we never claim to know why anyone did anything.</p>
+
+    <p><strong>Stay close to home.</strong> We cover Olympia and Thurston County. Other places appear only when they shape a local decision.</p>
+
+    <p><strong>Use plain language.</strong> We try to write so that any resident can follow what is happening and what they can do about it.</p>
+
+    <p><strong>Leave the conclusions to you.</strong> We offer questions worth asking, not instructions on how to vote or comment.</p>
+
+    <h2 class="section-label">The questions we ask</h2>
+
+    <p>Of every item, we ask the same few questions:</p>
+
+    <ul class="ledger-list">
+        <li>Is this decided at the level closest to the people affected?</li>
+        <li>Does it help ordinary families own and keep their homes, land, and shops?</li>
+        <li>Who pays, and who benefits?</li>
+        <li>Could the people affected find out and respond in time?</li>
+        <li>Does it respect the people and places already there?</li>
+    </ul>
+
+    <p>These are our questions, and we try to say plainly where a policy does well by them and where it doesn't.</p>
+
+    <h2 class="section-label">What you'll find here</h2>
+
+    <p>Each item gets a short brief: what is being decided, why it might matter, and what to do if you want to weigh in. City and county staff get a separate note on the open questions the documents leave unanswered. Each matter has a timeline showing where it started and every meeting it has passed through.</p>
+
+    <h2 class="section-label">How it's made</h2>
+
+    <p>A program collects the public agendas and documents and drafts the briefs. A person reads and approves every one before it appears here, and nothing unreviewed is published. The software and method are open: <a href="https://github.com/thecorcoran/Ledger" target="_blank" rel="noopener">https://github.com/thecorcoran/Ledger</a>.</p>
+
+    <h2 class="section-label">Disclosures</h2>
+
+    <p>The Ledger is written by Jon, who lives in Thurston County in the house his mother grew up in. He is not a lawyer, a planner, or a reporter, and he does not own a business. He has no financial ties to the matters the Ledger covers.</p>
+
+    <h2 class="section-label">Mistakes and corrections</h2>
+
+    <p>If something here is wrong, tell us at <a href="mailto:thecorcoran@gmail.com">thecorcoran@gmail.com</a>. We'll fix it and note the change on the page.</p>
+    
+    </div>
+    <footer class="broadsheet-footer">
+        Loretta's Ledger &bull; Documented Public Record for Thurston County and City of Olympia &bull; Strictly Factual
+    </footer>
+</body>
+</html>

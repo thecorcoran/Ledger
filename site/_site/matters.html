@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Matters Register — Loretta's Ledger</title>
+    <style>
+        :root {
+            --bg: #fcfaf5;
+            --surface: #ffffff;
+            --ink: #1c1a17;
+            --ink-muted: #575249;
+            --ink-faint: #807a70;
+            --rule: #ded8cb;
+            --rule-dark: #2c2824;
+            --oxblood: #7b2a26;
+            --oxblood-tint: #f5ebea;
+            --font-serif: "Iowan Old Style", "Palatino Linotype", "URW Palladio L", Palatino, Georgia, serif;
+            --font-mono: "SF Mono", "Consolas", "Liberation Mono", Courier, monospace;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            font-family: var(--font-serif);
+            background-color: var(--bg);
+            color: var(--ink);
+            margin: 0;
+            padding: 0;
+            line-height: 1.55;
+            font-size: 16px;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        header.broadsheet-masthead {
+            background: var(--bg);
+            border-bottom: 2px solid var(--rule-dark);
+            padding: 24px 20px 14px 20px;
+        }
+
+        .masthead-inner {
+            max-width: 1040px;
+            margin: 0 auto;
+        }
+
+        .top-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            border-bottom: 1px solid var(--rule);
+            padding-bottom: 8px;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--ink-muted);
+        }
+
+        .top-row span.meta-date {
+            font-variant-numeric: tabular-nums;
+        }
+
+        .masthead-title {
+            text-align: center;
+            margin: 18px 0 6px 0;
+        }
+
+        .masthead-title a {
+            color: var(--ink);
+            text-decoration: none;
+            font-size: 38px;
+            font-weight: 700;
+            letter-spacing: -0.01em;
+            text-transform: uppercase;
+        }
+
+        .masthead-subtitle {
+            text-align: center;
+            font-size: 14px;
+            font-style: italic;
+            color: var(--ink-muted);
+            margin: 0 0 16px 0;
+        }
+
+        nav.ledger-nav {
+            border-top: 1px solid var(--rule-dark);
+            border-bottom: 1px solid var(--rule-dark);
+            padding: 8px 0;
+            text-align: center;
+        }
+
+        nav.ledger-nav a {
+            color: var(--ink);
+            text-decoration: none;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            margin: 0 16px;
+            padding: 4px 2px;
+            font-weight: 600;
+        }
+
+        nav.ledger-nav a:hover, nav.ledger-nav a.active {
+            color: var(--oxblood);
+            border-bottom: 2px solid var(--oxblood);
+        }
+
+        .container {
+            max-width: 1040px;
+            margin: 0 auto;
+            padding: 32px 20px 70px 20px;
+        }
+
+        h1.headline-title {
+            font-size: 28px;
+            font-weight: 700;
+            line-height: 1.25;
+            margin: 0 0 16px 0;
+            color: var(--ink);
+            border-bottom: 2px solid var(--rule-dark);
+            padding-bottom: 10px;
+        }
+
+        h2.section-label {
+            font-size: 17px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: var(--oxblood);
+            border-bottom: 1px solid var(--rule);
+            padding-bottom: 4px;
+            margin: 32px 0 14px 0;
+        }
+
+        h3.subsection-label {
+            font-size: 16px;
+            font-weight: 700;
+            margin: 20px 0 8px 0;
+            color: var(--ink);
+        }
+
+        p {
+            margin: 0 0 14px 0;
+        }
+
+        a {
+            color: var(--oxblood);
+            text-decoration: underline;
+            text-underline-offset: 2px;
+        }
+
+        a:hover {
+            color: #4a1715;
+        }
+
+        /* Ledger table styles */
+        table.ledger-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+            margin: 20px 0 32px 0;
+            border-top: 2px solid var(--rule-dark);
+            border-bottom: 2px solid var(--rule-dark);
+        }
+
+        table.ledger-table th {
+            text-align: left;
+            padding: 9px 12px;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.07em;
+            background: #f4eee2;
+            border-bottom: 1px solid var(--rule-dark);
+            color: var(--ink);
+        }
+
+        table.ledger-table td {
+            padding: 10px 12px;
+            border-bottom: 1px solid var(--rule);
+            vertical-align: top;
+            font-variant-numeric: tabular-nums;
+        }
+
+        table.ledger-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        /* Ruled boxes and entries */
+        .ledger-entry {
+            border-bottom: 1px solid var(--rule);
+            padding: 18px 0;
+        }
+
+        .ledger-entry:first-child {
+            padding-top: 0;
+        }
+
+        .ledger-meta {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: var(--ink-faint);
+            margin-bottom: 6px;
+        }
+
+        .tag-oxblood {
+            color: var(--oxblood);
+            font-weight: 700;
+        }
+
+        .tag-testcase {
+            background: var(--oxblood-tint);
+            color: var(--oxblood);
+            border: 1px solid var(--oxblood);
+            padding: 2px 6px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-right: 6px;
+            display: inline-block;
+        }
+
+        .timeline-block {
+            border-left: 2px solid var(--oxblood);
+            padding-left: 18px;
+            margin: 16px 0;
+        }
+
+        .timeline-item {
+            margin-bottom: 14px;
+        }
+
+        .memo-box {
+            background: #fff;
+            border: 1px solid var(--rule);
+            border-left: 4px solid var(--oxblood);
+            padding: 18px 20px;
+            margin: 20px 0;
+        }
+
+        ul.ledger-list {
+            margin: 8px 0 16px 20px;
+            padding: 0;
+        }
+
+        ul.ledger-list li {
+            margin-bottom: 6px;
+        }
+
+        .spacer { height: 10px; }
+
+        footer.broadsheet-footer {
+            border-top: 2px solid var(--rule-dark);
+            padding: 26px 20px;
+            text-align: center;
+            font-size: 13px;
+            color: var(--ink-muted);
+            background: var(--bg);
+        }
+
+        @media (max-width: 768px) {
+            .top-row { flex-direction: column; gap: 4px; }
+            nav.ledger-nav a { display: inline-block; margin: 4px 8px; font-size: 13px; }
+            .masthead-title a { font-size: 28px; }
+            table.ledger-table { display: block; overflow-x: auto; }
+        }
+
+        @media print {
+            body { background: #fff; color: #000; font-size: 11pt; }
+            header.broadsheet-masthead, footer.broadsheet-footer, nav.ledger-nav { display: none; }
+            .container { max-width: 100%; padding: 0; }
+            a { text-decoration: none; color: #000; }
+            .memo-box { border: 1px solid #ccc; }
+        }
+    </style>
+</head>
+<body>
+    <header class="broadsheet-masthead">
+        <div class="masthead-inner">
+            <div class="top-row">
+                <span>Independent Public Account &bull; Olympia & Thurston County</span>
+                <span class="meta-date">Vol. I &bull; Record Current to October 2026</span>
+            </div>
+            <div class="masthead-title">
+                <a href="index.html">Loretta's Ledger</a>
+            </div>
+            <div class="masthead-subtitle">
+                An Account of Local Decisions, Upstream Influences, and Public Trajectory
+            </div>
+            <nav class="ledger-nav">
+                <a href="index.html" class="">This Week</a>
+                <a href="matters.html" class="active">Matters</a>
+                <a href="actors.html" class="">Who's in the Room</a>
+                <a href="archive.html" class="">Archive</a>
+                <a href="about.html" class="">About</a>
+                <a href="method.html" class="">Method</a>
+            </nav>
+        </div>
+    </header>
+    <div class="container">
+        
+    <div style="display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 10px; margin-bottom: 12px;">
+        <h1 class="headline-title" style="margin: 0; border: none; padding: 0;">Public Matters Register</h1>
+        <div style="font-size: 13px; text-transform: uppercase; letter-spacing: 0.05em;">
+            <label style="cursor: pointer;">
+                <input type="checkbox" id="test-case-filter" onchange="filterTestCases(this.checked)">
+                <strong>Show Test Cases Only</strong>
+            </label>
+        </div>
+    </div>
+    <p>Tracking matters across sessions from origin through final legislative trajectory. Select any matter to inspect its complete timeline and linked official records.</p>
+
+    <table class="ledger-table" id="matters-table">
+        <thead>
+            <tr>
+                <th>Matter Title</th>
+                <th style="width: 110px;">Jurisdiction</th>
+                <th style="width: 220px;">Current Stage / Status</th>
+                <th style="width: 150px;">Identifier</th>
+            </tr>
+        </thead>
+        <tbody>
+            
+        <tr data-testcase="1">
+            <td><a href="matters/matter-olympia-matter-file-26-0731.html"><strong>PUBLIC HEARING - Case:  25-1692, West Bay Marina Replacement Project</strong></a> <a href="briefs/brief-olympia-event-6984-item-102121.html" style="font-size:12px; margin-left:8px;">[Brief &rarr;]</a></td>
+            <td>OLYMPIA</td>
+            <td><span class="tag-testcase">Test Case</span></td>
+            <td>26-0731</td>
+        </tr>
+        
+        <tr data-testcase="1">
+            <td><a href="matters/matter-olympia-case-number-25-1692.html"><strong>PUBLIC HEARING - Case:  25-1692, West Bay Marina Replacement Project</strong></a> <a href="briefs/brief-olympia-event-6984-item-102121.html" style="font-size:12px; margin-left:8px;">[Brief &rarr;]</a></td>
+            <td>OLYMPIA</td>
+            <td><span class="tag-testcase">Test Case</span></td>
+            <td>25-1692</td>
+        </tr>
+        
+        <tr data-testcase="1">
+            <td><a href="matters/matter-olympia-matter-file-26-0732.html"><strong>PUBLIC HEARING - Case:  25-0980, Springwood Garden plat</strong></a> <a href="briefs/brief-olympia-event-6984-item-102122.html" style="font-size:12px; margin-left:8px;">[Brief &rarr;]</a></td>
+            <td>OLYMPIA</td>
+            <td><span class="tag-testcase">Test Case</span></td>
+            <td>26-0732</td>
+        </tr>
+        
+        <tr data-testcase="1">
+            <td><a href="matters/matter-olympia-case-number-25-0980.html"><strong>PUBLIC HEARING - Case:  25-0980, Springwood Garden plat</strong></a> <a href="briefs/brief-olympia-event-6984-item-102122.html" style="font-size:12px; margin-left:8px;">[Brief &rarr;]</a></td>
+            <td>OLYMPIA</td>
+            <td><span class="tag-testcase">Test Case</span></td>
+            <td>25-0980</td>
+        </tr>
+        
+        <tr data-testcase="1">
+            <td><a href="matters/matter-thurston-tcd-rates-2026.html"><strong>Public Hearing: Proposed Ordinance to Adjust Thurston Conservation District&#x27;s Rates</strong></a> <a href="briefs/brief-thurston-bocc-2026-10-20-6123bedc0c.html" style="font-size:12px; margin-left:8px;">[Brief &rarr;]</a></td>
+            <td>THURSTON</td>
+            <td><span class="tag-testcase">Test Case</span></td>
+            <td>TCD-Rates-2026</td>
+        </tr>
+        
+        <tr data-testcase="0">
+            <td><a href="matters/matter-olympia-matter-file-26-0747.html"><strong>Draft 2026 Police Auditor Semi-Annual Report</strong></a> </td>
+            <td>OLYMPIA</td>
+            <td>Deliberation / Scheduled</td>
+            <td>26-0747</td>
+        </tr>
+        
+        <tr data-testcase="0">
+            <td><a href="matters/matter-olympia-matter-file-26-0748.html"><strong>Approval of July 30, 2026 Community Policing Board Meeting Minutes</strong></a> </td>
+            <td>OLYMPIA</td>
+            <td>Action / Consideration</td>
+            <td>26-0748</td>
+        </tr>
+        
+        <tr data-testcase="0">
+            <td><a href="matters/matter-olympia-matter-file-26-0734.html"><strong>909 919 Prospect Multifamily, Parcel 34700300700, 26-5506</strong></a> </td>
+            <td>OLYMPIA</td>
+            <td>Deliberation / Scheduled</td>
+            <td>26-0734</td>
+        </tr>
+        
+        <tr data-testcase="0">
+            <td><a href="matters/matter-olympia-matter-file-26-0750.html"><strong>Swantown Boatworks Yard Expansion, 915 Washington St NE. 26-5305</strong></a> </td>
+            <td>OLYMPIA</td>
+            <td>Deliberation / Scheduled</td>
+            <td>26-0750</td>
+        </tr>
+        
+        <tr data-testcase="0">
+            <td><a href="matters/matter-olympia-matter-file-26-0751.html"><strong>Utility update for LOTT Clean Water Alliance</strong></a> </td>
+            <td>OLYMPIA</td>
+            <td>Deliberation / Scheduled</td>
+            <td>26-0751</td>
+        </tr>
+        
+        <tr data-testcase="0">
+            <td><a href="matters/matter-olympia-matter-file-26-0753.html"><strong>Preliminary 2027 Utility Operating Budget, Rates, Capital Facilities Plan, and General Facility Charges</strong></a> </td>
+            <td>OLYMPIA</td>
+            <td>Deliberation / Scheduled</td>
+            <td>26-0753</td>
+        </tr>
+        
+        <tr data-testcase="0">
+            <td><a href="matters/matter-olympia-matter-file-26-0752.html"><strong>Approval of the September 3, 2026 Utility Advisory Committee (UAC) Meeting Minutes</strong></a> </td>
+            <td>OLYMPIA</td>
+            <td>Action / Consideration</td>
+            <td>26-0752</td>
+        </tr>
+        
+        <tr data-testcase="0">
+            <td><a href="matters/matter-olympia-matter-file-26-0768.html"><strong>Approval of September 21, 2026, Olympia Planning Commission Meeting Minutes</strong></a> </td>
+            <td>OLYMPIA</td>
+            <td>Action / Consideration</td>
+            <td>26-0768</td>
+        </tr>
+        
+        <tr data-testcase="0">
+            <td><a href="matters/matter-olympia-matter-file-26-0769.html"><strong>Approval of September 12, 2026, Olympia Planning Commission Retreat Minutes</strong></a> </td>
+            <td>OLYMPIA</td>
+            <td>Action / Consideration</td>
+            <td>26-0769</td>
+        </tr>
+        
+        <tr data-testcase="0">
+            <td><a href="matters/matter-olympia-matter-file-26-0770.html"><strong>Minimum Parking Requirements Code Amendments</strong></a> </td>
+            <td>OLYMPIA</td>
+            <td>Deliberation / Scheduled</td>
+            <td>26-0770</td>
+        </tr>
+        
+        <tr data-testcase="0">
+            <td><a href="matters/matter-olympia-matter-file-26-0767.html"><strong>Critical Area Ordinance Update - Public Hearing</strong></a> </td>
+            <td>OLYMPIA</td>
+            <td>Public Hearing Scheduled</td>
+            <td>26-0767</td>
+        </tr>
+        
+        <tr data-testcase="0">
+            <td><a href="matters/matter-olympia-ordinance-update.html"><strong>Critical Area Ordinance Update - Public Hearing</strong></a> </td>
+            <td>OLYMPIA</td>
+            <td>Public Hearing Scheduled</td>
+            <td>Update</td>
+        </tr>
+        
+        <tr data-testcase="0">
+            <td><a href="matters/matter-olympia-matter-file-26-0755.html"><strong>Special Recognition - Proclamation Recognizing Indigenous Peoples’ Day</strong></a> </td>
+            <td>OLYMPIA</td>
+            <td>Deliberation / Scheduled</td>
+            <td>26-0755</td>
+        </tr>
+        
+        <tr data-testcase="0">
+            <td><a href="matters/matter-olympia-matter-file-26-0763.html"><strong>Special Recognition - Proclamation Recognizing Walk to School Month</strong></a> </td>
+            <td>OLYMPIA</td>
+            <td>Deliberation / Scheduled</td>
+            <td>26-0763</td>
+        </tr>
+        
+        <tr data-testcase="0">
+            <td><a href="matters/matter-olympia-matter-file-26-0595.html"><strong>Approval of a Resolution Authorizing a Lease Agreement with Terry Kissick Investments LLC for Fire Vehicles Storage</strong></a> </td>
+            <td>OLYMPIA</td>
+            <td>Action / Consideration</td>
+            <td>26-0595</td>
+        </tr>
+        
+        <tr data-testcase="0">
+            <td><a href="matters/matter-olympia-matter-file-26-0693.html"><strong>Approval of a Resolution Authorizing Amendments to the Affordable Housing and Homeless Services Contracts with Thurston County for Funding for Operation of the Quince Street Tiny Home Village</strong></a> </td>
+            <td>OLYMPIA</td>
+            <td>Action / Consideration</td>
+            <td>26-0693</td>
+        </tr>
+        
+        <tr data-testcase="0">
+            <td><a href="matters/matter-olympia-matter-file-26-0694.html"><strong>Approval of a Resolution Authorizing an Amendment to the Funding Agreement with Valeo Vocation for Operation of the Franz Anderson Tiny Home Village</strong></a> </td>
+            <td>OLYMPIA</td>
+            <td>Action / Consideration</td>
+            <td>26-0694</td>
+        </tr>
+        
+        <tr data-testcase="0">
+            <td><a href="matters/matter-olympia-matter-file-26-0760.html"><strong>Approval of a Bid Award for the Yelm Highway Community Park Phase 1 Construction Project</strong></a> </td>
+            <td>OLYMPIA</td>
+            <td>Action / Consideration</td>
+            <td>26-0760</td>
+        </tr>
+        
+        <tr data-testcase="0">
+            <td><a href="matters/matter-olympia-matter-file-26-0761.html"><strong>Approval of a Resolution Authorizing an Interlocal Agreement with Olympia School District for Cultural Access Tax Transportation Funding for the 2026-2027 School Year</strong></a> </td>
+            <td>OLYMPIA</td>
+            <td>Action / Consideration</td>
+            <td>26-0761</td>
+        </tr>
+        
+        <tr data-testcase="0">
+            <td><a href="matters/matter-olympia-matter-file-26-0762.html"><strong>Approval of a Resolution Authorizing a Grant Agreement with the U.S. Department of Housing and Urban Development for the Program Year 2026 Community Development Block Grant Award</strong></a> <a href="briefs/brief-olympia-event-7131-item-102421.html" style="font-size:12px; margin-left:8px;">[Brief &rarr;]</a></td>
+            <td>OLYMPIA</td>
+            <td>Action / Consideration</td>
+            <td>26-0762</td>
+        </tr>
+        
+        <tr data-testcase="0">
+            <td><a href="matters/matter-olympia-matter-file-26-0764.html"><strong>Approval of a Bid Award for the Transmission Main Seismic Valves Installation Project</strong></a> </td>
+            <td>OLYMPIA</td>
+            <td>Action / Consideration</td>
+            <td>26-0764</td>
+        </tr>
+        
+        <tr data-testcase="0">
+            <td><a href="matters/matter-olympia-matter-file-26-0765.html"><strong>Review of the Proposed 2027 Special (Dedicated) Revenues Program Budgets, Including Lodging Tax, Inspire Olympia, Parking &amp; Business Improvement Area, and Housing/Homeless Response</strong></a> </td>
+            <td>OLYMPIA</td>
+            <td>Deliberation / Scheduled</td>
+            <td>26-0765</td>
+        </tr>
+        
+        <tr data-testcase="0">
+            <td><a href="matters/matter-olympia-matter-file-26-0766.html"><strong>Review of the Proposed 2027 Development Fees, Impact Fees, Parking Rates, Utility Rates, and General Facility Charges</strong></a> </td>
+            <td>OLYMPIA</td>
+            <td>Deliberation / Scheduled</td>
+            <td>26-0766</td>
+        </tr>
+        
+        <tr data-testcase="0">
+            <td><a href="matters/matter-olympia-matter-file-26-0771.html"><strong>Approval of Bills (August 6, 2026 - September 2, 2026) and Payroll (July 31, 2026 - August 31, 2026) Certification</strong></a> </td>
+            <td>OLYMPIA</td>
+            <td>Action / Consideration</td>
+            <td>26-0771</td>
+        </tr>
+        
+        <tr data-testcase="0">
+            <td><a href="matters/matter-olympia-matter-file-26-0773.html"><strong>Approval of a Resolution Authorizing an Amendment to the Design/Build Agreement with Forma Construction Company for the Hands On Children’s Museum Expansion Project</strong></a> </td>
+            <td>OLYMPIA</td>
+            <td>Action / Consideration</td>
+            <td>26-0773</td>
+        </tr>
+        
+        <tr data-testcase="0">
+            <td><a href="matters/matter-olympia-matter-file-26-0774.html"><strong>Approval of a Resolution Authorizing a Lease Agreement with Western Peterbilt, LLC for a Refuse Collection Truck</strong></a> </td>
+            <td>OLYMPIA</td>
+            <td>Action / Consideration</td>
+            <td>26-0774</td>
+        </tr>
+        
+        <tr data-testcase="0">
+            <td><a href="matters/matter-olympia-matter-file-26-0786.html"><strong>Approval of September 15, 2026 City Council Meeting Minutes</strong></a> </td>
+            <td>OLYMPIA</td>
+            <td>Action / Consideration</td>
+            <td>26-0786</td>
+        </tr>
+        
+        <tr data-testcase="0">
+            <td><a href="matters/matter-olympia-matter-file-26-0787.html"><strong>Approval of September 22, 2026 Study Session Meeting Minutes</strong></a> </td>
+            <td>OLYMPIA</td>
+            <td>Action / Consideration</td>
+            <td>26-0787</td>
+        </tr>
+        
+        <tr data-testcase="0">
+            <td><a href="matters/matter-olympia-matter-file-26-0777.html"><strong>Consideration of a Resolution Expressing the City Council’s Collective Opposition to Initiative to the Legislature No. 26-001 Concerning Parental Rights Relating to Their Children in Public School</strong></a> </td>
+            <td>OLYMPIA</td>
+            <td>Action / Consideration</td>
+            <td>26-0777</td>
+        </tr>
+        
+        <tr data-testcase="0">
+            <td><a href="matters/matter-olympia-matter-file-26-0780.html"><strong>Consideration of a Resolution Expressing the City Council’s Collective Opposition to the Passage of  Initiative to the Legislature 26-638 Concerning Athletics at K-12 Public Schools</strong></a> </td>
+            <td>OLYMPIA</td>
+            <td>Action / Consideration</td>
+            <td>26-0780</td>
+        </tr>
+        
+        <tr data-testcase="0">
+            <td><a href="matters/matter-olympia-matter-file-26-0781.html"><strong>Consideration of a Resolution Expressing Collective City Council Support for the Timberland Regional Library District Levy Lid Lift Proposition No. 1</strong></a> </td>
+            <td>OLYMPIA</td>
+            <td>Action / Consideration</td>
+            <td>26-0781</td>
+        </tr>
+        
+        <tr data-testcase="0">
+            <td><a href="matters/matter-olympia-matter-file-26-0776.html"><strong>Consideration of a Referral to Approve Funding to Support Development of Olympia School District (OSD) Student Visitation Program at the OlyAHA Museum</strong></a> </td>
+            <td>OLYMPIA</td>
+            <td>Deliberation / Scheduled</td>
+            <td>26-0776</td>
+        </tr>
+        
+        <tr data-testcase="0">
+            <td><a href="matters/matter-olympia-matter-file-26-0788.html"><strong>Consideration of a Referral Regarding the Use of City Council Goal Funds to Support the Olympia Downtown Alliance Downtown Seasonal Lighting Program</strong></a> </td>
+            <td>OLYMPIA</td>
+            <td>Deliberation / Scheduled</td>
+            <td>26-0788</td>
+        </tr>
+        
+        <tr data-testcase="0">
+            <td><a href="matters/matter-olympia-matter-file-26-0791.html"><strong>Approval of the September 2, 2026 PBIA Meeting Minutes</strong></a> </td>
+            <td>OLYMPIA</td>
+            <td>Action / Consideration</td>
+            <td>26-0791</td>
+        </tr>
+        
+        <tr data-testcase="0">
+            <td><a href="matters/matter-olympia-matter-file-26-0790.html"><strong>PBIA Phase 2 Discussion</strong></a> </td>
+            <td>OLYMPIA</td>
+            <td>Deliberation / Scheduled</td>
+            <td>26-0790</td>
+        </tr>
+        
+        <tr data-testcase="0">
+            <td><a href="matters/matter-olympia-matter-file-26-0759.html"><strong>Approval of May 6, 2026 Metropolitan Park District Advisory Committee Meeting Minutes</strong></a> </td>
+            <td>OLYMPIA</td>
+            <td>Action / Consideration</td>
+            <td>26-0759</td>
+        </tr>
+        
+        <tr data-testcase="0">
+            <td><a href="matters/matter-olympia-matter-file-26-0758.html"><strong>2027 Preliminary Budget Preview</strong></a> </td>
+            <td>OLYMPIA</td>
+            <td>Deliberation / Scheduled</td>
+            <td>26-0758</td>
+        </tr>
+        
+        <tr data-testcase="0">
+            <td><a href="matters/matter-olympia-matter-file-26-0733.html"><strong>Review public feedback and finalize the annual report to Olympia Metropolitan Park District (OMPD) Board and City Council regarding the compliance of 2025 funding levels</strong></a> </td>
+            <td>OLYMPIA</td>
+            <td>Deliberation / Scheduled</td>
+            <td>26-0733</td>
+        </tr>
+        
+        <tr data-testcase="0">
+            <td><a href="matters/matter-olympia-matter-file-26-0778.html"><strong>Approval of August 11 Cultural Access Advisory Board Meeting Minutes</strong></a> </td>
+            <td>OLYMPIA</td>
+            <td>Action / Consideration</td>
+            <td>26-0778</td>
+        </tr>
+        
+        <tr data-testcase="0">
+            <td><a href="matters/matter-olympia-matter-file-26-0782.html"><strong>Recruitment Subcommittee</strong></a> </td>
+            <td>OLYMPIA</td>
+            <td>Deliberation / Scheduled</td>
+            <td>26-0782</td>
+        </tr>
+        
+        <tr data-testcase="0">
+            <td><a href="matters/matter-olympia-matter-file-26-0779.html"><strong>City Council Study Session Outcome</strong></a> </td>
+            <td>OLYMPIA</td>
+            <td>Work Session / Study</td>
+            <td>26-0779</td>
+        </tr>
+        
+        <tr data-testcase="0">
+            <td><a href="matters/matter-olympia-matter-file-26-0783.html"><strong>Inspire Olympia 2027 Budget</strong></a> </td>
+            <td>OLYMPIA</td>
+            <td>Deliberation / Scheduled</td>
+            <td>26-0783</td>
+        </tr>
+        
+        <tr data-testcase="0">
+            <td><a href="matters/matter-olympia-matter-file-26-0784.html"><strong>Approval of the Social Justice &amp; Equity Commission Work Plan Update for City Council</strong></a> </td>
+            <td>OLYMPIA</td>
+            <td>Action / Consideration</td>
+            <td>26-0784</td>
+        </tr>
+        
+        <tr data-testcase="0">
+            <td><a href="matters/matter-olympia-matter-file-26-0785.html"><strong>Social Justice and Equity Commission Retreat</strong></a> </td>
+            <td>OLYMPIA</td>
+            <td>Deliberation / Scheduled</td>
+            <td>26-0785</td>
+        </tr>
+        
+        </tbody>
+    </table>
+
+    <script>
+        function filterTestCases(checked) {
+            var rows = document.querySelectorAll('#matters-table tbody tr');
+            rows.forEach(function(r) {
+                if (checked && r.getAttribute('data-testcase') !== '1') {
+                    r.style.display = 'none';
+                } else {
+                    r.style.display = '';
+                }
+            });
+        }
+    </script>
+    
+    </div>
+    <footer class="broadsheet-footer">
+        Loretta's Ledger &bull; Documented Public Record for Thurston County and City of Olympia &bull; Strictly Factual
+    </footer>
+</body>
+</html>

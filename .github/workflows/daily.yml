@@ -58,6 +58,10 @@ jobs:
           python -m pipeline.upstream.chains --link
           python -m pipeline.upstream.similarity --run
 
+      - name: Link Cross-Meeting Matters & Timelines
+        run: |
+          python -m pipeline.matters
+
       - name: Export Static Site & Documents
         run: |
           python -m pipeline.export --all

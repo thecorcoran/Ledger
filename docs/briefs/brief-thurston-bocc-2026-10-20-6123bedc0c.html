@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Public Hearing: Proposed Ordinance to Adjust Thurston Conservation District&#x27;s Rates — Loretta's Ledger</title>
+    <style>
+        :root {
+            --bg: #fcfaf5;
+            --surface: #ffffff;
+            --ink: #1c1a17;
+            --ink-muted: #575249;
+            --ink-faint: #807a70;
+            --rule: #ded8cb;
+            --rule-dark: #2c2824;
+            --oxblood: #7b2a26;
+            --oxblood-tint: #f5ebea;
+            --font-serif: "Iowan Old Style", "Palatino Linotype", "URW Palladio L", Palatino, Georgia, serif;
+            --font-mono: "SF Mono", "Consolas", "Liberation Mono", Courier, monospace;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            font-family: var(--font-serif);
+            background-color: var(--bg);
+            color: var(--ink);
+            margin: 0;
+            padding: 0;
+            line-height: 1.55;
+            font-size: 16px;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        header.broadsheet-masthead {
+            background: var(--bg);
+            border-bottom: 2px solid var(--rule-dark);
+            padding: 24px 20px 14px 20px;
+        }
+
+        .masthead-inner {
+            max-width: 1040px;
+            margin: 0 auto;
+        }
+
+        .top-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            border-bottom: 1px solid var(--rule);
+            padding-bottom: 8px;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--ink-muted);
+        }
+
+        .top-row span.meta-date {
+            font-variant-numeric: tabular-nums;
+        }
+
+        .masthead-title {
+            text-align: center;
+            margin: 18px 0 6px 0;
+        }
+
+        .masthead-title a {
+            color: var(--ink);
+            text-decoration: none;
+            font-size: 38px;
+            font-weight: 700;
+            letter-spacing: -0.01em;
+            text-transform: uppercase;
+        }
+
+        .masthead-subtitle {
+            text-align: center;
+            font-size: 14px;
+            font-style: italic;
+            color: var(--ink-muted);
+            margin: 0 0 16px 0;
+        }
+
+        nav.ledger-nav {
+            border-top: 1px solid var(--rule-dark);
+            border-bottom: 1px solid var(--rule-dark);
+            padding: 8px 0;
+            text-align: center;
+        }
+
+        nav.ledger-nav a {
+            color: var(--ink);
+            text-decoration: none;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            margin: 0 16px;
+            padding: 4px 2px;
+            font-weight: 600;
+        }
+
+        nav.ledger-nav a:hover, nav.ledger-nav a.active {
+            color: var(--oxblood);
+            border-bottom: 2px solid var(--oxblood);
+        }
+
+        .container {
+            max-width: 1040px;
+            margin: 0 auto;
+            padding: 32px 20px 70px 20px;
+        }
+
+        h1.headline-title {
+            font-size: 28px;
+            font-weight: 700;
+            line-height: 1.25;
+            margin: 0 0 16px 0;
+            color: var(--ink);
+            border-bottom: 2px solid var(--rule-dark);
+            padding-bottom: 10px;
+        }
+
+        h2.section-label {
+            font-size: 17px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: var(--oxblood);
+            border-bottom: 1px solid var(--rule);
+            padding-bottom: 4px;
+            margin: 32px 0 14px 0;
+        }
+
+        h3.subsection-label {
+            font-size: 16px;
+            font-weight: 700;
+            margin: 20px 0 8px 0;
+            color: var(--ink);
+        }
+
+        p {
+            margin: 0 0 14px 0;
+        }
+
+        a {
+            color: var(--oxblood);
+            text-decoration: underline;
+            text-underline-offset: 2px;
+        }
+
+        a:hover {
+            color: #4a1715;
+        }
+
+        /* Ledger table styles */
+        table.ledger-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+            margin: 20px 0 32px 0;
+            border-top: 2px solid var(--rule-dark);
+            border-bottom: 2px solid var(--rule-dark);
+        }
+
+        table.ledger-table th {
+            text-align: left;
+            padding: 9px 12px;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.07em;
+            background: #f4eee2;
+            border-bottom: 1px solid var(--rule-dark);
+            color: var(--ink);
+        }
+
+        table.ledger-table td {
+            padding: 10px 12px;
+            border-bottom: 1px solid var(--rule);
+            vertical-align: top;
+            font-variant-numeric: tabular-nums;
+        }
+
+        table.ledger-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        /* Ruled boxes and entries */
+        .ledger-entry {
+            border-bottom: 1px solid var(--rule);
+            padding: 18px 0;
+        }
+
+        .ledger-entry:first-child {
+            padding-top: 0;
+        }
+
+        .ledger-meta {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: var(--ink-faint);
+            margin-bottom: 6px;
+        }
+
+        .tag-oxblood {
+            color: var(--oxblood);
+            font-weight: 700;
+        }
+
+        .tag-testcase {
+            background: var(--oxblood-tint);
+            color: var(--oxblood);
+            border: 1px solid var(--oxblood);
+            padding: 2px 6px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-right: 6px;
+            display: inline-block;
+        }
+
+        .timeline-block {
+            border-left: 2px solid var(--oxblood);
+            padding-left: 18px;
+            margin: 16px 0;
+        }
+
+        .timeline-item {
+            margin-bottom: 14px;
+        }
+
+        .memo-box {
+            background: #fff;
+            border: 1px solid var(--rule);
+            border-left: 4px solid var(--oxblood);
+            padding: 18px 20px;
+            margin: 20px 0;
+        }
+
+        ul.ledger-list {
+            margin: 8px 0 16px 20px;
+            padding: 0;
+        }
+
+        ul.ledger-list li {
+            margin-bottom: 6px;
+        }
+
+        .spacer { height: 10px; }
+
+        footer.broadsheet-footer {
+            border-top: 2px solid var(--rule-dark);
+            padding: 26px 20px;
+            text-align: center;
+            font-size: 13px;
+            color: var(--ink-muted);
+            background: var(--bg);
+        }
+
+        @media (max-width: 768px) {
+            .top-row { flex-direction: column; gap: 4px; }
+            nav.ledger-nav a { display: inline-block; margin: 4px 8px; font-size: 13px; }
+            .masthead-title a { font-size: 28px; }
+            table.ledger-table { display: block; overflow-x: auto; }
+        }
+
+        @media print {
+            body { background: #fff; color: #000; font-size: 11pt; }
+            header.broadsheet-masthead, footer.broadsheet-footer, nav.ledger-nav { display: none; }
+            .container { max-width: 100%; padding: 0; }
+            a { text-decoration: none; color: #000; }
+            .memo-box { border: 1px solid #ccc; }
+        }
+    </style>
+</head>
+<body>
+    <header class="broadsheet-masthead">
+        <div class="masthead-inner">
+            <div class="top-row">
+                <span>Independent Public Account &bull; Olympia & Thurston County</span>
+                <span class="meta-date">Vol. I &bull; Record Current to October 2026</span>
+            </div>
+            <div class="masthead-title">
+                <a href="../index.html">Loretta's Ledger</a>
+            </div>
+            <div class="masthead-subtitle">
+                An Account of Local Decisions, Upstream Influences, and Public Trajectory
+            </div>
+            <nav class="ledger-nav">
+                <a href="../index.html" class="">This Week</a>
+                <a href="../matters.html" class="">Matters</a>
+                <a href="../actors.html" class="">Who's in the Room</a>
+                <a href="../archive.html" class="active">Archive</a>
+                <a href="../about.html" class="">About</a>
+                <a href="../method.html" class="">Method</a>
+            </nav>
+        </div>
+    </header>
+    <div class="container">
+        <h1 class="headline-title">Public Hearing: Proposed Ordinance to Adjust Thurston Conservation District&#x27;s Rates</h1>
+<div class="spacer"></div>
+<h2 class="section-label">For Staff</h2>
+<p><strong>Neutral Policy Memo &amp; Operational Considerations</strong></p>
+<ul class="ledger-list">
+<li><strong>Administrative Summary</strong>: The Board of County Commissioners has set a public hearing for Tuesday, October 20, 2026, at 3:30 PM in the Thurston County Atrium and via Zoom. The proposed ordinance adjusts the annual assessment rates levied on real property parcels across the county to fund the Thurston Conservation District. The hearing notice schedules public testimony before any vote, but the specific per-parcel dollar increases and proposed rate schedules were not attached to the preliminary agenda notice table.</li>
+<li><strong>Upstream Requirements &amp; Statutory Constraints</strong>: Washington State Conservation Commission (state_agency): mechanism `unknown`</li>
+<li><strong>Litmus Policy Checks</strong>: Cost and who pays (This action directly modifies mandatory per-parcel assessments collected through property tax statements, establishing the recurring financial burden landowners and working agricultural operators will pay to finance the conservation district&#x27;s operations.); Subsidiarity (While the county commissioners must vote to adopt the ordinance, conservation district assessments operate under state statutory framework (RCW 89.08.400), which dictates how rates are calculated and sets limits on county discretion.)</li>
+<li><strong>Key Dependencies &amp; Open Questions to Clarify</strong>:</li>
+<li>What is the exact proposed dollar increase per parcel, and does it include different rate tiers for rural residential, commercial, and working agricultural acreage?</li>
+<li>Does the ordinance include a multi-year sunset date requiring re-authorization, or is this a permanent rate schedule?</li>
+<li>What percentage of the newly generated revenue will fund direct, on-the-ground technical services for landowners versus district administrative overhead?</li>
+</ul>
+<div class="spacer"></div>
+<h2 class="section-label">For Residents</h2>
+<p><strong>What Is Happening</strong></p>
+<p>The Thurston County Board of Commissioners is holding a public hearing to consider an ordinance adjusting the rates and assessments collected from county landowners on behalf of the Thurston Conservation District.</p>
+<div class="spacer"></div>
+<p>The Board of County Commissioners has set a public hearing for Tuesday, October 20, 2026, at 3:30 PM in the Thurston County Atrium and via Zoom. The proposed ordinance adjusts the annual assessment rates levied on real property parcels across the county to fund the Thurston Conservation District. The hearing notice schedules public testimony before any vote, but the specific per-parcel dollar increases and proposed rate schedules were not attached to the preliminary agenda notice table.</p>
+<div class="spacer"></div>
+<p><strong>Why It May Matter</strong></p>
+<ul class="ledger-list">
+<li><strong>Cost and who pays</strong>: This action directly modifies mandatory per-parcel assessments collected through property tax statements, establishing the recurring financial burden landowners and working agricultural operators will pay to finance the conservation district&#x27;s operations.</li>
+<li><strong>Subsidiarity</strong>: While the county commissioners must vote to adopt the ordinance, conservation district assessments operate under state statutory framework (RCW 89.08.400), which dictates how rates are calculated and sets limits on county discretion.</li>
+</ul>
+<div class="spacer"></div>
+<p><strong>What to Do &amp; How to Participate</strong></p>
+<ul class="ledger-list">
+<li><strong>Meeting Date</strong>: 2026-10-20</li>
+<li><strong>Comment Deadline</strong>: 2026-10-20 (2 hrs prior to start)</li>
+<li><strong>How to Comment</strong>: Email testimony to the Clerk of the Board at <a href="https://www.thurstoncountywa.gov/bocc/contact" target="_blank" rel="noopener">https://www.thurstoncountywa.gov/bocc/contact</a> or register for Zoom public testimony.</li>
+<li><strong>Official Packet</strong>: <a href="https://www.thurstoncountywa.gov/meetings-and-agendas" target="_blank" rel="noopener">Thurston County Agenda Record</a></li>
+</ul>
+<div class="spacer"></div>
+<h2 class="section-label">Trajectory</h2>
+<ul class="ledger-list">
+<li><strong>Origin</strong>: - <strong>Thurston Conservation District &amp; State Law</strong>: Initiated by the Thurston Conservation District Board of Supervisors under state conservation district statute (RCW 89.08.400), which requires county legislative approval to place rates on local tax rolls.</li>
+<li><strong>Current Stage</strong>: Scheduled for Public Deliberation (2026-10-20)</li>
+<li><strong>Documented Next Step</strong>: Action vote by governing body following public hearing and record close.</li>
+</ul>
+<div class="spacer"></div>
+<p><strong>Timeline &amp; Milestones</strong></p>
+<ul class="ledger-list">
+<li><strong>2026-10-20</strong>: Official legislative agenda review / public hearing scheduled (Thurston County). <a href="https://www.thurstoncountywa.gov/meetings-and-agendas" target="_blank" rel="noopener">Official Record</a></li>
+</ul>
+<div class="spacer"></div>
+    </div>
+    <footer class="broadsheet-footer">
+        Loretta's Ledger &bull; Documented Public Record for Thurston County and City of Olympia &bull; Strictly Factual
+    </footer>
+</body>
+</html>

@@ -6,243 +6,347 @@
     <title>BOH Public Hearing: Revisions to Drinking Water Code for Thurston County Article III — Loretta's Ledger</title>
     <style>
         :root {
-            --bg: #0b1120;
-            --surface: #1e293b;
-            --surface-hover: #24344d;
-            --border: #334155;
-            --text: #f8fafc;
-            --muted: #94a3b8;
-            --accent: #38bdf8;
-            --accent-glow: rgba(56, 189, 248, 0.15);
-            --gold: #f59e0b;
-            --green: #10b981;
+            --bg: #fcfaf5;
+            --surface: #ffffff;
+            --ink: #1c1a17;
+            --ink-muted: #575249;
+            --ink-faint: #807a70;
+            --rule: #ded8cb;
+            --rule-dark: #2c2824;
+            --oxblood: #7b2a26;
+            --oxblood-tint: #f5ebea;
+            --font-serif: "Iowan Old Style", "Palatino Linotype", "URW Palladio L", Palatino, Georgia, serif;
+            --font-mono: "SF Mono", "Consolas", "Liberation Mono", Courier, monospace;
         }
+
+        * { box-sizing: border-box; }
+
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background: var(--bg);
-            color: var(--text);
+            font-family: var(--font-serif);
+            background-color: var(--bg);
+            color: var(--ink);
             margin: 0;
             padding: 0;
-            line-height: 1.6;
+            line-height: 1.55;
+            font-size: 16px;
+            -webkit-font-smoothing: antialiased;
         }
-        header {
-            background: rgba(15, 23, 42, 0.95);
-            border-bottom: 1px solid var(--border);
-            padding: 18px 24px;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            backdrop-filter: blur(8px);
+
+        header.broadsheet-masthead {
+            background: var(--bg);
+            border-bottom: 2px solid var(--rule-dark);
+            padding: 24px 20px 14px 20px;
         }
-        .header-inner {
-            max-width: 1100px;
+
+        .masthead-inner {
+            max-width: 1040px;
             margin: 0 auto;
+        }
+
+        .top-row {
             display: flex;
-            align-items: center;
             justify-content: space-between;
+            align-items: baseline;
+            border-bottom: 1px solid var(--rule);
+            padding-bottom: 8px;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--ink-muted);
         }
-        .logo {
-            font-size: 20px;
-            font-weight: 700;
-            color: #fff;
+
+        .top-row span.meta-date {
+            font-variant-numeric: tabular-nums;
+        }
+
+        .masthead-title {
+            text-align: center;
+            margin: 18px 0 6px 0;
+        }
+
+        .masthead-title a {
+            color: var(--ink);
             text-decoration: none;
-            letter-spacing: -0.02em;
+            font-size: 38px;
+            font-weight: 700;
+            letter-spacing: -0.01em;
+            text-transform: uppercase;
         }
-        .logo span { color: var(--accent); }
-        nav a {
-            color: var(--muted);
+
+        .masthead-subtitle {
+            text-align: center;
+            font-size: 14px;
+            font-style: italic;
+            color: var(--ink-muted);
+            margin: 0 0 16px 0;
+        }
+
+        nav.ledger-nav {
+            border-top: 1px solid var(--rule-dark);
+            border-bottom: 1px solid var(--rule-dark);
+            padding: 8px 0;
+            text-align: center;
+        }
+
+        nav.ledger-nav a {
+            color: var(--ink);
             text-decoration: none;
             font-size: 14px;
-            margin-left: 20px;
-            font-weight: 500;
-            transition: color 0.15s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            margin: 0 16px;
+            padding: 4px 2px;
+            font-weight: 600;
         }
-        nav a:hover, nav a.active { color: var(--accent); }
+
+        nav.ledger-nav a:hover, nav.ledger-nav a.active {
+            color: var(--oxblood);
+            border-bottom: 2px solid var(--oxblood);
+        }
+
         .container {
-            max-width: 1100px;
+            max-width: 1040px;
             margin: 0 auto;
-            padding: 32px 20px 60px 20px;
+            padding: 32px 20px 70px 20px;
         }
-        .hero {
-            border-bottom: 1px solid var(--border);
-            padding-bottom: 28px;
-            margin-bottom: 32px;
+
+        h1.headline-title {
+            font-size: 28px;
+            font-weight: 700;
+            line-height: 1.25;
+            margin: 0 0 16px 0;
+            color: var(--ink);
+            border-bottom: 2px solid var(--rule-dark);
+            padding-bottom: 10px;
         }
-        .hero h1 {
-            font-size: 32px;
-            margin: 0 0 10px 0;
-            font-weight: 800;
-            line-height: 1.2;
+
+        h2.section-label {
+            font-size: 17px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: var(--oxblood);
+            border-bottom: 1px solid var(--rule);
+            padding-bottom: 4px;
+            margin: 32px 0 14px 0;
         }
-        .hero p {
+
+        h3.subsection-label {
             font-size: 16px;
-            color: var(--muted);
-            margin: 0;
-            max-width: 800px;
+            font-weight: 700;
+            margin: 20px 0 8px 0;
+            color: var(--ink);
         }
-        .badge {
-            display: inline-block;
-            padding: 3px 8px;
-            border-radius: 4px;
+
+        p {
+            margin: 0 0 14px 0;
+        }
+
+        a {
+            color: var(--oxblood);
+            text-decoration: underline;
+            text-underline-offset: 2px;
+        }
+
+        a:hover {
+            color: #4a1715;
+        }
+
+        /* Ledger table styles */
+        table.ledger-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+            margin: 20px 0 32px 0;
+            border-top: 2px solid var(--rule-dark);
+            border-bottom: 2px solid var(--rule-dark);
+        }
+
+        table.ledger-table th {
+            text-align: left;
+            padding: 9px 12px;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.07em;
+            background: #f4eee2;
+            border-bottom: 1px solid var(--rule-dark);
+            color: var(--ink);
+        }
+
+        table.ledger-table td {
+            padding: 10px 12px;
+            border-bottom: 1px solid var(--rule);
+            vertical-align: top;
+            font-variant-numeric: tabular-nums;
+        }
+
+        table.ledger-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        /* Ruled boxes and entries */
+        .ledger-entry {
+            border-bottom: 1px solid var(--rule);
+            padding: 18px 0;
+        }
+
+        .ledger-entry:first-child {
+            padding-top: 0;
+        }
+
+        .ledger-meta {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: var(--ink-faint);
+            margin-bottom: 6px;
+        }
+
+        .tag-oxblood {
+            color: var(--oxblood);
+            font-weight: 700;
+        }
+
+        .tag-testcase {
+            background: var(--oxblood-tint);
+            color: var(--oxblood);
+            border: 1px solid var(--oxblood);
+            padding: 2px 6px;
             font-size: 11px;
             font-weight: 600;
             text-transform: uppercase;
-        }
-        .badge-jur { background: var(--accent-glow); color: var(--accent); }
-        .badge-testcase { background: rgba(245, 158, 11, 0.15); color: var(--gold); border: 1px solid rgba(245, 158, 11, 0.3); }
-        .badge-topic { background: #1e3a5f; color: #7dd3fc; margin-right: 4px; }
-        .card {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            padding: 20px;
-            margin-bottom: 20px;
-            transition: transform 0.15s ease, border-color 0.15s ease;
-        }
-        .card:hover { border-color: #475569; }
-        .card-title {
-            font-size: 18px;
-            font-weight: 700;
-            margin: 0 0 8px 0;
-        }
-        .card-title a {
-            color: #fff;
-            text-decoration: none;
-        }
-        .card-title a:hover { color: var(--accent); }
-        .card-meta {
-            font-size: 13px;
-            color: var(--muted);
-            margin-bottom: 12px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        .btn {
+            letter-spacing: 0.05em;
+            margin-right: 6px;
             display: inline-block;
-            background: var(--accent);
-            color: #0b1120;
-            font-weight: 600;
-            font-size: 13px;
-            padding: 8px 14px;
-            border-radius: 6px;
-            text-decoration: none;
-            margin-top: 10px;
         }
-        .btn:hover { opacity: 0.9; }
-        pre {
-            background: #060913;
-            border: 1px solid var(--border);
-            padding: 16px;
-            border-radius: 6px;
-            overflow-x: auto;
-            color: #cbd5e1;
-            font-size: 13px;
-        }
-        blockquote {
-            border-left: 3px solid var(--accent);
+
+        .timeline-block {
+            border-left: 2px solid var(--oxblood);
+            padding-left: 18px;
             margin: 16px 0;
-            padding-left: 16px;
-            color: #cbd5e1;
-            font-style: italic;
         }
-        footer {
-            border-top: 1px solid var(--border);
-            padding: 24px;
+
+        .timeline-item {
+            margin-bottom: 14px;
+        }
+
+        .memo-box {
+            background: #fff;
+            border: 1px solid var(--rule);
+            border-left: 4px solid var(--oxblood);
+            padding: 18px 20px;
+            margin: 20px 0;
+        }
+
+        ul.ledger-list {
+            margin: 8px 0 16px 20px;
+            padding: 0;
+        }
+
+        ul.ledger-list li {
+            margin-bottom: 6px;
+        }
+
+        .spacer { height: 10px; }
+
+        footer.broadsheet-footer {
+            border-top: 2px solid var(--rule-dark);
+            padding: 26px 20px;
             text-align: center;
-            color: var(--muted);
             font-size: 13px;
+            color: var(--ink-muted);
+            background: var(--bg);
         }
+
+        @media (max-width: 768px) {
+            .top-row { flex-direction: column; gap: 4px; }
+            nav.ledger-nav a { display: inline-block; margin: 4px 8px; font-size: 13px; }
+            .masthead-title a { font-size: 28px; }
+            table.ledger-table { display: block; overflow-x: auto; }
+        }
+
         @media print {
-            body { background: #fff; color: #000; }
-            header, footer, nav, .btn { display: none; }
+            body { background: #fff; color: #000; font-size: 11pt; }
+            header.broadsheet-masthead, footer.broadsheet-footer, nav.ledger-nav { display: none; }
             .container { max-width: 100%; padding: 0; }
-            .card { border: none; padding: 0; }
+            a { text-decoration: none; color: #000; }
+            .memo-box { border: 1px solid #ccc; }
         }
     </style>
 </head>
 <body>
-    <header>
-        <div class="header-inner">
-            <a href="../index.html" class="logo">Loretta's <span>Ledger</span></a>
-            <nav>
-                <a href="../index.html" class="">Home</a>
-                <a href="../briefs.html" class="active">Policy Briefs</a>
-                <a href="../action.html" class="">Citizen Action</a>
-                <a href="../test-cases.html" class="">Test Cases</a>
-                <a href="../influences.html" class="">Who's Behind This</a>
+    <header class="broadsheet-masthead">
+        <div class="masthead-inner">
+            <div class="top-row">
+                <span>Independent Public Account &bull; Olympia & Thurston County</span>
+                <span class="meta-date">Vol. I &bull; Record Current to October 2026</span>
+            </div>
+            <div class="masthead-title">
+                <a href="../index.html">Loretta's Ledger</a>
+            </div>
+            <div class="masthead-subtitle">
+                An Account of Local Decisions, Upstream Influences, and Public Trajectory
+            </div>
+            <nav class="ledger-nav">
+                <a href="../index.html" class="">This Week</a>
+                <a href="../matters.html" class="">Matters</a>
+                <a href="../actors.html" class="">Who's in the Room</a>
+                <a href="../archive.html" class="active">Archive</a>
+                <a href="../about.html" class="">About</a>
+                <a href="../method.html" class="">Method</a>
             </nav>
         </div>
     </header>
     <div class="container">
-        <h1>Brief: BOH Public Hearing: Revisions to Drinking Water Code for Thurston County Article III</h1>
-<br>
-<p><strong>Jurisdiction</strong>: Thurston County</p>
-<p><strong>Meeting Date</strong>: 2026-10-13</p>
-<p><strong>Original Source</strong>: <a href="https://www.thurstoncountywa.gov/media/35264" target="_blank">Thurston County Official Record</a></p>
-<br>
-<h2>Summary (facts only)</h2>
-<p>The Thurston County governing body has scheduled consideration of: BOH Public Hearing: Revisions to Drinking Water Code for Thurston County Article III.</p>
-<br>
-<p><strong>Documented Key Facts:</strong></p>
-<p><strong>Staff / Presenters</strong>: Melanie Bruno</p>
-<p><strong>Key Documented Provisions</strong>: Article III, Sanitary Code</p>
-<br>
-<br>
-<p><strong>Official Documents Examined (1 total):</strong></p>
-<ul>
-<li>*BOH Public Hearing: Revisions to Drinking Water Code for Thurston County Article III*</li>
+        <h1 class="headline-title">BOH Public Hearing: Revisions to Drinking Water Code for Thurston County Article III</h1>
+<div class="spacer"></div>
+<h2 class="section-label">For Staff</h2>
+<p><strong>Neutral Policy Memo &amp; Operational Considerations</strong></p>
+<ul class="ledger-list">
+<li><strong>Administrative Summary</strong>: The Thurston County Board of Health has scheduled a public hearing on Tuesday, October 13, 2026, at 4:15 PM in the Thurston County Atrium and via Zoom. The hearing addresses proposed revisions to Article III of the Thurston County Sanitary Code, which regulates private wells, two-party residential water systems, and Group B public water supplies. The proposed updates revise sanitary survey intervals, hydrogeological review requirements, and water availability certifications required for building permits across unincorporated Thurston County.</li>
+<li><strong>Upstream Requirements &amp; Statutory Constraints</strong>: Washington State Department of Health (state_agency): mechanism `mandate`</li>
+<li><strong>Litmus Policy Checks</strong>: Ownership (Revisions establish administrative permitting criteria and monitoring burdens that encumber private residential water systems, wellhead protection zones, and parcel development feasibility.); Subsidiarity (County sanitary rules must align with Washington State Department of Health administrative regulations (WAC 246), limiting local board flexibility in tailoring rules to rural Thurston conditions.); Cost and who pays (Testing, engineering reviews, and sanitary code compliance fees are borne directly by individual well owners and small Group B water system users.)</li>
+<li><strong>Key Dependencies &amp; Open Questions to Clarify</strong>:</li>
+<li>What are the specific fee and testing increases required for small Group B and two-party residential well owners under the revised Article III?</li>
+<li>Are existing conforming wells grandfathered against costly mandatory hydrogeological reviews when replacing equipment?</li>
 </ul>
-<br>
-<h2>Litmus Test Evaluation</h2>
-<p>1. <strong>Subsidiarity</strong>: [Rating: Cuts against]. Policy originates or is conditioned by outside/higher authority: Washington State Department of Health (mandate). Local discretion is constrained by upstream mandates or funding conditions. [Source: https://www.thurstoncountywa.gov/media/35264]</p>
-<p>2. <strong>Ownership</strong>: [Rating: Cuts against]. Restricts private well development and water system modifications, imposing administrative encumbrances on private residential parcels. [Source: https://www.thurstoncountywa.gov/media/35264]</p>
-<p>3. <strong>Small and local vs. large and distant</strong>: [Rating: Cuts against]. Complex engineering and water-testing rules place fixed costs on small two-party or rural water systems that large municipal utilities easily absorb. [Source: https://www.thurstoncountywa.gov/media/35264]</p>
-<p>4. <strong>Family and household</strong>: [Rating: Cuts against]. Subjects household domestic water self-sufficiency to administrative public health regulations and inspection requirements. [Source: https://www.thurstoncountywa.gov/media/35264]</p>
-<p>5. <strong>Cost and who pays</strong>: [Rating: Cuts against]. Private well owners and rural water consumers pay for required testing, inspections, and administrative compliance. [Source: https://www.thurstoncountywa.gov/media/35264]</p>
-<p>6. <strong>Consent and process</strong>: [Rating: Supports]. Formally noticed for public hearing with advance citizen comment and registration opportunities. [Source: https://www.thurstoncountywa.gov/media/35264]</p>
-<p>7. <strong>Reversibility and accountability</strong>: [Rating: Cuts against]. Tied to state statutory update mandates (GMA periodic review), intergovernmental contracts, or administrative rule minimums (prepared by Melanie Bruno) that locally elected officials cannot easily alter or repeal. [Source: https://www.thurstoncountywa.gov/media/35264]</p>
-<p>8. <strong>Place</strong>: [Rating: Neutral / unclear]. Source documents do not specify localized geographical or neighborhood historical impacts.</p>
-<br>
-<h2>Who&#x27;s Behind This? (Upstream Influence)</h2>
-<p><strong>Documented Lineage Chain:</strong></p>
-<pre><code>
-• Washington State Department of Health (state_agency) via mandate
-</code></pre>
-<br>
-<ul>
-<li><strong>Washington State Department of Health</strong> (state_agency): Influence operating via `mandate`. Evidence: &quot;BOH Public Hearing: Revisions to Drinking Water Code for Thurston County Article III Meeting Time: 4:15 PM Location: Thurston County Atrium, Zoom Documents &amp;...&quot; <a href="https://www.thurstoncountywa.gov/media/35264" target="_blank">Source Document</a></li>
+<div class="spacer"></div>
+<h2 class="section-label">For Residents</h2>
+<p><strong>What Is Happening</strong></p>
+<p>The Thurston County Board of Health is holding a public hearing on proposed revisions to Sanitary Code Article III governing drinking water systems and private well standards.</p>
+<div class="spacer"></div>
+<p>The Thurston County Board of Health has scheduled a public hearing on Tuesday, October 13, 2026, at 4:15 PM in the Thurston County Atrium and via Zoom. The hearing addresses proposed revisions to Article III of the Thurston County Sanitary Code, which regulates private wells, two-party residential water systems, and Group B public water supplies. The proposed updates revise sanitary survey intervals, hydrogeological review requirements, and water availability certifications required for building permits across unincorporated Thurston County.</p>
+<div class="spacer"></div>
+<p><strong>Why It May Matter</strong></p>
+<ul class="ledger-list">
+<li><strong>Ownership</strong>: Revisions establish administrative permitting criteria and monitoring burdens that encumber private residential water systems, wellhead protection zones, and parcel development feasibility.</li>
+<li><strong>Subsidiarity</strong>: County sanitary rules must align with Washington State Department of Health administrative regulations (WAC 246), limiting local board flexibility in tailoring rules to rural Thurston conditions.</li>
+<li><strong>Cost and who pays</strong>: Testing, engineering reviews, and sanitary code compliance fees are borne directly by individual well owners and small Group B water system users.</li>
 </ul>
-<br>
-<h2>Overall Analysis</h2>
-<p>*(Analysis)*: This proposal represents formal policy action by Thurston County. Citizens should evaluate whether the conditions, financial obligations, and regulatory terms preserve local self-determination, protect independent ownership, and respect the voice of longstanding residents.</p>
-<br>
-<h2>Plain-Language Effect for Residents</h2>
-<p>Official policy consideration by Thurston County governing body. Review supporting documents for full scope.</p>
-<br>
-<h2>Recommended Response &amp; A Way Forward</h2>
-<h3>For Citizens &amp; Property Owners:</h3>
-<ul>
-<li><strong>Ask Who Prompted the Proposal</strong>: Inquire during public comment whether this policy originated from local citizen requests or outside policy organizations.</li>
-<li><strong>Request Plain-Language Documentation</strong>: Demand that staff provide a one-page non-technical summary of costs, legal liabilities, and regulatory obligations before final action.</li>
+<div class="spacer"></div>
+<p><strong>What to Do &amp; How to Participate</strong></p>
+<ul class="ledger-list">
+<li><strong>Meeting Date</strong>: 2026-10-13</li>
+<li><strong>Comment Deadline</strong>: 2026-10-13 (2 hrs prior to start)</li>
+<li><strong>How to Comment</strong>: Email testimony to the Clerk of the Board at <a href="https://www.thurstoncountywa.gov/bocc/contact" target="_blank" rel="noopener">https://www.thurstoncountywa.gov/bocc/contact</a> or register for Zoom public testimony.</li>
+<li><strong>Official Packet</strong>: <a href="https://www.thurstoncountywa.gov/media/35264" target="_blank" rel="noopener">Thurston County Agenda Record</a></li>
 </ul>
-<br>
-<h3>For Local Elected Officials:</h3>
-<ul>
-<li><strong>Preserve Local Flexibility</strong>: Avoid entering into binding intergovernmental commitments that limit future Thurston County council discretion or voter accountability.</li>
-<li><strong>Disclose Upstream Influences</strong>: Require all staff reports to state clearly whether outside model legislation or state agency pressure prompted the proposal.</li>
+<div class="spacer"></div>
+<h2 class="section-label">Trajectory</h2>
+<ul class="ledger-list">
+<li><strong>Origin</strong>: - <strong>Washington State Department of Health</strong>: Sanitary Code Article III revisions align local standards with Washington Administrative Code (WAC 246) drinking water mandates.</li>
+<li><strong>Current Stage</strong>: Scheduled for Public Deliberation (2026-10-13)</li>
+<li><strong>Documented Next Step</strong>: Action vote by governing body following public hearing and record close.</li>
 </ul>
-<br>
-<h2>Next Step for Citizens</h2>
-<ul>
-<li><strong>Meeting / Public Hearing</strong>: 2026-10-13</li>
-<li><strong>Public Comment Deadline</strong>: 2026-10-13 (2 hrs prior to start)</li>
-<li><strong>Official Documentation</strong>: <a href="https://www.thurstoncountywa.gov/media/35264" target="_blank">Review Complete Packet</a></li>
+<div class="spacer"></div>
+<p><strong>Timeline &amp; Milestones</strong></p>
+<ul class="ledger-list">
+<li><strong>2026-10-13</strong>: Official legislative agenda review / public hearing scheduled (Thurston County). <a href="https://www.thurstoncountywa.gov/media/35264" target="_blank" rel="noopener">Official Record</a></li>
 </ul>
-<br>
+<div class="spacer"></div>
     </div>
-    <footer>
-        Loretta's Ledger &bull; Independent local policy publication for Olympia and Thurston County &bull; People-First Policy Framework
+    <footer class="broadsheet-footer">
+        Loretta's Ledger &bull; Documented Public Record for Thurston County and City of Olympia &bull; Strictly Factual
     </footer>
 </body>
 </html>
