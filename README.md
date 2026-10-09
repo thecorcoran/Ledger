@@ -46,8 +46,10 @@ Running `./ledger` with no arguments will always display this quick reminder.
 ## Safety & Publishing Rules
 
 - **Zero Unreviewed Publishing**: The public site generator will never publish an unreviewed draft. Items must have explicit human review (`reviewed = true`) before appearing in public archives.
-- **Approval Stays Local**: Clicking **Approve** in the dashboard generates the HTML pages locally in `docs/` for your immediate verification. It **never** pushes to the internet or GitHub.
-- **Explicit Publishing Step**: Pushing to the public website remains a separate, deliberate action using `./ledger push`.
+- **Local-Only Architecture**: All running (`./ledger run`), reviewing (`./ledger web`), and draft approvals happen strictly on your local machine. Your local machine is the single writer to `data/ledger.db`. The database is untracked in Git to avoid binary merge conflicts.
+- **No Cloud Automation**: There are no GitHub Actions workflows, cron jobs, or automated cloud bots writing to this repository. No automated job will ever run unreviewed pipelines or commit behind your back.
+- **Explicit Publishing Step**: Pushing to the public website remains a separate, deliberate action using `./ledger push`. It stages and publishes the public website in `docs/`, never `data/`.
+
 
 ---
 
@@ -88,6 +90,6 @@ Every upstream influence is documented with direct citations and links to offici
   - `upstream/`: Registry matching, citation detection, and influence chain tracing.
   - `view.py`: Single-page editorial Control Center (`http://localhost:8000`).
   - `export.py`: Static site builder and PDF brief generator (`docs/`).
-- `data/`: Local SQLite database (`ledger.db`) and cached document attachments.
+- `data/`: Local-only SQLite database (`ledger.db`) and cached document attachments (untracked in git).
 - `docs/`: The public website files published to GitHub Pages.
 - `tests/`: Automated unit and integration tests.

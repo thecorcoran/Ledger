@@ -14,7 +14,8 @@ case "$1" in
     ;;
   push|publish)
     echo "Staging approved briefs and public site updates..."
-    git add docs/ site/_site/ data/ledger.db
+    git add docs/ site/_site/
+    git add -u ':!data/**'
     if git diff --staged --quiet; then
       echo "No newly approved drafts to commit."
     else
