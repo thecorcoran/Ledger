@@ -4,7 +4,4 @@ __pycache__/
 *.egg-info/
 dist/
 build/
-data/cache/
-data/ledger.db
-data/*.db
-data/*.sqlite*
+data/

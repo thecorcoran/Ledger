@@ -16,6 +16,11 @@ case "$1" in
     echo "Staging approved briefs and public site updates..."
     git add docs/ site/_site/
     git add -u ':!data/**'
+    git reset HEAD -- data/ >/dev/null 2>&1 || true
+    if git diff --staged --name-only | grep -q '^data/'; then
+      echo "ERROR: Attempted to stage files in data/. Aborting push."
+      exit 1
+    fi
     if git diff --staged --quiet; then
       echo "No newly approved drafts to commit."
     else
