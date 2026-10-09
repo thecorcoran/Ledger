@@ -127,7 +127,7 @@ class TestExport(unittest.TestCase):
         with open(brief_file, "r", encoding="utf-8") as f:
             html = f.read()
         self.assertIn('<a href="../index.html">Loretta\'s Ledger</a>', html)
-        self.assertIn('<a href="../archive.html" class="active">Archive</a>', html)
+        self.assertIn('<a href="../matters.html" class="">Matters</a>', html)
 
     def test_dashboard_handler_routes(self):
         import io

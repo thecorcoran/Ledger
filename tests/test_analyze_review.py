@@ -181,7 +181,9 @@ class TestAnalyzeAndReview(unittest.TestCase):
         self.assertIn("Verdict: Cuts against", brief)
         self.assertIn("Verdict: Mixed", brief)
         self.assertIn("The Strongest Case for This", brief)
-        self.assertIn("What We'd Want to Know", brief)
+        self.assertIn("Questions and Possible Actions", brief)
+        self.assertIn("Who to Contact", brief)
+        self.assertIn("What to Ask or Advocate For", brief)
         self.assertIn("RCW 89.08", brief)
 
 

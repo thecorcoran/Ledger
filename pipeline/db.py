@@ -24,6 +24,7 @@ CREATE TABLE IF NOT EXISTS items (
     meeting_date TEXT,
     comment_deadline TEXT,
     status TEXT DEFAULT 'active',
+    display_title TEXT,
     hash TEXT NOT NULL,
     created_at TEXT NOT NULL DEFAULT (datetime('now'))
 );
@@ -197,6 +198,12 @@ def init_db(db_path: Optional[Path] = None) -> None:
     conn = get_db_connection(db_path)
     try:
         conn.executescript(SCHEMA_SQL)
+        # Migration: ensure display_title exists in items
+        cursor = conn.cursor()
+        cursor.execute("PRAGMA table_info(items)")
+        cols = [row[1] for row in cursor.fetchall()]
+        if "display_title" not in cols:
+            cursor.execute("ALTER TABLE items ADD COLUMN display_title TEXT")
         conn.commit()
     finally:
         conn.close()

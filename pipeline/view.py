@@ -15,8 +15,10 @@ import socketserver
 import sqlite3
 import sys
 import urllib.parse
+from datetime import datetime
 from pathlib import Path
 from typing import Optional
+import yaml
 
 from pipeline.db import DEFAULT_DB_PATH, get_db_connection
 from pipeline.review import approve_draft, reject_draft
@@ -129,7 +131,7 @@ def generate_html_dashboard(
         unreviewed = conn.execute(
             """
             SELECT d.id, d.item_id, d.kind, d.markdown, d.reviewed,
-                   i.title as item_title, i.jurisdiction, i.meeting_date, i.url as item_url,
+                   i.title as item_title, i.display_title, i.jurisdiction, i.meeting_date, i.url as item_url,
                    t.flagged_reason as test_case_reason,
                    (CASE WHEN t.item_id IS NOT NULL THEN 1 WHEN r.item_id IS NOT NULL THEN 2 ELSE 3 END) as priority_rank
             FROM drafts d
@@ -146,7 +148,7 @@ def generate_html_dashboard(
         published = conn.execute(
             """
             SELECT d.id, d.item_id, d.kind, d.reviewed, d.reviewed_at,
-                   i.title as item_title, i.jurisdiction, i.meeting_date, i.url as item_url
+                   i.title as item_title, i.display_title, i.jurisdiction, i.meeting_date, i.url as item_url
             FROM drafts d
             JOIN items i ON d.item_id = i.id
             WHERE d.reviewed = 1 AND d.kind = 'brief'
@@ -155,6 +157,25 @@ def generate_html_dashboard(
         ).fetchall()
 
         waiting_count = len(unreviewed)
+
+        # Check contacts verification age (flag > 90 days)
+        contacts_path = Path(__file__).resolve().parent.parent / "config" / "contacts.yaml"
+        stale_contacts = []
+        if contacts_path.exists():
+            with open(contacts_path, "r", encoding="utf-8") as f:
+                cdata = yaml.safe_load(f) or {}
+                for cid, cinfo in cdata.get("contacts", {}).items():
+                    v_str = cinfo.get("last_verified")
+                    if v_str:
+                        try:
+                            v_dt = datetime.strptime(v_str, "%Y-%m-%d")
+                            age = (datetime.now() - v_dt).days
+                            if age > 90:
+                                stale_contacts.append(f"{cinfo.get('entity_name', cid)} ({age}d)")
+                        except Exception:
+                            stale_contacts.append(f"{cinfo.get('entity_name', cid)}")
+                    else:
+                        stale_contacts.append(f"{cinfo.get('entity_name', cid)}")
 
         # Determine which draft is actively open for review
         active_draft = None
@@ -168,7 +189,7 @@ def generate_html_dashboard(
                 active_draft = conn.execute(
                     """
                     SELECT d.id, d.item_id, d.kind, d.markdown, d.reviewed,
-                           i.title as item_title, i.jurisdiction, i.meeting_date, i.url as item_url,
+                           i.title as item_title, i.display_title, i.jurisdiction, i.meeting_date, i.url as item_url,
                            t.flagged_reason as test_case_reason
                     FROM drafts d
                     JOIN items i ON d.item_id = i.id
@@ -244,6 +265,7 @@ def generate_html_dashboard(
 
         headline_html = f'<div class="draft-row-headline" style="font-size:13px; color:#cbd5e1; margin-top:6px; line-height:1.4;">{html.escape(headline_text)}</div>' if headline_text else ''
 
+        d_title = d["display_title"] or d["item_title"]
         needs_review_cards.append(f"""
         <div class="draft-row {'active-row' if is_selected else ''}">
             <div class="draft-row-meta">
@@ -253,7 +275,8 @@ def generate_html_dashboard(
                 {tc_flag}
             </div>
             <div class="draft-row-title">
-                <a href="/?draft_id={d['id']}#draft-view">{html.escape(d['item_title'])}</a>
+                <a href="/?draft_id={d['id']}#draft-view"><strong>{html.escape(d_title)}</strong></a>
+                <div style="font-size: 12px; color: #94a3b8; margin-top: 2px;">Official: {html.escape(d['item_title'])}</div>
             </div>
             {headline_html}
         </div>
@@ -363,6 +386,7 @@ def generate_html_dashboard(
     for p in published:
         jur_title = "Olympia" if p["jurisdiction"].lower() == "olympia" else "Thurston County"
         public_url = f"/docs/briefs/brief-{p['item_id']}.html" if p["kind"] == "brief" else f"/docs/action-pages/action-{p['item_id']}.html"
+        p_title = p["display_title"] or p["item_title"]
 
         published_items_html.append(f"""
         <div class="published-row">
@@ -371,7 +395,8 @@ def generate_html_dashboard(
                 <span class="date-text">Published {html.escape(str(p['reviewed_at'] or ''))[:10]}</span>
             </div>
             <div class="published-row-title" style="flex: 1; margin: 0 16px;">
-                <a href="{html.escape(public_url)}" target="_blank">{html.escape(p['item_title'])}</a>
+                <a href="{html.escape(public_url)}" target="_blank"><strong>{html.escape(p_title)}</strong></a>
+                <div style="font-size: 12px; color: #94a3b8; margin-top: 2px;">Official: {html.escape(p['item_title'])}</div>
             </div>
             <div>
                 <a href="{html.escape(public_url)}" target="_blank" class="btn btn-blue" style="font-size: 12px; padding: 4px 12px; text-decoration: none; white-space: nowrap;">View Public Page &rarr;</a>
@@ -433,6 +458,14 @@ def generate_html_dashboard(
         </div>
         """)
     patterns_section_html = "".join(patterns_html) if patterns_html else "<p class='muted-text'>No recurring multi-item patterns detected yet.</p>"
+
+    contacts_warning_html = ""
+    if stale_contacts:
+        contacts_warning_html = f"""
+        <div class="alert alert-warning" style="background:rgba(234, 179, 8, 0.15); border:1px solid #eab308; color:#fde047; padding:12px 16px; border-radius:6px; margin-bottom:20px; font-size:13px;">
+            <strong>⚠️ Contact Verification Warning:</strong> The following contacts in config/contacts.yaml were verified over 90 days ago: <em>{', '.join(stale_contacts)}</em>. Please re-verify against official directories.
+        </div>
+        """
 
     # Banner message
     approved_banner_html = ""
@@ -756,6 +789,7 @@ def generate_html_dashboard(
 
     <div class="container">
         {banner_html}
+        {contacts_warning_html}
 
         <!-- Section 1: Needs your review -->
         <div class="section">

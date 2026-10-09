@@ -291,25 +291,23 @@
                 <a href="index.html" class="">This Week</a>
                 <a href="matters.html" class="active">Matters</a>
                 <a href="actors.html" class="">Who's in the Room</a>
-                <a href="archive.html" class="">Archive</a>
                 <a href="principles.html" class="">Principles</a>
                 <a href="about.html" class="">About</a>
-                <a href="method.html" class="">Method</a>
             </nav>
         </div>
     </header>
     <div class="container">
         
-    <div style="display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 10px; margin-bottom: 12px;">
+    <div style="display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 10px; margin-bottom: 6px;">
         <h1 class="headline-title" style="margin: 0; border: none; padding: 0;">Public Matters Register</h1>
-        <div style="font-size: 13px; text-transform: uppercase; letter-spacing: 0.05em;">
-            <label style="cursor: pointer;">
-                <input type="checkbox" id="test-case-filter" onchange="filterTestCases(this.checked)">
-                <strong>Show Test Cases Only</strong>
-            </label>
+        <div style="font-size: 13px; text-transform: uppercase; letter-spacing: 0.05em; display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
+            <label style="cursor: pointer;"><input type="radio" name="matter-filter" value="all" checked onchange="filterMatters(this.value)"> <strong>All</strong></label>
+            <label style="cursor: pointer;"><input type="radio" name="matter-filter" value="active" onchange="filterMatters(this.value)"> <strong>Active</strong></label>
+            <label style="cursor: pointer;"><input type="radio" name="matter-filter" value="past" onchange="filterMatters(this.value)"> <strong>Past / Completed</strong></label>
+            <label style="cursor: pointer;"><input type="radio" name="matter-filter" value="testcase" onchange="filterMatters(this.value)"> <strong>Test Cases Only</strong></label>
         </div>
     </div>
-    <p>Tracking matters across sessions from origin through final legislative trajectory. Select any matter to inspect its complete timeline and linked official records.</p>
+    <p style="font-size: 15px; color: var(--ink-muted); margin-bottom: 24px;">A complete register of local policy matters tracked across sessions from origin to legislative outcome.</p>
 
     <table class="ledger-table" id="matters-table">
         <thead>
@@ -1187,13 +1185,19 @@
     </table>
 
     <script>
-        function filterTestCases(checked) {
+        function filterMatters(val) {
             var rows = document.querySelectorAll('#matters-table tbody tr');
             rows.forEach(function(r) {
-                if (checked && r.getAttribute('data-testcase') !== '1') {
-                    r.style.display = 'none';
-                } else {
+                var isTc = r.getAttribute('data-testcase') === '1';
+                var isPast = r.getAttribute('data-stage') && (r.getAttribute('data-stage').toLowerCase().includes('concluded') || r.getAttribute('data-stage').toLowerCase().includes('approved') || r.getAttribute('data-stage').toLowerCase().includes('past'));
+                if (val === 'all') {
                     r.style.display = '';
+                } else if (val === 'testcase') {
+                    r.style.display = isTc ? '' : 'none';
+                } else if (val === 'past') {
+                    r.style.display = isPast ? '' : 'none';
+                } else if (val === 'active') {
+                    r.style.display = !isPast ? '' : 'none';
                 }
             });
         }
@@ -1201,7 +1205,7 @@
     
     </div>
     <footer class="broadsheet-footer">
-        Loretta's Ledger &bull; Documented Public Record for Thurston County and City of Olympia &bull; Strictly Factual
+        Loretta's Ledger &bull; Documented Public Record for Thurston County and City of Olympia &bull; Strictly Factual &bull; <a href="glossary.html">Glossary</a>
     </footer>
 </body>
 </html>

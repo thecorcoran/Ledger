@@ -23,8 +23,33 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional
 
 from pipeline.db import DEFAULT_DB_PATH, get_db_connection
+from pipeline.titles import generate_display_title
 
 logger = logging.getLogger(__name__)
+
+
+def get_whats_at_stake(item: Dict[str, Any]) -> str:
+    """Returns a concise, one-line summary of the core public stake for an item."""
+    title = (item.get("title") or "").lower()
+    if "conservation district" in title and ("rate" in title or "ordinance" in title):
+        return "Proposed assessment adjustment on real property parcels to fund natural resource stewardship."
+    if "drinking water" in title or "article iii" in title:
+        return "Revisions to Group B private and community water system testing and compliance standards."
+    if "wetland" in title:
+        return "Critical areas buffer widths and agricultural exemptions across unincorporated county lands."
+    if "fwhca" in title or "wildlife" in title or "fish" in title:
+        return "Riparian management zones and tree height buffer restrictions near water bodies and habitats."
+    if any(k in title for k in ("cdbg", "hud", "housing and urban development")):
+        return "Receipt of federal Community Development Block Grant funds with attached compliance terms."
+    if "development fees" in title or "impact fees" in title or "utility rates" in title:
+        return "Proposed 2027 fee updates for city water, sewer, stormwater, and development charges."
+    if "west bay marina" in title:
+        return "Environmental cleanup conditions and public shoreline access along West Bay."
+    if "quince street" in title or "franz anderson" in title:
+        return "Contract terms and neighborhood protocols for supportive housing operations."
+    if "budget" in title or "operating" in title:
+        return "Annual municipal operating expenditures and capital program priorities."
+    return "Review of local regulatory terms, public contracts, or budget allocations."
 
 ROOT_DIR = Path(__file__).resolve().parent.parent
 SITE_SRC_DIR = ROOT_DIR / "site" / "src"
@@ -421,10 +446,8 @@ def get_base_html_page(title: str, content: str, active_nav: str = "this-week", 
                 <a href="{root_prefix}index.html" class="{'active' if active_nav == 'this-week' else ''}">This Week</a>
                 <a href="{root_prefix}matters.html" class="{'active' if active_nav == 'matters' else ''}">Matters</a>
                 <a href="{root_prefix}actors.html" class="{'active' if active_nav == 'actors' else ''}">Who's in the Room</a>
-                <a href="{root_prefix}archive.html" class="{'active' if active_nav == 'archive' else ''}">Archive</a>
                 <a href="{root_prefix}principles.html" class="{'active' if active_nav == 'principles' else ''}">Principles</a>
                 <a href="{root_prefix}about.html" class="{'active' if active_nav == 'about' else ''}">About</a>
-                <a href="{root_prefix}method.html" class="{'active' if active_nav == 'method' else ''}">Method</a>
             </nav>
         </div>
     </header>
@@ -432,7 +455,7 @@ def get_base_html_page(title: str, content: str, active_nav: str = "this-week", 
         {content}
     </div>
     <footer class="broadsheet-footer">
-        Loretta's Ledger &bull; Documented Public Record for Thurston County and City of Olympia &bull; Strictly Factual
+        Loretta's Ledger &bull; Documented Public Record for Thurston County and City of Olympia &bull; Strictly Factual &bull; <a href="{root_prefix}glossary.html">Glossary</a>
     </footer>
 </body>
 </html>
@@ -683,71 +706,84 @@ def export_site_content(conn, out_dirs: Optional[List[Path]] = None) -> Dict[str
 
     # 4. Generate Main Top-Level Nav Pages:
     # A. "This Week" (Upcoming meetings, hearings, comment deadlines)
+    # Deduplicate so one agenda item appears once
     upcoming_items = conn.execute(
         """
-        SELECT i.*, t.flagged_reason as test_case_reason
+        SELECT i.id, i.jurisdiction, i.title, i.display_title, i.meeting_date, i.comment_deadline, i.url,
+               t.flagged_reason as test_case_reason,
+               d.id as brief_id
         FROM items i
         LEFT JOIN test_cases t ON i.id = t.item_id
+        LEFT JOIN drafts d ON i.id = d.item_id AND d.kind = 'brief' AND d.reviewed = 1
         WHERE i.meeting_date >= '2026-10-01'
+        GROUP BY COALESCE(i.display_title, i.title), i.meeting_date, i.jurisdiction
         ORDER BY i.meeting_date ASC
-        LIMIT 25
+        LIMIT 100
         """
     ).fetchall()
 
     upcoming_rows = []
     for u in upcoming_items:
         tc_flag = f'<span class="tag-testcase">&#9888; Test Case</span>' if u["test_case_reason"] else ''
-        deadline_text = u["comment_deadline"] or "Prior to meeting"
+        disp_title = u["display_title"] or generate_display_title(dict(u))
+        whats_at_stake = get_whats_at_stake(dict(u))
+        jur_label = "Olympia" if u["jurisdiction"].lower() == "olympia" else "Thurston County"
+        
+        if u["brief_id"]:
+            status_html = f'<span class="tag-oxblood">Brief Published</span><br><a href="briefs/brief-{u["id"]}.html">Read Brief &rarr;</a>'
+        elif "hearing" in u["title"].lower():
+            status_html = f'Public Hearing<br><a href="{html.escape(u["url"])}" target="_blank" rel="noopener">Official Agenda &rarr;</a>'
+        else:
+            status_html = f'Deliberation<br><a href="{html.escape(u["url"])}" target="_blank" rel="noopener">Official Agenda &rarr;</a>'
+
         upcoming_rows.append(f"""
         <tr>
             <td><strong>{u['meeting_date']}</strong></td>
-            <td>{u['jurisdiction'].upper()}</td>
+            <td>{jur_label}</td>
             <td>
                 {tc_flag}
-                <strong>{html.escape(u['title'])}</strong>
+                <strong>{html.escape(disp_title)}</strong>
+                <div style="font-size: 13px; color: var(--ink-muted); margin-top: 3px;">
+                    Official: {html.escape(u['title'])}
+                </div>
             </td>
-            <td>{html.escape(deadline_text)}</td>
-            <td><a href="{html.escape(u['url'])}" target="_blank" rel="noopener">Official Agenda &rarr;</a></td>
+            <td>{html.escape(whats_at_stake)}</td>
+            <td>{status_html}</td>
         </tr>
         """)
 
     this_week_content = f"""
-    <h1 class="headline-title">This Week: Public Hearings & Upcoming Decisions</h1>
-    <p>A structured docket of active hearings, legislative decisions, and comment submission deadlines across Olympia and Thurston County.</p>
+    <h1 class="headline-title">This Week: Upcoming Hearings & Decisions</h1>
+    <p style="font-size: 15px; color: var(--ink-muted); margin-bottom: 24px;">A weekly docket of scheduled public hearings, upcoming votes, and comment deadlines in Thurston County and the City of Olympia.</p>
 
     <table class="ledger-table">
         <thead>
             <tr>
-                <th style="width: 110px;">Date</th>
-                <th style="width: 90px;">Body</th>
-                <th>Subject / Docket Item</th>
-                <th style="width: 180px;">Comment Cutoff</th>
-                <th style="width: 140px;">Record</th>
+                <th style="width: 105px;">Date</th>
+                <th style="width: 120px;">Jurisdiction</th>
+                <th>What Is Happening</th>
+                <th>What's at Stake</th>
+                <th style="width: 140px;">Status</th>
             </tr>
         </thead>
         <tbody>
             {''.join(upcoming_rows)}
         </tbody>
     </table>
-
-    <h2 class="section-label">Recently Approved Policy Briefs</h2>
-    <div style="margin-top: 14px;">
-        {''.join(archive_rows[:5]) if archive_rows else '<p>No briefs approved yet.</p>'}
-    </div>
     """
 
-    # B. "Matters" (Unified list with Test-Case filter)
+    # B. "Matters" (Unified list with Active, Past, and Test-Case filters)
     matters_content = f"""
-    <div style="display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 10px; margin-bottom: 12px;">
+    <div style="display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 10px; margin-bottom: 6px;">
         <h1 class="headline-title" style="margin: 0; border: none; padding: 0;">Public Matters Register</h1>
-        <div style="font-size: 13px; text-transform: uppercase; letter-spacing: 0.05em;">
-            <label style="cursor: pointer;">
-                <input type="checkbox" id="test-case-filter" onchange="filterTestCases(this.checked)">
-                <strong>Show Test Cases Only</strong>
-            </label>
+        <div style="font-size: 13px; text-transform: uppercase; letter-spacing: 0.05em; display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
+            <label style="cursor: pointer;"><input type="radio" name="matter-filter" value="all" checked onchange="filterMatters(this.value)"> <strong>All</strong></label>
+            <label style="cursor: pointer;"><input type="radio" name="matter-filter" value="active" onchange="filterMatters(this.value)"> <strong>Active</strong></label>
+            <label style="cursor: pointer;"><input type="radio" name="matter-filter" value="past" onchange="filterMatters(this.value)"> <strong>Past / Completed</strong></label>
+            <label style="cursor: pointer;"><input type="radio" name="matter-filter" value="testcase" onchange="filterMatters(this.value)"> <strong>Test Cases Only</strong></label>
         </div>
     </div>
-    <p>Tracking matters across sessions from origin through final legislative trajectory. Select any matter to inspect its complete timeline and linked official records.</p>
+    <p style="font-size: 15px; color: var(--ink-muted); margin-bottom: 24px;">A complete register of local policy matters tracked across sessions from origin to legislative outcome.</p>
 
     <table class="ledger-table" id="matters-table">
         <thead>
@@ -764,13 +800,19 @@ def export_site_content(conn, out_dirs: Optional[List[Path]] = None) -> Dict[str
     </table>
 
     <script>
-        function filterTestCases(checked) {{
+        function filterMatters(val) {{
             var rows = document.querySelectorAll('#matters-table tbody tr');
             rows.forEach(function(r) {{
-                if (checked && r.getAttribute('data-testcase') !== '1') {{
-                    r.style.display = 'none';
-                }} else {{
+                var isTc = r.getAttribute('data-testcase') === '1';
+                var isPast = r.getAttribute('data-stage') && (r.getAttribute('data-stage').toLowerCase().includes('concluded') || r.getAttribute('data-stage').toLowerCase().includes('approved') || r.getAttribute('data-stage').toLowerCase().includes('past'));
+                if (val === 'all') {{
                     r.style.display = '';
+                }} else if (val === 'testcase') {{
+                    r.style.display = isTc ? '' : 'none';
+                }} else if (val === 'past') {{
+                    r.style.display = isPast ? '' : 'none';
+                }} else if (val === 'active') {{
+                    r.style.display = !isPast ? '' : 'none';
                 }}
             }});
         }}
@@ -780,19 +822,21 @@ def export_site_content(conn, out_dirs: Optional[List[Path]] = None) -> Dict[str
     # C. "Who's in the Room"
     actors_content = f"""
     <h1 class="headline-title">Who's in the Room</h1>
-    <p>A factual account of state agencies, consultants, advisory bodies, outside groups, and funders appearing in Olympia and Thurston County policy files. Documents factual relationships and statutory roles only; never asserts motive or coordination.</p>
+    <p style="font-size: 15px; color: var(--ink-muted); margin-bottom: 24px;">An index of outside agencies, consultants, advisory groups, and regional bodies documented in official local policy records.</p>
 
     <div style="margin-top: 24px;">
         {''.join(actor_cards) if actor_cards else '<p>No upstream actors linked to approved briefs yet.</p>'}
     </div>
     """
 
-    # D. "Archive"
+    # D. "Archive" (Maintained for bookmarks, points into Matters past filter)
     archive_content = f"""
-    <h1 class="headline-title">Policy Briefs Archive</h1>
-    <p>Complete record of reviewed and approved policy briefs analyzed through the People-First Policy Framework.</p>
+    <h1 class="headline-title">Public Matters Archive</h1>
+    <p style="font-size: 15px; color: var(--ink-muted); margin-bottom: 24px;">Past and completed matters are organized within the unified Matters register.</p>
+    <p><a href="matters.html">View All Past Matters in the Public Matters Register &rarr;</a></p>
 
-    <div style="margin-top: 20px;">
+    <h2 class="section-label" style="margin-top: 32px;">Approved Policy Briefs</h2>
+    <div style="margin-top: 14px;">
         {''.join(archive_rows) if archive_rows else '<p>No approved briefs in archive.</p>'}
     </div>
     """
@@ -800,6 +844,7 @@ def export_site_content(conn, out_dirs: Optional[List[Path]] = None) -> Dict[str
     # E. "About: Why This Exists"
     about_content = f"""
     <h1 class="headline-title">Why This Exists</h1>
+    <p style="font-size: 15px; color: var(--ink-muted); margin-bottom: 24px;">An independent public account of local decisions, upstream influences, and policy outcomes in Olympia and Thurston County.</p>
     
     <p>Loretta's Ledger is named for my grandmother, Loretta Corcoran. She ran Loretta's Cafe at 213 North Capitol Way in downtown Olympia for many years, and she made meals for the Olympia jail. The café closed when its building was demolished to make way for the Olympia Center.</p>
 
@@ -830,27 +875,9 @@ def export_site_content(conn, out_dirs: Optional[List[Path]] = None) -> Dict[str
 
     <p><strong>Leave the conclusions to you.</strong> We offer questions worth asking, not instructions on how to vote or comment.</p>
 
-    <h2 class="section-label">The questions we ask</h2>
+    <h2 class="section-label">Editorial Process</h2>
 
-    <p>Of every item, we ask the same few questions:</p>
-
-    <ul class="ledger-list">
-        <li>Is this decided at the level closest to the people affected?</li>
-        <li>Does it help ordinary families own and keep their homes, land, and shops?</li>
-        <li>Who pays, and who benefits?</li>
-        <li>Could the people affected find out and respond in time?</li>
-        <li>Does it respect the people and places already there?</li>
-    </ul>
-
-    <p>These are our questions, and we try to say plainly where a policy does well by them and where it doesn't.</p>
-
-    <h2 class="section-label">What you'll find here</h2>
-
-    <p>Each item gets a short brief: what is being decided, why it might matter, and what to do if you want to weigh in. City and county staff get a separate note on the open questions the documents leave unanswered. Each matter has a timeline showing where it started and every meeting it has passed through.</p>
-
-    <h2 class="section-label">How it's made</h2>
-
-    <p>A program collects the public agendas and documents and drafts the briefs. A person reads and approves every one before it appears here, and nothing unreviewed is published. The software and method are open: <a href="https://github.com/thecorcoran/Ledger" target="_blank" rel="noopener">https://github.com/thecorcoran/Ledger</a>.</p>
+    <p>Public agendas and official document packets are collected and analyzed against our core principles. Every item is reviewed and approved by an editor before publication, and nothing unreviewed is published. Source documents and methodology are open to the public: <a href="https://github.com/thecorcoran/Ledger" target="_blank" rel="noopener">https://github.com/thecorcoran/Ledger</a>.</p>
 
     <h2 class="section-label">Disclosures</h2>
 
@@ -930,6 +957,72 @@ def export_site_content(conn, out_dirs: Optional[List[Path]] = None) -> Dict[str
     </div>
     """
 
+    # H. "Glossary of Local Government Terms"
+    glossary_content = f"""
+    <h1 class="headline-title">Glossary of Local Government Terms</h1>
+    <p style="font-size: 15px; color: var(--ink-muted); margin-bottom: 24px;">Plain-language definitions for legal, policy, and planning terms commonly used across Olympia and Thurston County public dockets.</p>
+
+    <div class="ledger-entry">
+        <div class="ledger-meta">Local Legislation</div>
+        <h3 style="margin: 0 0 4px 0;">Ordinance</h3>
+        <p>A formal local law adopted by a city council or board of county commissioners that has permanent legal force within that city or county.</p>
+    </div>
+
+    <div class="ledger-entry">
+        <div class="ledger-meta">Council Action</div>
+        <h3 style="margin: 0 0 4px 0;">Resolution</h3>
+        <p>A formal statement of policy, administrative approval (such as accepting a grant or setting an advisory goal), or official direction that generally carries less permanent legal effect than an ordinance.</p>
+    </div>
+
+    <div class="ledger-entry">
+        <div class="ledger-meta">Meeting Procedure</div>
+        <h3 style="margin: 0 0 4px 0;">Consent Agenda</h3>
+        <p>A group of routine, non-controversial agenda items passed together in a single collective vote without separate discussion, unless a councilmember or commissioner asks to pull an item for individual debate.</p>
+    </div>
+
+    <div class="ledger-entry">
+        <div class="ledger-meta">Public Finance</div>
+        <h3 style="margin: 0 0 4px 0;">Assessment</h3>
+        <p>A fee or charge placed directly on real property tax statements for a dedicated public purpose or service, such as conservation district operations, diking districts, or stormwater management.</p>
+    </div>
+
+    <div class="ledger-entry">
+        <div class="ledger-meta">Environmental Review</div>
+        <h3 style="margin: 0 0 4px 0;">SEPA Checklist</h3>
+        <p>A standard disclosure form under the Washington State Environmental Policy Act (RCW 43.21C) where project sponsors and local agencies evaluate potential impacts on air, water, land, and traffic before permits are granted.</p>
+    </div>
+
+    <div class="ledger-entry">
+        <div class="ledger-meta">Growth Management</div>
+        <h3 style="margin: 0 0 4px 0;">Critical Areas Ordinance (CAO)</h3>
+        <p>Local land use regulations required by state law (RCW 36.70A) that establish protective buffer zones around wetlands, streams, fish and wildlife habitat conservation areas, and steep slopes.</p>
+    </div>
+
+    <div class="ledger-entry">
+        <div class="ledger-meta">Public Health</div>
+        <h3 style="margin: 0 0 4px 0;">Group B Water System</h3>
+        <p>A small public drinking water system that provides water to 2 through 14 service connections and fewer than 25 people per day, regulated primarily under county health sanitary codes (Article III).</p>
+    </div>
+
+    <div class="ledger-entry">
+        <div class="ledger-meta">Inter-Agency Agreement</div>
+        <h3 style="margin: 0 0 4px 0;">Interlocal Agreement (ILA)</h3>
+        <p>A legally binding contract between two or more local government bodies (such as between the City of Olympia and Thurston County) authorized under chapter 39.34 RCW to coordinate shared services, facilities, or funding.</p>
+    </div>
+
+    <div class="ledger-entry">
+        <div class="ledger-meta">Public Participation</div>
+        <h3 style="margin: 0 0 4px 0;">Public Hearing</h3>
+        <p>A formal meeting required by state statute or city charter where members of the public are legally entitled to give verbal or written testimony on the official record before elected officials vote on an ordinance or major land use decision.</p>
+    </div>
+
+    <div class="ledger-entry">
+        <div class="ledger-meta">Legal Procedure</div>
+        <h3 style="margin: 0 0 4px 0;">Quasi-Judicial Action</h3>
+        <p>A proceeding where elected officials or a hearing examiner act like judges applying established legal criteria to a specific property or permit application, with strict rules preventing private discussions outside the formal public record.</p>
+    </div>
+    """
+
     # Write the canonical pages to both docs/ and site/_site/
     pages_to_write = [
         ("index.html", "This Week", this_week_content, "this-week"),
@@ -939,6 +1032,7 @@ def export_site_content(conn, out_dirs: Optional[List[Path]] = None) -> Dict[str
         ("principles.html", "Principles", principles_content, "principles"),
         ("about.html", "Why This Exists", about_content, "about"),
         ("method.html", "Method", method_content, "method"),
+        ("glossary.html", "Glossary", glossary_content, ""),
     ]
 
     for filename, title, content, nav_key in pages_to_write:

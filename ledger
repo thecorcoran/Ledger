@@ -14,7 +14,7 @@ case "$1" in
     ;;
   push|publish)
     echo "Staging approved briefs and public site updates..."
-    git add docs/ site/_site/
+    git add docs/ site/_site/ config/ pipeline/ tests/ README.md
     git add -u ':!data/**'
     git reset HEAD -- data/ >/dev/null 2>&1 || true
     if git diff --staged --name-only | grep -q '^data/'; then

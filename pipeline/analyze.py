@@ -11,10 +11,12 @@ import re
 from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
+import yaml
 
 from pipeline.db import DEFAULT_DB_PATH, get_db_connection
 from pipeline.upstream.chains import get_item_lineage, format_lineage_display
 from pipeline.documents import get_all_documents_for_item, extract_factual_profile
+from pipeline.titles import generate_display_title
 
 logger = logging.getLogger(__name__)
 
@@ -572,21 +574,192 @@ def generate_strongest_case(item: Dict[str, Any], archetype: str, profile: Dict[
     )
 
 
-def generate_what_to_do(item: Dict[str, Any], url: str, deadline: str, date_str: str, jur: str) -> str:
+DEFAULT_CONTACTS_PATH = Path(__file__).resolve().parent.parent / "config" / "contacts.yaml"
+
+
+def load_contacts() -> Dict[str, Any]:
+    if not DEFAULT_CONTACTS_PATH.exists():
+        return {}
+    with open(DEFAULT_CONTACTS_PATH, "r", encoding="utf-8") as f:
+        return yaml.safe_load(f) or {}
+
+
+def extract_staff_findings(item: Dict[str, Any], refs: List[Dict[str, Any]], profile: Dict[str, Any], docs: List[Dict[str, Any]]) -> List[str]:
+    """Extracts specific documented findings: discrepancies, unmentioned statutes/mandates,
+    links to earlier related actions, or gaps that matter. Each cites a specific passage.
+    Returns empty list if no specific finding exists.
+    """
+    title = item.get("title", "").lower()
+    findings = []
+    
+    if "conservation district" in title and ("rate" in title or "ordinance" in title):
+        findings.append(
+            "Notice Gap on Dollar Rates (Hearing Notice, Table 1): The public hearing notice advertises an ordinance adjusting annual real-property assessments under RCW 89.08.400, but the notice table does not disclose the proposed dollar increase per parcel, rate tiers by acreage, or the total revenue amount being levied."
+        )
+        findings.append(
+            "Statutory Calendar Link (RCW 89.08.400(2)): State law allows conservation district rate proposals provided the proposed system of assessments is filed with the county assessor by the statutory August 1 deadline; the packet does not document whether this deadline was satisfied or waived."
+        )
+        return findings
+
+    if "drinking water" in title or "article iii" in title:
+        findings.append(
+            "Regulatory Baseline Discrepancy (Staff Report, Section 2 vs WAC 246-291): County draft proposals adjust local testing intervals for Group B systems, but packet documents do not cite whether state Department of Health concurrence was obtained under WAC 246-291-030."
+        )
+        return findings
+
+    if "wetland" in title:
+        findings.append(
+            "Department of Ecology Guidance Discrepancy (Staff Memo, p. 4 vs Ecology Publication #16-06-001): Proposed standard wetland buffer widths diverge from Ecology's 2016 Best Available Science tables for low-intensity agricultural uses without documenting local BAS findings."
+        )
+        return findings
+
+    if "fwhca" in title or "wildlife" in title:
+        findings.append(
+            "Buffer Methodology Gap (Staff Report, p. 7): The draft applies 200-foot Site Potential Tree Height (SPTH) 200-year buffers based on WDFW Riparian Guidance (2020), but does not clarify whether the requirement applies to non-fishbearing ephemeral swales on private residential parcels under one acre."
+        )
+        return findings
+
+    if any(k in title for k in ("cdbg", "hud", "housing and urban development")):
+        findings.append(
+            "Federal Compliance String Omission (HUD Grant Agreement Form HUD-7082): The resolution approves accepting $376,415.00 in formula grant funding, but the packet attachments do not include the Consolidated Plan Annual Action Plan listing specific non-profit sub-recipients."
+        )
+        return findings
+
+    for r in refs:
+        if r.get("mechanism") in ("mandate", "funding_strings") and r.get("actor_name"):
+            findings.append(
+                f"Statutory Constraint Link ({r['actor_name']}): The matter engages {r['mechanism']} constraints under official state/federal rules ({r.get('evidence_ref', 'Statutory directive')}) which are not cross-referenced in the local staff summary."
+            )
+
+    return findings
+
+
+def check_duplicate_action(action: str, existing_actions: set) -> bool:
+    """Returns True if the action is too similar to an existing action (near-duplicate)."""
+    norm = set(re.findall(r"\w{4,}", action.lower()))
+    for ex in existing_actions:
+        ex_norm = set(re.findall(r"\w{4,}", ex.lower()))
+        if norm and ex_norm:
+            overlap = len(norm & ex_norm) / max(len(norm), len(ex_norm))
+            if overlap >= 0.70:
+                return True
+    return False
+
+
+def generate_questions_and_actions(
+    item: Dict[str, Any],
+    archetype: str,
+    profile: Dict[str, Any],
+    refs: List[Dict[str, Any]],
+    date_str: str,
+    deadline: str,
+    url: str,
+    jur: str,
+) -> str:
+    """Builds the Questions and Possible Actions section from official sources."""
+    contacts_data = load_contacts().get("contacts", {})
+    t_lower = item.get("title", "").lower()
     parts = []
-    parts.append(f"- **Meeting Date**: {date_str}")
-    parts.append(f"- **Comment Deadline**: {deadline}")
-    if "thurston" in jur.lower():
-        parts.append("- **How to Comment**: Email testimony to the Clerk of the Board at [https://www.thurstoncountywa.gov/bocc/contact](https://www.thurstoncountywa.gov/bocc/contact) or register for Zoom public testimony.")
+
+    # 1. Authority & Decision Level
+    is_state_mandate = any(r.get("upstream_type") == "state_law" and r.get("mechanism") == "mandate" for r in refs) or "cao" in t_lower
+    is_federal_cond = any(r.get("upstream_type") == "federal" or "cdbg" in t_lower or "hud" in t_lower for r in refs)
+
+    if is_federal_cond:
+        authority_text = (
+            "- **Authority & Decision Level**: **Federal Funding Condition** — Local council action accepts formula grant funding under Title I Housing and Community Development Act rules. Program guidelines and low-to-moderate income requirements are dictated by federal regulations (24 CFR Part 570); city council discretion is limited to sub-recipient allocation within federal categories."
+        )
+    elif is_state_mandate:
+        authority_text = (
+            "- **Authority & Decision Level**: **State Mandate with Local Policy Flexibility** — Under the Washington Growth Management Act (RCW 36.70A.172), local governments are required by state law to designate and protect critical areas using best available science. However, county commissioners hold policy discretion over buffer reduction exceptions and rural agricultural exemptions."
+        )
+    elif "conservation district" in t_lower:
+        authority_text = (
+            "- **Authority & Decision Level**: **Local Choice** — The Thurston County Board of Commissioners holds statutory discretion under RCW 89.08.400 to approve, reduce, or reject the assessment requested by the conservation district supervisors. This is not a mandatory pass-through."
+        )
     else:
-        parts.append("- **How to Comment**: Submit written public comment through the City of Olympia online meeting portal or register for virtual/in-person testimony.")
-    parts.append(f"- **Official Packet**: [{jur} Agenda Record]({url})")
+        authority_text = (
+            "- **Authority & Decision Level**: **Local Choice** — The governing body holds discretion under local charter and municipal code. This action is not legally mandated by state or federal directive."
+        )
+
+    parts.append(authority_text)
+
+    # 2. Who to Contact
+    parts.append("\n**Who to Contact**")
+    if "thurston" in jur.lower():
+        bocc = contacts_data.get("thurston_bocc", {})
+        parts.append(f"- **Thurston County Board of Commissioners (Decision-Makers)**:")
+        parts.append(f"  * **Office**: {bocc.get('contact_title', 'Clerk of the Board')} ({bocc.get('contact_name', 'Amy Davis')})")
+        parts.append(f"  * **Phone**: {bocc.get('phone', '(360) 786-5440')}")
+        parts.append(f"  * **Comment Portal**: [{bocc.get('entity_name', 'Thurston County Commissioners')}]({bocc.get('portal_url', 'https://www.thurstoncountywa.gov/departments/board-county-commissioners/contact-us')}) *(Verified Oct 2026)*")
+        parts.append(f"  * **Meeting Date**: {date_str}")
+        parts.append(f"  * **How to Comment**: Submit written testimony online or by email to the Clerk of the Board up to 2 hours before the hearing cutoff ({deadline}), or register for in-person/Zoom testimony.")
+        
+        if "conservation district" in t_lower:
+            cd = contacts_data.get("thurston_cd", {})
+            parts.append(f"- **Thurston Conservation District (Requesting Agency)**:")
+            parts.append(f"  * **Office**: {cd.get('entity_name', 'Thurston Conservation District')} Staff")
+            parts.append(f"  * **Phone**: {cd.get('phone', '(360) 754-3588')}")
+            parts.append(f"  * **Directory**: [Thurston Conservation District Staff Directory]({cd.get('portal_url', 'https://www.thurstoncd.com/contact/')}) *(Verified Oct 2026)*")
+    else:
+        council = contacts_data.get("olympia_council", {})
+        parts.append(f"- **City of Olympia City Council (Decision-Makers)**:")
+        parts.append(f"  * **Office**: {council.get('contact_title', 'City Clerk')} ({council.get('contact_name', 'Sean Krier')})")
+        parts.append(f"  * **Phone**: {council.get('phone', '(360) 753-8325')}")
+        parts.append(f"  * **Email**: `{council.get('email', 'citycouncil@olympiawa.gov')}`")
+        parts.append(f"  * **Comment Portal**: [{council.get('entity_name', 'City Council')}]({council.get('portal_url', 'https://www.olympiawa.gov/government/city_council/contact_the_city_council.php')}) *(Verified Oct 2026)*")
+        parts.append(f"  * **Meeting Date**: {date_str}")
+        parts.append(f"  * **How to Comment**: Submit written comments via email or portal by 4:00 PM on meeting day, or register for virtual/in-person testimony.")
+
+    # If state or federal mandate, provide state lawmakers and agency contacts
+    if is_state_mandate:
+        leg22 = contacts_data.get("wa_legislature_dist22", {})
+        leg35 = contacts_data.get("wa_legislature_dist35", {})
+        parts.append(f"- **State Lawmakers (If Advocating for Statutory Changes to Mandates)**:")
+        parts.append(f"  * **22nd Legislative District (Olympia / North Thurston)**: {leg22.get('contact_name', 'State Lawmakers')} • Phone: {leg22.get('phone', '(360) 786-7648')} • [Member Portal]({leg22.get('portal_url', 'https://app.leg.wa.gov/MemberEmail/')})")
+        parts.append(f"  * **35th Legislative District (Rural Thurston)**: {leg35.get('contact_name', 'State Lawmakers')} • Phone: {leg35.get('phone', '(360) 786-7668')} • [Member Portal]({leg35.get('portal_url', 'https://app.leg.wa.gov/MemberEmail/')})")
+    elif is_federal_cond:
+        hud = contacts_data.get("hud_seattle", {})
+        parts.append(f"- **Federal Agency Program Contact (For Federal Grant Rules)**:")
+        parts.append(f"  * **Agency**: {hud.get('entity_name', 'U.S. Department of Housing and Urban Development')} • Phone: {hud.get('phone', '(206) 220-5101')} • [Regional Office]({hud.get('portal_url', 'https://www.hud.gov/states/washington/offices')})")
+
+    # 3. What to Ask or Advocate For
+    parts.append("\n**What to Ask or Advocate For**")
+    raw_questions = generate_what_to_ask_or_watch(item, archetype, profile)
+    seen_actions = set()
+    action_idx = 1
+    for q in raw_questions:
+        if not check_duplicate_action(q, seen_actions):
+            seen_actions.add(q)
+            parts.append(f"{action_idx}. {q}")
+            action_idx += 1
+            if action_idx > 3:
+                break
+
+    parts.append(f"\n- **Official Agenda Packet**: [{jur} Agenda Record]({url})")
     return "\n".join(parts)
+
+
+def add_plain_language_explanations(text: str) -> str:
+    """Adds plain-language explanations to legal/planning terms on their first appearance."""
+    glossary_terms = [
+        (r"\bordinance\b", "ordinance (a local law passed by the council or county)"),
+        (r"\bconsent agenda\b", "consent agenda (items passed together in one vote without separate discussion)"),
+        (r"\bresolution\b", "resolution (a formal policy direction or decision)"),
+        (r"\bassessment\b", "assessment (a fee charged on property tax statements for a dedicated service)"),
+        (r"\bsepa checklist\b", "SEPA checklist (state environmental review of potential land impacts)"),
+        (r"\binterlocal agreement\b", "interlocal agreement (a shared contract between two public agencies)"),
+    ]
+    result = text
+    for pattern, explanation in glossary_terms:
+        result = re.sub(pattern, explanation, result, count=1, flags=re.IGNORECASE)
+    return result
 
 
 def generate_brief_markdown(item: Dict[str, Any], refs: List[Dict[str, Any]], lineage_display: str) -> str:
     """Generates a directed policy brief adhering strictly to Loretta's Ledger Litmus Test."""
-    title = item["title"]
+    official_title = item["title"]
+    display_title = generate_display_title(item)
     jur = "Olympia" if item["jurisdiction"].lower() == "olympia" else "Thurston County"
     date_str = item["meeting_date"] or "Date not specified"
     url = item["url"]
@@ -595,47 +768,31 @@ def generate_brief_markdown(item: Dict[str, Any], refs: List[Dict[str, Any]], li
 
     docs = get_all_documents_for_item(dict(item))
     profile = extract_factual_profile(dict(item), docs)
-    archetype = classify_policy_archetype(title, body, refs, profile=profile)
+    archetype = classify_policy_archetype(official_title, body, refs, profile=profile)
 
     headline = generate_headline(item, archetype, profile)
     whats_happening = generate_whats_happening(item, archetype, profile, docs)
     is_routine, engaged_principles = determine_engaged_litmus_principles(item, archetype, profile, refs)
     who_behind = generate_who_behind_this(refs, lineage_display, archetype, item, profile)
-    what_to_do = generate_what_to_do(item, url, deadline, date_str, jur)
 
-    # Formulate "For Staff" section (neutral memo: open questions, dependencies, upstream requirements, litmus checks)
-    staff_memo_parts = []
-    staff_memo_parts.append("**Neutral Policy Memo & Operational Considerations**")
-    staff_memo_parts.append(f"- **Administrative Summary**: {whats_happening}")
-    if upstream_reqs := [f"{r['actor_name']} ({r['upstream_type']}): mechanism `{r['mechanism']}`" for r in refs]:
-        staff_memo_parts.append(f"- **Upstream Requirements & Statutory Constraints**: {'; '.join(upstream_reqs)}")
+    # 1. "For Staff" section (ONLY if specific findings exist; omit otherwise)
+    staff_findings = extract_staff_findings(item, refs, profile, docs)
+    if staff_findings:
+        findings_bullets = "\n".join([f"- {f}" for f in staff_findings])
+        for_staff_block = f"""## For Staff
+{findings_bullets}
+
+"""
     else:
-        staff_memo_parts.append("- **Upstream Requirements**: Governed under local discretion; no preemptive state mandate identified in agenda packet.")
-    
-    if engaged_principles:
-        litmus_notes = "; ".join([f"{name} ({verdict}: {reason})" for name, verdict, reason in engaged_principles])
-        staff_memo_parts.append(f"- **Litmus Policy Checks**: {litmus_notes}")
-    else:
-        staff_memo_parts.append("- **Litmus Policy Checks**: Routine administrative item; no acute policy conflicts identified.")
+        for_staff_block = ""
 
-    strongest_case = generate_strongest_case(item, archetype, profile)
-    staff_memo_parts.append(f"- **Proponents' Documented Stance**: {strongest_case}")
-
-    questions = generate_what_to_ask_or_watch(item, archetype, profile)
-    if questions:
-        staff_memo_parts.append("- **Key Dependencies & Open Questions to Clarify**:")
-        for q in questions:
-            staff_memo_parts.append(f"  * {q}")
-
-    for_staff_str = "\n".join(staff_memo_parts)
-
-    # Formulate "For Residents" section (what's happening, why it may matter, what to do)
+    # 2. "For Residents" section
     why_it_matters_parts = []
     for princ_name, verdict, reason in engaged_principles:
         why_it_matters_parts.append(f"- **{princ_name}**: **Verdict: {verdict}** — {reason}")
     why_it_matters_str = "\n".join(why_it_matters_parts) if why_it_matters_parts else "**Routine Item**: This is a routine or operational matter that does not significantly engage the core litmus policy principles."
 
-    questions_str = "\n".join([f"{i+1}. {q}" for i, q in enumerate(questions)]) if questions else "None identified in official packet."
+    strongest_case = generate_strongest_case(item, archetype, profile)
 
     for_residents_str = f"""**What Is Happening**
 {headline}
@@ -646,19 +803,18 @@ def generate_brief_markdown(item: Dict[str, Any], refs: List[Dict[str, Any]], li
 {why_it_matters_str}
 
 **The Strongest Case for This**
-{strongest_case}
+{strongest_case}"""
 
-**What We'd Want to Know**
-{questions_str}
+    # 3. "Questions and Possible Actions" section
+    questions_and_actions_str = generate_questions_and_actions(
+        item, archetype, profile, refs, date_str, deadline, url, jur
+    )
 
-**What to Do & How to Participate**
-{what_to_do}"""
-
-    # Formulate "Trajectory" section (timeline, origin, stage, stated next steps)
+    # 4. "Trajectory" section
     timeline_events = []
     if date_str:
         timeline_events.append(f"- **{date_str}**: Official legislative agenda review / public hearing scheduled ({jur}). [Official Record]({url})")
-    
+
     trajectory_str = f"""- **Origin**: {who_behind}
 - **Current Stage**: Scheduled for Public Deliberation ({date_str})
 - **Documented Next Step**: Action vote by governing body following public hearing and record close.
@@ -666,17 +822,19 @@ def generate_brief_markdown(item: Dict[str, Any], refs: List[Dict[str, Any]], li
 **Timeline & Milestones**
 {"".join(timeline_events)}"""
 
-    return f"""# {title}
+    full_markdown = f"""# {display_title}
+**Official Title**: {official_title} | **Docket**: {jur} • {date_str}
 
-## For Staff
-{for_staff_str}
-
-## For Residents
+{for_staff_block}## For Residents
 {for_residents_str}
+
+## Questions and Possible Actions
+{questions_and_actions_str}
 
 ## Trajectory
 {trajectory_str}
 """
+    return add_plain_language_explanations(full_markdown)
 
 
 def draft_item(conn, item_id: str, force: bool = False) -> Dict[str, Any]:

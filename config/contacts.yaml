@@ -1,0 +1,148 @@
+# Loretta's Ledger — Official Contacts Directory
+# Verified contact directory for local and state decision-makers.
+# Rules:
+# 1. Must come from official government websites/directories.
+# 2. Never guess or construct emails or phone numbers.
+# 3. Flagged in the review dashboard if last_verified is older than 90 days.
+
+contacts:
+  thurston_bocc:
+    jurisdiction: thurston
+    entity_name: "Thurston County Board of County Commissioners"
+    role: "County Legislative and Executive Body"
+    contact_name: "Amy Davis"
+    contact_title: "Clerk of the Board"
+    phone: "(360) 786-5440"
+    email: null
+    portal_url: "https://www.thurstoncountywa.gov/departments/board-county-commissioners/contact-us"
+    comment_info: "Written comments may be submitted online via portal or emailed to the Clerk of the Board up to 2 hours before scheduled hearings."
+    address: "3000 Pacific Ave SE, Olympia, WA 98501"
+    source_url: "https://www.thurstoncountywa.gov/departments/board-county-commissioners"
+    last_verified: "2026-10-09"
+
+  thurston_cd:
+    jurisdiction: thurston
+    entity_name: "Thurston Conservation District"
+    role: "Local Natural Resource Conservation District"
+    contact_name: "District Office"
+    contact_title: "Administrative Office"
+    phone: "(360) 754-3588"
+    email: null
+    portal_url: "https://www.thurstoncd.com/contact/"
+    comment_info: "Direct inquiries regarding voluntary farm planning, rates, and district conservation programs."
+    address: "2918 Ferguson St SW, Ste A, Tumwater, WA 98512"
+    source_url: "https://www.thurstoncd.com"
+    last_verified: "2026-10-09"
+
+  olympia_council:
+    jurisdiction: olympia
+    entity_name: "City of Olympia City Council"
+    role: "Municipal Legislative Body"
+    contact_name: "Sean Krier"
+    contact_title: "City Clerk"
+    phone: "(360) 753-8325"
+    email: "citycouncil@olympiawa.gov"
+    portal_url: "https://www.olympiawa.gov/government/city_council/contact_the_city_council.php"
+    comment_info: "Submit public comments online or via email by 4:00 PM on the day of the council meeting, or register for live Zoom/in-person testimony."
+    address: "601 4th Ave E, Olympia, WA 98501"
+    source_url: "https://www.olympiawa.gov/government/city_council/contact_the_city_council.php"
+    last_verified: "2026-10-09"
+
+  wa_legislature_dist22:
+    jurisdiction: state
+    entity_name: "Washington State Legislative District 22 (Olympia, Lacey, Tumwater)"
+    role: "State Legislative Delegation"
+    contact_name: "Sen. Jessica Bateman, Rep. Beth Doglio, Rep. Lisa Parshley"
+    contact_title: "22nd District Legislators"
+    phone: "(360) 786-7648"
+    email: null
+    portal_url: "https://app.leg.wa.gov/MemberEmail/"
+    comment_info: "Contact state lawmakers regarding state statutes, mandates, and state agency funding."
+    address: "Legislative Building, PO Box 40482, Olympia, WA 98504"
+    source_url: "https://leg.wa.gov"
+    last_verified: "2026-10-09"
+
+  wa_legislature_dist35:
+    jurisdiction: state
+    entity_name: "Washington State Legislative District 35 (Rural Thurston & Mason)"
+    role: "State Legislative Delegation"
+    contact_name: "Sen. Drew MacEwen, Rep. Dan Griffey, Rep. Travis Couture"
+    contact_title: "35th District Legislators"
+    phone: "(360) 786-7668"
+    email: null
+    portal_url: "https://app.leg.wa.gov/MemberEmail/"
+    comment_info: "Contact state lawmakers representing rural Thurston County."
+    address: "Legislative Building, PO Box 40482, Olympia, WA 98504"
+    source_url: "https://leg.wa.gov"
+    last_verified: "2026-10-09"
+
+  wa_scc:
+    jurisdiction: state
+    entity_name: "Washington State Conservation Commission"
+    role: "State Agency Overseeing Conservation Districts"
+    contact_name: "State Commission Office"
+    contact_title: "Agency Contact"
+    phone: "(360) 407-6200"
+    email: null
+    portal_url: "https://scc.wa.gov/contact-us"
+    comment_info: "Oversees RCW 89.08 and statewide conservation district support programs."
+    address: "PO Box 47721, Olympia, WA 98504"
+    source_url: "https://scc.wa.gov"
+    last_verified: "2026-10-09"
+
+  wa_doh:
+    jurisdiction: state
+    entity_name: "Washington State Department of Health (Office of Drinking Water)"
+    role: "State Drinking Water Regulator"
+    contact_name: "Office of Drinking Water"
+    contact_title: "Southwest Regional Office"
+    phone: "(360) 236-3100"
+    email: null
+    portal_url: "https://doh.wa.gov/community-and-environment/drinking-water"
+    comment_info: "Sets standards for public and Group B drinking water systems."
+    address: "PO Box 47822, Olympia, WA 98504"
+    source_url: "https://doh.wa.gov"
+    last_verified: "2026-10-09"
+
+  wa_ecology:
+    jurisdiction: state
+    entity_name: "Washington State Department of Ecology"
+    role: "State Environmental Regulatory Agency"
+    contact_name: "Southwest Regional Office"
+    contact_title: "Regional Office"
+    phone: "(360) 407-6300"
+    email: null
+    portal_url: "https://ecology.wa.gov/about-us/contact-us"
+    comment_info: "Oversees Shoreline Management Act and wetlands guidance."
+    address: "PO Box 47775, Olympia, WA 98504"
+    source_url: "https://ecology.wa.gov"
+    last_verified: "2026-10-09"
+
+  wa_commerce:
+    jurisdiction: state
+    entity_name: "Washington State Department of Commerce (Growth Management)"
+    role: "Growth Management Act State Oversight"
+    contact_name: "Growth Management Services"
+    contact_title: "Agency Program"
+    phone: "(360) 725-3000"
+    email: null
+    portal_url: "https://www.commerce.wa.gov/serving-communities/growth-management/"
+    comment_info: "Administers RCW 36.70A Growth Management Act compliance and reviews."
+    address: "1011 Plum St SE, Olympia, WA 98504"
+    source_url: "https://www.commerce.wa.gov"
+    last_verified: "2026-10-09"
+
+  hud_seattle:
+    jurisdiction: federal
+    entity_name: "U.S. Department of Housing and Urban Development (Region X)"
+    role: "Federal Housing & Community Development Agency"
+    contact_name: "Seattle Regional Office"
+    contact_title: "Regional Office"
+    phone: "(206) 220-5101"
+    email: null
+    portal_url: "https://www.hud.gov/states/washington/offices"
+    comment_info: "Administers federal Community Development Block Grants (CDBG)."
+    address: "909 First Avenue, Suite 200, Seattle, WA 98104"
+    source_url: "https://www.hud.gov"
+    last_verified: "2026-10-09"
+
