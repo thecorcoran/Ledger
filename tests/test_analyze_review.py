@@ -5,7 +5,7 @@ import tempfile
 import unittest
 
 from pipeline.db import init_db, get_db_connection
-from pipeline.analyze import generate_brief_markdown, generate_action_page_markdown, draft_item
+from pipeline.analyze import generate_brief_markdown, draft_item
 from pipeline.review import approve_draft, reject_draft
 
 
@@ -104,16 +104,16 @@ class TestAnalyzeAndReview(unittest.TestCase):
         self.assertIn("Will the county remove prescriptive lawn size limitations", cao_brief)
 
     def test_draft_item_and_review_workflow(self):
-        # 1. Generate drafts
+        # 1. Generate brief draft
         res = draft_item(self.conn, self.item_id)
-        self.assertEqual(res["created"], 2)
+        self.assertEqual(res["created"], 1)
 
         # 2. Check draft stored with reviewed = 0
         rows = self.conn.execute("SELECT * FROM drafts WHERE item_id = ?", (self.item_id,)).fetchall()
-        self.assertEqual(len(rows), 2)
-        for r in rows:
-            self.assertEqual(r["reviewed"], 0)
-            self.assertIsNone(r["reviewed_at"])
+        self.assertEqual(len(rows), 1)
+        self.assertEqual(rows[0]["kind"], "brief")
+        self.assertEqual(rows[0]["reviewed"], 0)
+        self.assertIsNone(rows[0]["reviewed_at"])
 
         # 3. Approve draft
         draft_id = rows[0]["id"]
@@ -124,10 +124,8 @@ class TestAnalyzeAndReview(unittest.TestCase):
         self.assertIsNotNone(approved_row["reviewed_at"])
 
         # 4. Reject draft
-        other_draft_id = rows[1]["id"]
-        reject_draft(self.conn, other_draft_id)
-
-        rejected_row = self.conn.execute("SELECT * FROM drafts WHERE id = ?", (other_draft_id,)).fetchone()
+        reject_draft(self.conn, draft_id)
+        rejected_row = self.conn.execute("SELECT * FROM drafts WHERE id = ?", (draft_id,)).fetchone()
         self.assertIsNone(rejected_row)
 
     def test_save_draft_edits(self):

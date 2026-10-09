@@ -866,13 +866,6 @@ class DashboardHandler(http.server.BaseHTTPRequestHandler):
                 draft_id = int(params.get("draft_id", [0])[0])
                 if draft_id:
                     approve_draft(conn, draft_id)
-                    draft_item_row = conn.execute("SELECT item_id FROM drafts WHERE id = ?", (draft_id,)).fetchone()
-                    if draft_item_row:
-                        conn.execute(
-                            "UPDATE drafts SET reviewed = 1, reviewed_at = datetime('now') WHERE item_id = ? AND kind = 'action_page'",
-                            (draft_item_row["item_id"],),
-                        )
-                        conn.commit()
                     export_site_content(conn)
                 self.send_response(303)
                 self.send_header("Location", f"/?approved={draft_id}")

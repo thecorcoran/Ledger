@@ -679,51 +679,8 @@ def generate_brief_markdown(item: Dict[str, Any], refs: List[Dict[str, Any]], li
 """
 
 
-def generate_action_page_markdown(item: Dict[str, Any], refs: List[Dict[str, Any]]) -> str:
-    """Generates a plain-language action page for community participation."""
-    title = item["title"]
-    jur = "Olympia" if item["jurisdiction"].lower() == "olympia" else "Thurston County"
-    date_str = item["meeting_date"] or "Upcoming"
-    url = item["url"]
-    deadline = item["comment_deadline"] or "Two hours before scheduled meeting start"
-    body = item.get("body_text") or ""
-
-    docs = get_all_documents_for_item(dict(item))
-    profile = extract_factual_profile(dict(item), docs)
-    archetype = classify_policy_archetype(title, body, refs, profile=profile)
-
-    headline = generate_headline(item, archetype, profile)
-    whats_happening = generate_whats_happening(item, archetype, profile, docs)
-    is_routine, engaged_principles = determine_engaged_litmus_principles(item, archetype, profile, refs)
-    who_behind = generate_who_behind_this(refs, "", archetype, item, profile)
-    what_to_do = generate_what_to_do(item, url, deadline, date_str, jur)
-
-    why_it_matters_parts = []
-    for princ_name, verdict, reason in engaged_principles:
-        why_it_matters_parts.append(f"- **{princ_name}**: **Verdict: {verdict}** — {reason}")
-    why_it_matters_str = "\n".join(why_it_matters_parts) if why_it_matters_parts else "**Routine Item**: General administrative action."
-
-    return f"""# Citizen Action: {title}
-
-### Headline
-{headline}
-
-### What's Happening
-{whats_happening}
-
-### Why It Matters
-{why_it_matters_str}
-
-### Who's Behind This
-{who_behind}
-
-### How to Have Your Say
-{what_to_do}
-"""
-
-
 def draft_item(conn, item_id: str, force: bool = False) -> Dict[str, Any]:
-    """Generates brief and action page drafts for an item and saves with reviewed = 0."""
+    """Generates a policy brief draft for an item and saves with reviewed = 0."""
     item = conn.execute("SELECT * FROM items WHERE id = ?", (item_id,)).fetchone()
     if not item:
         return {"created": 0, "updated": 0, "skipped": False}
@@ -752,30 +709,27 @@ def draft_item(conn, item_id: str, force: bool = False) -> Dict[str, Any]:
     lineage_str = format_lineage_display(lineage) if lineage else ""
 
     brief_md = generate_brief_markdown(item_dict, refs_list, lineage_str)
-    action_md = generate_action_page_markdown(item_dict, refs_list)
 
     # Check if drafts already exist for item_id
-    existing = conn.execute("SELECT id, kind, reviewed FROM drafts WHERE item_id = ?", (item_id,)).fetchall()
+    existing = conn.execute("SELECT id, kind, reviewed FROM drafts WHERE item_id = ? AND kind = 'brief'", (item_id,)).fetchall()
     if existing:
         for r in existing:
             if r["reviewed"] == 0 or force:
-                md = brief_md if r["kind"] == "brief" else action_md
-                conn.execute("UPDATE drafts SET markdown = ? WHERE id = ?", (md, r["id"]))
+                conn.execute("UPDATE drafts SET markdown = ? WHERE id = ?", (brief_md, r["id"]))
         conn.commit()
         return {"created": 0, "updated": len(existing), "skipped": False}
 
-    # Insert new drafts
-    for kind, md in (("brief", brief_md), ("action_page", action_md)):
-        conn.execute(
-            """
-            INSERT INTO drafts (item_id, kind, markdown, reviewed, reviewed_at)
-            VALUES (?, ?, ?, 0, NULL)
-            """,
-            (item_id, kind, md),
-        )
+    # Insert new brief draft
+    conn.execute(
+        """
+        INSERT INTO drafts (item_id, kind, markdown, reviewed, reviewed_at)
+        VALUES (?, 'brief', ?, 0, NULL)
+        """,
+        (item_id, brief_md),
+    )
 
     conn.commit()
-    return {"created": 2, "updated": 0, "skipped": False}
+    return {"created": 1, "updated": 0, "skipped": False}
 
 
 def run_drafts(conn, limit: int = 15) -> int:

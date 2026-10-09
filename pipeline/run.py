@@ -16,6 +16,21 @@ from pipeline.analyze import run_drafts
 from pipeline.export import export_site_content
 
 
+def format_export_summary(export_stats: Dict[str, Any]) -> str:
+    """Formats export stats reporting only what the exporter actually returns without KeyError."""
+    lines = ["  OK: Site generated in docs/ and site/_site/"]
+    label_map = {
+        "matters": "Matters Tracked",
+        "briefs": "Approved Policy Briefs",
+        "actors": "Upstream Actors Indexed",
+        "test_cases": "Test-Case Watch Items",
+    }
+    for key, value in export_stats.items():
+        label = label_map.get(key, key.replace("_", " ").title())
+        lines.append(f"      - {value} {label}")
+    return "\n".join(lines)
+
+
 def run_full_pipeline(
     days_back: int = 30,
     days_ahead: int = 30,
@@ -80,7 +95,7 @@ def run_full_pipeline(
         conn.close()
 
     # 5. Generate Drafts
-    print("\n[Step 5/6] Generating Litmus Test Briefs & Action Pages...")
+    print("\n[Step 5/6] Generating Litmus Test Briefs...")
     conn = get_db_connection()
     try:
         drafts_created = run_drafts(conn, limit=draft_limit)
@@ -95,11 +110,7 @@ def run_full_pipeline(
     try:
         export_stats = export_site_content(conn)
         results["export"] = export_stats
-        print(f"  OK: Site generated in docs/ and site/_site/")
-        print(f"      - {export_stats['briefs']} Approved Policy Briefs")
-        print(f"      - {export_stats['actions']} Citizen Action Pages")
-        print(f"      - {export_stats['test_cases']} Test-Case Watch Items")
-        print(f"      - {export_stats['influences']} Upstream Dossiers")
+        print(format_export_summary(export_stats))
     finally:
         conn.close()
 

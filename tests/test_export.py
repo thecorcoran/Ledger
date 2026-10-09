@@ -45,7 +45,7 @@ class TestExport(unittest.TestCase):
         draft_item(self.conn, self.item_id)
 
         draft_rows = self.conn.execute("SELECT * FROM drafts WHERE item_id = ?", (self.item_id,)).fetchall()
-        self.assertEqual(len(draft_rows), 2)
+        self.assertEqual(len(draft_rows), 1)
 
         # Before approval, export should report 0 briefs published
         stats1 = export_site_content(self.conn, out_dirs=[Path(self.temp_dir.name)])
