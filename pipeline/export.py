@@ -422,6 +422,7 @@ def get_base_html_page(title: str, content: str, active_nav: str = "this-week", 
                 <a href="{root_prefix}matters.html" class="{'active' if active_nav == 'matters' else ''}">Matters</a>
                 <a href="{root_prefix}actors.html" class="{'active' if active_nav == 'actors' else ''}">Who's in the Room</a>
                 <a href="{root_prefix}archive.html" class="{'active' if active_nav == 'archive' else ''}">Archive</a>
+                <a href="{root_prefix}principles.html" class="{'active' if active_nav == 'principles' else ''}">Principles</a>
                 <a href="{root_prefix}about.html" class="{'active' if active_nav == 'about' else ''}">About</a>
                 <a href="{root_prefix}method.html" class="{'active' if active_nav == 'method' else ''}">Method</a>
             </nav>
@@ -875,12 +876,67 @@ def export_site_content(conn, out_dirs: Optional[List[Path]] = None) -> Dict[str
     </div>
     """
 
+    # G. "Principles: Plain-Language Guide"
+    principles_content = f"""
+    <h1 class="headline-title">Our Principles</h1>
+    <p>Loretta's Ledger evaluates every local policy proposal through eight core principles grounded in plain language and everyday household life. These principles help us understand who decides, who pays, and who benefits.</p>
+
+    <div class="memo-box">
+        <h2 style="font-size: 18px; margin: 0 0 10px 0; color: var(--oxblood);">1. Subsidiarity (Who Decides?)</h2>
+        <p><strong>The Question:</strong> Is this decision made at the level closest to the people it affects?</p>
+        <p>Decisions should be made by local elected officials accountable to neighbors in Olympia and Thurston County, not dictated by distant state or federal bureaucracies, outside lobbying templates, or funding strings.</p>
+    </div>
+
+    <div class="memo-box">
+        <h2 style="font-size: 18px; margin: 0 0 10px 0; color: var(--oxblood);">2. Ownership (Can Ordinary People Hold Property?)</h2>
+        <p><strong>The Question:</strong> Does this help working families and independent businesses own and keep real property?</p>
+        <p>A resilient community depends on widely held property. We look at whether rules make it easier to buy, keep, and care for a home, small parcel, or storefront, or whether they lock land behind costly regulations and institutional consolidation.</p>
+    </div>
+
+    <div class="memo-box">
+        <h2 style="font-size: 18px; margin: 0 0 10px 0; color: var(--oxblood);">3. Small &amp; Local vs. Large &amp; Distant</h2>
+        <p><strong>The Question:</strong> Who carries the burden, and who captures the benefit?</p>
+        <p>Local government should not favor large institutional corporations over independent local trades, contractors, and shops. We track who gets the contracts and who bears the compliance costs.</p>
+    </div>
+
+    <div class="memo-box">
+        <h2 style="font-size: 18px; margin: 0 0 10px 0; color: var(--oxblood);">4. Family &amp; Household (Self-Reliance vs. Bureaucracy)</h2>
+        <p><strong>The Question:</strong> Does this support what families and neighborhoods do for themselves?</p>
+        <p>We favor policies that protect independent household livelihoods and mutual aid over programs that substitute administrative management for family and community responsibility.</p>
+    </div>
+
+    <div class="memo-box">
+        <h2 style="font-size: 18px; margin: 0 0 10px 0; color: var(--oxblood);">5. Cost and Who Pays (Honest Accounting)</h2>
+        <p><strong>The Question:</strong> Who pays the bills, and is the real cost made clear?</p>
+        <p>Every public program costs money. We insist on knowing the total dollar amount, how much each household or parcel will pay, and whether costs are transparently shared or quietly loaded onto property tax and utility bills.</p>
+    </div>
+
+    <div class="memo-box">
+        <h2 style="font-size: 18px; margin: 0 0 10px 0; color: var(--oxblood);">6. Consent &amp; Process (Were Neighbors Heard?)</h2>
+        <p><strong>The Question:</strong> Did the people affected have timely notice and a genuine chance to respond?</p>
+        <p>Public hearings should not be formalities. We check whether notice was given early enough, in plain language, with full documents attached, and at meeting times ordinary working people can attend.</p>
+    </div>
+
+    <div class="memo-box">
+        <h2 style="font-size: 18px; margin: 0 0 10px 0; color: var(--oxblood);">7. Reversibility &amp; Accountability (Can Voters Change It?)</h2>
+        <p><strong>The Question:</strong> Can voters hold elected officials answerable, and can this be undone if it doesn't work?</p>
+        <p>Decisions should have named sponsors, recorded roll-call votes, and expiration dates. We look with skepticism on multi-decade contracts, permanent debt, or powers handed off to unelected boards.</p>
+    </div>
+
+    <div class="memo-box">
+        <h2 style="font-size: 18px; margin: 0 0 10px 0; color: var(--oxblood);">8. Place (Respecting Our Community's Fabric)</h2>
+        <p><strong>The Question:</strong> Does this respect the physical character, history, and people already here?</p>
+        <p>Our towns and rural lands have character built across generations. We keep in mind the lesson of Loretta's Cafe: community improvements should not needlessly sweep away the physical and cultural anchors that make our community feel like home.</p>
+    </div>
+    """
+
     # Write the canonical pages to both docs/ and site/_site/
     pages_to_write = [
         ("index.html", "This Week", this_week_content, "this-week"),
         ("matters.html", "Matters Register", matters_content, "matters"),
         ("actors.html", "Who's in the Room", actors_content, "actors"),
         ("archive.html", "Archive", archive_content, "archive"),
+        ("principles.html", "Principles", principles_content, "principles"),
         ("about.html", "Why This Exists", about_content, "about"),
         ("method.html", "Method", method_content, "method"),
     ]
@@ -890,6 +946,13 @@ def export_site_content(conn, out_dirs: Optional[List[Path]] = None) -> Dict[str
         for out_base in target_dirs:
             with open(out_base / filename, "w", encoding="utf-8") as f:
                 f.write(page_html)
+
+    # Ensure .nojekyll is present in all target directories
+    for out_base in target_dirs:
+        nojekyll_file = out_base / ".nojekyll"
+        if not nojekyll_file.exists():
+            with open(nojekyll_file, "w", encoding="utf-8") as f:
+                f.write("# Disable Jekyll processing on GitHub Pages\n")
 
     return stats
 

@@ -49,16 +49,16 @@ Evaluate the following policy item through the Loretta's Ledger Litmus Test.
 [3-5 sentences strictly from the staff report, ordinance text, or attachments covering specific amounts, who is affected, vote, and date.]
 
 ### Why It Matters
-- **[Engaged Principle 1]**: [What the documents show about this principle.]
-- **[Engaged Principle 2]**: [What the documents show about this principle.]
+- **[Engaged Principle 1]**: **Verdict: [Advances / Mixed / Cuts against]** — [One-sentence reason citing a specific passage, number, or section from the documents.]
+- **[Engaged Principle 2]**: **Verdict: [Advances / Mixed / Cuts against]** — [One-sentence reason citing a specific passage, number, or section from the documents.]
 <!-- Name only the 1-3 engaged principles. If none apply, state: "Routine: This is a routine or operational matter that does not significantly engage the core litmus policy principles." -->
 
-### Who's Behind This
-[Upstream chain with evidence links, or "No upstream source identified in the documents reviewed."]
+### The Strongest Case for This
+[What proponents would say, drawn strictly from official findings, staff reports, or statutory purpose in the documents.]
 
-### What to Ask or Watch
-1. [Specific unanswered question from the documents]
-2. [Specific unanswered question from the documents]
+### What We'd Want to Know
+1. [Specific unanswered question left open by the documents]
+2. [Specific unanswered question left open by the documents]
 
 ### What to Do
 - **Meeting Date**: {{ item.meeting_date }}

@@ -143,6 +143,49 @@ class TestAnalyzeAndReview(unittest.TestCase):
         updated_row = self.conn.execute("SELECT markdown FROM drafts WHERE id = ?", (draft_id,)).fetchone()
         self.assertEqual(updated_row["markdown"], new_text)
 
+    def test_principles_yaml_config(self):
+        import yaml
+        config_path = Path(__file__).resolve().parent.parent / "config" / "principles.yaml"
+        self.assertTrue(config_path.exists())
+        with open(config_path, "r", encoding="utf-8") as f:
+            cfg = yaml.safe_load(f)
+        self.assertIn("principles", cfg)
+        principles = cfg["principles"]
+        self.assertEqual(len(principles), 8)
+        for key in ["subsidiarity", "ownership", "small_and_local", "family_and_household", "cost_and_who_pays", "consent_and_process", "reversibility_and_accountability", "place"]:
+            self.assertIn(key, principles)
+            p = principles[key]
+            self.assertIn("name", p)
+            self.assertIn("plain_question", p)
+            self.assertIn("what_to_look_for", p)
+            self.assertIn("verdicts", p)
+            self.assertIn("advances", p["verdicts"])
+            self.assertIn("mixed", p["verdicts"])
+            self.assertIn("cuts_against", p["verdicts"])
+
+    def test_sharpened_verdict_and_strongest_case(self):
+        tcd_item = {
+            "title": "Public Hearing: Proposed Ordinance to Adjust Thurston Conservation District's Rates",
+            "jurisdiction": "thurston",
+            "meeting_date": "2026-10-20",
+            "url": "https://example.com/tcd",
+            "body_text": "Meeting Time: 3:30 PM, Atrium",
+            "comment_deadline": "2026-10-20 1:30 PM",
+        }
+        refs = [{
+            "actor_name": "Washington State Conservation Commission",
+            "upstream_type": "state_agency",
+            "mechanism": "mandate",
+            "evidence_ref": "TCD Rate Adjustment",
+            "evidence_url": "https://example.com/tcd",
+        }]
+        brief = generate_brief_markdown(tcd_item, refs, "")
+        self.assertIn("Verdict: Cuts against", brief)
+        self.assertIn("Verdict: Mixed", brief)
+        self.assertIn("The Strongest Case for This", brief)
+        self.assertIn("What We'd Want to Know", brief)
+        self.assertIn("RCW 89.08", brief)
+
 
 if __name__ == "__main__":
     unittest.main()

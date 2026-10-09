@@ -2,7 +2,7 @@
 
 A local policy publication providing consistent, evidence-based policy briefs for the **City of Olympia** and **Thurston County**, analyzed through a people-first policy lens (subsidiarity, widely held property, family and local economy, skepticism of concentrated power).
 
-Named for Loretta Corcoran, whose home was cleared for the Olympia Center.
+Named for Loretta Corcoran, who ran Loretta's Cafe in downtown Olympia until the Olympia Center was built.
 
 ---
 

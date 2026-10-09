@@ -24,7 +24,7 @@ Rather than mechanically rating all eight principles as a rigid template, **name
 5. **Cost and who pays**: Who bears the direct fees, rates, taxes, or compliance overhead? Is the burden transparently accounted for?
 6. **Consent and process**: Were affected residents provided timely notice, clear language, and a genuine hearing before decisions were enacted? (Only cite if there is a real notice or procedural issue).
 7. **Reversibility and accountability**: Can local voters hold named elected officials answerable for this, and can the action be repealed or amended later? (Only cite if there are binding multi-year terms or unique governance conditions).
-8. **Place**: Does it respect the physical shorelines, historic neighborhoods, and longstanding character of our local community (the lesson of Loretta Corcoran's home)?
+8. **Place**: Does it respect the physical shorelines, historic neighborhoods, and longstanding character of our local community (the lesson of Loretta Corcoran's cafe)?
 
 ---
 

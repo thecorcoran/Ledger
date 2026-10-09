@@ -301,10 +301,11 @@ def determine_engaged_litmus_principles(
     archetype: str,
     profile: Dict[str, Any],
     refs: List[Dict[str, Any]],
-) -> Tuple[bool, List[Tuple[str, str]]]:
-    """Names only the 1-3 litmus principles the documents actually engage.
+) -> Tuple[bool, List[Tuple[str, str, str]]]:
+    """Names only the 1-3 litmus principles the documents actually engage, with verdicts.
 
     If none apply, returns (True, []) indicating Routine status.
+    Verdicts must be one of: 'Advances', 'Mixed', 'Cuts against'.
     """
     title = item["title"]
     t_lower = title.lower()
@@ -317,17 +318,24 @@ def determine_engaged_litmus_principles(
     if any(k in t_lower for k in ("lease agreement for fire vehicles", "storage lease", "vehicle storage", "interlocal agreement with olympia school district for cultural access")):
         return True, []
 
-    engaged = []
+    engaged: List[Tuple[str, str, str]] = []
 
     # 1. Conservation District Rates
     if "conservation district" in t_lower and ("rate" in t_lower or "ordinance" in t_lower):
         engaged.append((
             "Cost and who pays",
-            "This action directly modifies mandatory per-parcel assessments collected through property tax statements, establishing the recurring financial burden landowners and working agricultural operators will pay to finance the conservation district's operations.",
+            "Cuts against",
+            "The proposed ordinance adjusts mandatory annual tax-roll assessments on private landowners under RCW 89.08.400, but the notice fails to disclose the proposed dollar increase per parcel, rate tiers by acreage, or the total revenue amount being levied.",
+        ))
+        engaged.append((
+            "Consent and process",
+            "Cuts against",
+            "The county scheduled a public hearing with written testimony cutting off two hours before the 3:30 PM session, yet failed to attach the draft ordinance or proposed rate schedule to the public notice, preventing affected landowners from inspecting what they will be charged before testifying.",
         ))
         engaged.append((
             "Subsidiarity",
-            "While the county commissioners must vote to adopt the ordinance, conservation district assessments operate under state statutory framework (RCW 89.08.400), which dictates how rates are calculated and sets limits on county discretion.",
+            "Mixed",
+            "The Board of County Commissioners holds statutory discretion under RCW 89.08.400 to approve, modify, or reject the assessment requested by the conservation district supervisors, but state law governs the assessment framework and delegates collection to the county tax rolls.",
         ))
         return False, engaged
 
@@ -335,14 +343,17 @@ def determine_engaged_litmus_principles(
     if "fwhca" in t_lower or ("fish and wildlife" in t_lower and "code" in t_lower) or archetype == "critical_areas":
         engaged.append((
             "Ownership",
-            "The proposed code directly encumbers private parcel rights by expanding riparian buffers (150–250+ ft) under Site Potential Tree Height formulas and regulating customary private residential yard care, including mandatory reductions in lawn sizes and soil seedbank controls in historic prairie zones.",
+            "Cuts against",
+            "The draft code encumbers private parcel rights by expanding riparian buffers (150–250+ ft) under Site Potential Tree Height formulas and regulating customary private residential yard care, including mandatory reductions in lawn sizes and soil seedbank controls in historic prairie zones.",
         ))
         engaged.append((
             "Subsidiarity",
+            "Mixed",
             "While local planners present the draft code, the revisions are driven by Washington State Department of Fish and Wildlife (WDFW) guidance and Growth Management Act (RCW 36.70A) mandates that constrain local legislative discretion.",
         ))
         engaged.append((
             "Small and local vs. large and distant",
+            "Cuts against",
             "High compliance overhead for professional biological delineations and buffer averaging studies places thousands of dollars in fixed costs onto ordinary homeowners and small builders, compared to large institutional developers.",
         ))
         return False, engaged
@@ -351,15 +362,18 @@ def determine_engaged_litmus_principles(
     if "drinking water" in t_lower or "article iii" in t_lower or archetype == "water_and_health":
         engaged.append((
             "Ownership",
+            "Cuts against",
             "Revisions establish administrative permitting criteria and monitoring burdens that encumber private residential water systems, wellhead protection zones, and parcel development feasibility.",
         ))
         engaged.append((
             "Subsidiarity",
+            "Mixed",
             "County sanitary rules must align with Washington State Department of Health administrative regulations (WAC 246), limiting local board flexibility in tailoring rules to rural Thurston conditions.",
         ))
         engaged.append((
             "Cost and who pays",
-            "Testing, engineering reviews, and sanitary code compliance fees are borne directly by individual well owners and small Group B water system users.",
+            "Cuts against",
+            "Testing, engineering reviews, and sanitary code compliance fees are borne directly by individual well owners and small Group B water system users rather than covered by county health revenue.",
         ))
         return False, engaged
 
@@ -367,11 +381,13 @@ def determine_engaged_litmus_principles(
     if any(k in t_lower for k in ("cdbg", "hud", "housing and urban development")):
         engaged.append((
             "Subsidiarity",
-            "The grant agreement connects local funding to federal HUD guidelines; Olympia is explicitly relying on legal protections under King County v. Turner to protect local policy self-determination against federal executive mandates.",
+            "Advances",
+            "Olympia accepts federal formula grant funds while explicitly conditioning execution on legal protections under King County v. Turner to protect local policy self-determination against federal executive mandates.",
         ))
         engaged.append((
             "Cost and who pays",
-            "Commits $376,415.00 in federal formula funding to designated low-income assistance activities, requiring ongoing local administrative accounting and compliance overhead.",
+            "Advances",
+            "Directs $376,415.00 in federal formula funding into designated local low-income community housing and facility projects without increasing local municipal tax burdens.",
         ))
         return False, engaged
 
@@ -379,11 +395,13 @@ def determine_engaged_litmus_principles(
     if "quince street" in t_lower or "franz anderson" in t_lower or archetype == "housing_and_grants":
         engaged.append((
             "Cost and who pays",
-            "Authorizes substantial public funding commitments ($450,000+ amendments) drawn from local housing funds for contracted third-party shelter operations.",
+            "Mixed",
+            "Authorizes substantial public funding commitments ($450,000+ amendments) drawn from regional housing funds for contracted third-party shelter operations.",
         ))
         engaged.append((
             "Family and household",
-            "Channels resources into institutional, managed shelter environments rather than pathways to independent household economic self-reliance or fee-simple homeownership.",
+            "Mixed",
+            "Provides immediate transitional shelter for unhoused individuals but channels ongoing resources into managed institutional shelter beds rather than pathways to fee-simple family stability.",
         ))
         return False, engaged
 
@@ -391,11 +409,13 @@ def determine_engaged_litmus_principles(
     if "springwood" in t_lower or archetype == "development_and_plat":
         engaged.append((
             "Ownership",
-            "Facilitates private fee-simple property investment and home construction (e.g. 37 home lots at Springwood) while creating private wetland mitigation tracts and maintenance obligations.",
+            "Advances",
+            "Enables the creation of 37 fee-simple single-family homeownership lots on 7.2 acres at 1609 Springwood Ave NE, expanding private family housing inventory with required developer-funded infrastructure bonds.",
         ))
         engaged.append((
             "Place",
-            "Touches established neighborhoods, requiring evaluation of stormwater runoff detention, perimeter tree preservation, and local traffic safety for longstanding adjacent residents.",
+            "Mixed",
+            "Integrates new residential neighborhood density and wetland buffer mitigation tracts, but requires ongoing monitoring of stormwater drainage and traffic impacts on longstanding adjacent residents.",
         ))
         return False, engaged
 
@@ -403,7 +423,8 @@ def determine_engaged_litmus_principles(
     if archetype == "rates_and_taxes":
         engaged.append((
             "Cost and who pays",
-            "Adjusts fees or assessments that directly alter the recurring carrying cost for local households and small businesses.",
+            "Cuts against",
+            "Adjusts fees or assessments that directly alter the recurring carrying cost for local households and small businesses without demonstrating offsetting cost reductions.",
         ))
         return False, engaged
 
@@ -494,6 +515,63 @@ def generate_what_to_ask_or_watch(item: Dict[str, Any], archetype: str, profile:
     ]
 
 
+def generate_strongest_case(item: Dict[str, Any], archetype: str, profile: Dict[str, Any]) -> str:
+    """Generates the strongest case proponents would make, drawn from official record or statute."""
+    title = item["title"].lower()
+
+    if "conservation district" in title and ("rate" in title or "ordinance" in title):
+        return (
+            "Under state law (RCW 89.08), conservation districts deliver non-regulatory natural resource stewardship, "
+            "voluntary farm planning, wildfire risk reduction, and water quality assistance directly to working landowners "
+            "without regulatory enforcement. Establishing a stable local rate assessment allows the district to sustain voluntary "
+            "conservation programs and landowner technical assistance without relying on unpredictable state grants or diverting "
+            "county general property taxes."
+        )
+
+    if "fwhca" in title or ("fish and wildlife" in title and "code" in title) or archetype == "critical_areas":
+        return (
+            "State-mandated Best Available Science and Washington Department of Fish and Wildlife riparian guidance indicate that "
+            "expanded Site Potential Tree Height buffers and prairie soil conservation protect critical salmon-bearing stream temperatures, "
+            "water quality, and declining regional wildlife habitats from irreversible suburban fragmentation."
+        )
+
+    if "drinking water" in title or "article iii" in title or archetype == "water_and_health":
+        return (
+            "Updating Sanitary Code Article III aligns local groundwater protection with Washington State Department of Health administrative rules, "
+            "ensuring regular water quality monitoring, reducing nitrate contamination risks in rural aquifers, and protecting public health for families "
+            "relying on private or shared residential wells."
+        )
+
+    if any(k in title for k in ("cdbg", "hud", "housing and urban development")):
+        return (
+            "Federal Community Development Block Grant funding provides direct formula assistance for low-income housing and vital public infrastructure "
+            "that local property tax revenues cannot fully cover, while local conditioning under King County v. Turner shields city operations from federal executive mandates."
+        )
+
+    if "springwood" in title or archetype == "development_and_plat":
+        return (
+            "The subdivision adds needed family homeownership housing supply on land zoned for residential density, provides dedicated stormwater management "
+            "and open space tracts, and requires developer performance surety bonds to guarantee completion without public taxpayer expense."
+        )
+
+    if "quince street" in title or "franz anderson" in title or archetype == "housing_and_grants":
+        return (
+            "Provides vital immediate shelter and supportive case management for unsheltered residents while bridging toward long-term permanent supportive housing, "
+            "utilizing regional homelessness dollars already dedicated for crisis response."
+        )
+
+    if "yelm" in title and "trail" in title:
+        return (
+            "Transferring trail right-of-way to the municipal parks department places corridor maintenance and local trail enhancements with the municipal government "
+            "closest to trail users while preserving continuous public recreational access."
+        )
+
+    return (
+        "Proponents emphasize that the action fulfills official agency administrative duties, updates outdated regulatory frameworks, "
+        "or secures dedicated resources to maintain public community services."
+    )
+
+
 def generate_what_to_do(item: Dict[str, Any], url: str, deadline: str, date_str: str, jur: str) -> str:
     parts = []
     parts.append(f"- **Meeting Date**: {date_str}")
@@ -535,10 +613,13 @@ def generate_brief_markdown(item: Dict[str, Any], refs: List[Dict[str, Any]], li
         staff_memo_parts.append("- **Upstream Requirements**: Governed under local discretion; no preemptive state mandate identified in agenda packet.")
     
     if engaged_principles:
-        litmus_notes = "; ".join([f"{name} ({desc})" for name, desc in engaged_principles])
+        litmus_notes = "; ".join([f"{name} ({verdict}: {reason})" for name, verdict, reason in engaged_principles])
         staff_memo_parts.append(f"- **Litmus Policy Checks**: {litmus_notes}")
     else:
         staff_memo_parts.append("- **Litmus Policy Checks**: Routine administrative item; no acute policy conflicts identified.")
+
+    strongest_case = generate_strongest_case(item, archetype, profile)
+    staff_memo_parts.append(f"- **Proponents' Documented Stance**: {strongest_case}")
 
     questions = generate_what_to_ask_or_watch(item, archetype, profile)
     if questions:
@@ -550,17 +631,25 @@ def generate_brief_markdown(item: Dict[str, Any], refs: List[Dict[str, Any]], li
 
     # Formulate "For Residents" section (what's happening, why it may matter, what to do)
     why_it_matters_parts = []
-    for princ_name, princ_desc in engaged_principles:
-        why_it_matters_parts.append(f"- **{princ_name}**: {princ_desc}")
-    why_it_matters_str = "\n".join(why_it_matters_parts) if why_it_matters_parts else "Routine local government action."
+    for princ_name, verdict, reason in engaged_principles:
+        why_it_matters_parts.append(f"- **{princ_name}**: **Verdict: {verdict}** — {reason}")
+    why_it_matters_str = "\n".join(why_it_matters_parts) if why_it_matters_parts else "**Routine Item**: This is a routine or operational matter that does not significantly engage the core litmus policy principles."
+
+    questions_str = "\n".join([f"{i+1}. {q}" for i, q in enumerate(questions)]) if questions else "None identified in official packet."
 
     for_residents_str = f"""**What Is Happening**
 {headline}
 
 {whats_happening}
 
-**Why It May Matter**
+**Principled Analysis**
 {why_it_matters_str}
+
+**The Strongest Case for This**
+{strongest_case}
+
+**What We'd Want to Know**
+{questions_str}
 
 **What to Do & How to Participate**
 {what_to_do}"""
@@ -610,8 +699,8 @@ def generate_action_page_markdown(item: Dict[str, Any], refs: List[Dict[str, Any
     what_to_do = generate_what_to_do(item, url, deadline, date_str, jur)
 
     why_it_matters_parts = []
-    for princ_name, princ_desc in engaged_principles:
-        why_it_matters_parts.append(f"- **{princ_name}**: {princ_desc}")
+    for princ_name, verdict, reason in engaged_principles:
+        why_it_matters_parts.append(f"- **{princ_name}**: **Verdict: {verdict}** — {reason}")
     why_it_matters_str = "\n".join(why_it_matters_parts) if why_it_matters_parts else "**Routine Item**: General administrative action."
 
     return f"""# Citizen Action: {title}

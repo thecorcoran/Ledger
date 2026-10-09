@@ -1,0 +1,163 @@
+# Loretta's Ledger — Principled Policy Evaluation Config
+# Concrete indicators, evidentiary standards, and verdict thresholds for all 8 Litmus principles.
+
+principles:
+  subsidiarity:
+    name: "Subsidiarity"
+    plain_question: "Is this decided at the level closest to the people affected?"
+    what_to_look_for:
+      document_indicators:
+        - "Citations to state RCWs (e.g. RCW 36.70A Growth Management Act, RCW 89.08 Conservation Districts, RCW 70A, RCW 90.58 SMA)"
+        - "Citations to federal statutes, executive orders, or federal grant agreements (e.g. HUD, CDBG, EPA)"
+        - "Model policies or outside advocacy templates imported from regional or non-local organizations"
+        - "State agency guidance documents (e.g. WDFW Riparian Guidance, Dept of Ecology manual, Dept of Health WAC 246)"
+      authority_sources:
+        local_choice: "Discretionary policy initiated by local elected council or commission without state preemption"
+        funding_condition: "Voluntary participation tied to contractual state/federal strings or grant compliance"
+        mandate: "Binding state or federal statutory directive with statutory penalties for non-compliance"
+    verdicts:
+      advances:
+        criteria: "Local elected officials exercise genuine discretion to tailor policy to Thurston/Olympia community needs, resist preemptive overreach, or defend local self-governance (e.g. asserting preliminary injunctions against federal grant overreach)."
+      mixed:
+        criteria: "Action is locally crafted but constrained within state regulatory boundaries or partial grant compliance conditions."
+      cuts_against:
+        criteria: "Action uncritically passes through distant state or federal mandates without tailoring, abdicates local legislative authority to regional bodies, or accepts outside policy dictates that override local preferences."
+
+  ownership:
+    name: "Ownership"
+    plain_question: "Does it help ordinary families and small businesses own and keep real property?"
+    what_to_look_for:
+      document_indicators:
+        - "Zoning amendments, lot size maximums/minimums, subdivision plat approvals, accessory dwelling rules"
+        - "Environmental setbacks, wetland buffer requirements, Site Potential Tree Height (SPTH) designations"
+        - "Permitting fees, mandatory professional consultant studies (geotechnical, biological, hydrogeological)"
+        - "Covenants, liens, deed restrictions, or municipal property encumbrances"
+      property_effects:
+        - "Direct restrictions on private land use or dwelling additions"
+        - "Creation of new fee-simple ownership opportunities vs rental/institutional tenure"
+        - "Mandatory buffer encumbrances eliminating usable yard area"
+      displacement_risks:
+        - "Code changes that render existing homes or structures non-conforming"
+        - "Subdivisions requiring demolition of existing residential dwellings or small retail spaces"
+    verdicts:
+      advances:
+        criteria: "Enables ordinary households to acquire, maintain, or improve fee-simple land and buildings; creates new family homeownership parcels; reduces prohibitive permitting hurdles."
+      mixed:
+        criteria: "Authorizes new housing or business development but encumbers parcels with extensive deed restrictions, restrictive HOA covenants, or heavy buffer easements."
+      cuts_against:
+        criteria: "Imposes severe land-use restrictions, mandates costly professional studies ($5,000+) on small parcels, restricts private residential yard use, or diminishes landowner equity without compensation."
+
+  small_and_local:
+    name: "Small and Local vs. Large and Distant"
+    plain_question: "Who bears the burden and who captures the benefit?"
+    what_to_look_for:
+      document_indicators:
+        - "Public procurement contracts, RFP award specifications, bidding prerequisites"
+        - "Contractor eligibility criteria, local prevailing wage documentation, vendor headquarters location"
+        - "Business license surcharges, impact fee schedules, commercial regulations"
+        - "Disproportionate compliance overhead on small independent shops vs corporate chains"
+      financial_metrics:
+        - "Contract dollar totals and recipient vendor identity (local vs multi-state firm)"
+        - "Minimum bonding, insurance, or certification thresholds that exclude small local subcontractors"
+    verdicts:
+      advances:
+        criteria: "Awards public business to independent local trades and contractors; lowers regulatory barriers for mom-and-pop operators; protects independent commerce against consolidated dominance."
+      mixed:
+        criteria: "Splits contract awards between regional corporate entities and local subcontractors."
+      cuts_against:
+        criteria: "Funneled to large out-of-area corporations or institutional consultants; designs compliance systems only large corporate balance sheets can satisfy while burdening small local competitors."
+
+  family_and_household:
+    name: "Family and Household"
+    plain_question: "Does it support family and neighborhood self-reliance or substitute agency bureaucracy?"
+    what_to_look_for:
+      document_indicators:
+        - "Social service program grants, homelessness shelter contracts, public health directives"
+        - "Home occupation regulations, childcare zoning clearances, residential restrictions"
+        - "Interlocal contracts for managed group shelter facilities vs permanent family stability"
+      displacement_risks:
+        - "Shifting public investments away from family neighborhood stabilization into temporary managed facilities"
+    verdicts:
+      advances:
+        criteria: "Strengthens independent family economy; removes barriers to neighborhood mutual aid, home childcare, and home-based livelihoods; supports stable generational roots."
+      mixed:
+        criteria: "Provides emergency temporary shelter or assistance but ties recipients to open-ended administrative supervision without a clear transition to household independence."
+      cuts_against:
+        criteria: "Substitutes government administration for family responsibility; restricts domestic home enterprise; prioritizes permanent institutional shelter networks over family stability."
+
+  cost_and_who_pays:
+    name: "Cost and Who Pays"
+    plain_question: "Who bears the direct fees, rates, and taxes, and is the burden transparent?"
+    what_to_look_for:
+      document_indicators:
+        - "Tax levies, assessment roll schedules, utility rate adjustments, General Facility Charges (GFCs)"
+        - "Staff budget memos, rate study tables, CPI escalation clauses, fee schedules"
+        - "Identification of designated fund accounts (General Fund vs Enterprise Funds vs Special Revenues)"
+      financial_metrics:
+        total_expenditure: "Exact dollar amount authorized in ordinance or contract"
+        per_household_or_parcel: "Estimated per-parcel, per-meter, or per-household annual dollar impact"
+        burden_allocation: "Whether rate is flat per parcel (regressive) or graduated by value/usage"
+    verdicts:
+      advances:
+        criteria: "Reduces public fees, eliminates redundant assessments, caps rate increases, or ensures burdens are transparently allocated to direct beneficiaries with detailed per-parcel accounting."
+      mixed:
+        criteria: "Increases fees or assessments but clearly states the per-parcel dollar schedule and ties all proceeds to direct capital improvements with transparent sunset provisions."
+      cuts_against:
+        criteria: "Hikes taxes, utility rates, or per-parcel assessments without disclosing per-household costs in public notice, relies on regressive flat fees on working families, or commits broad public tax funds to narrow private/administrative benefits."
+
+  consent_and_process:
+    name: "Consent and Process"
+    plain_question: "Were affected neighbors given timely notice, plain language, and a genuine hearing?"
+    what_to_look_for:
+      document_indicators:
+        - "Notice publication dates, legal ads, mailed neighbor notices, sign postings"
+        - "Comment period window duration and submission cutoffs"
+        - "Meeting time accessibility (daytime working hours vs evening public sessions)"
+        - "Availability of complete draft ordinances and rate schedules prior to hearing"
+      procedural_timing:
+        minimum_notice: "Standard notice intervals (e.g. 10 days, 15 days, 30 days)"
+        comment_cutoff: "Specific submission deadline relative to vote (e.g. 2 hours before meeting, close of hearing)"
+    verdicts:
+      advances:
+        criteria: "Provides expansive notice (20+ days), holds accessible evening hearings in person and online, publishes full draft texts well in advance, and actively engages affected neighbors."
+      mixed:
+        criteria: "Meets technical statutory minimums (e.g. 10-day notice) but publishes rate details or complex attachments late in the agenda packet release."
+      cuts_against:
+        criteria: "Schedules public hearings on rate or property changes without attaching proposed dollar schedules; holds critical votes during restrictive daytime work hours; limits written comment to short windows without adequate packet disclosure."
+
+  reversibility_and_accountability:
+    name: "Reversibility and Accountability"
+    plain_question: "Can local voters hold named elected officials answerable, and can actions be repealed?"
+    what_to_look_for:
+      document_indicators:
+        - "Term length of contracts, multi-year binding obligations, interlocal agreements (ILAs)"
+        - "Delegation of authority to unelected boards, joint operating agencies, or hearing examiners"
+        - "Sunset clauses, mandatory biennial performance reviews, termination provisions"
+        - "Recorded roll-call vote requirements vs unanimous consent calendar approval"
+    verdicts:
+      advances:
+        criteria: "Action is decided by named elected officials by recorded roll-call vote, includes clear expiration/sunset dates, and allows straightforward amendment or repeal by future councils/boards."
+      mixed:
+        criteria: "Authorizes a multi-year interlocal agreement (3-5 years) with standard 60-day or 90-day mutual termination clauses."
+      cuts_against:
+        criteria: "Locks local taxpayers into long-term irrevocable debt or multi-decade contracts; delegates binding regulatory authority to unelected boards; removes decisions from future voter recourse."
+
+  place:
+    name: "Place"
+    plain_question: "Does it respect the physical shoreline, historic fabric, and longstanding character of our community?"
+    what_to_look_for:
+      document_indicators:
+        - "SEPA environmental checklists, shoreline master program permits, historic preservation reviews"
+        - "Demolition permits, clearing and grading limits, heritage tree removal specifications"
+        - "Changes to working waterfronts, rural farmland preservation, downtown streetscapes"
+      displacement_risks:
+        - "Demolition of historic structures, cafes, or legacy community gathering spaces (the lesson of Loretta Corcoran's cafe)"
+        - "Displacement of longstanding rural, coastal, or downtown tenants"
+    verdicts:
+      advances:
+        criteria: "Protects and restores natural water bodies and historic architecture; preserves working land and neighborhood scale; prevents destruction of beloved local cultural landmarks."
+      mixed:
+        criteria: "Improves environmental aspects (e.g. removing toxic creosote pilings) while significantly altering existing shoreline access or site scale."
+      cuts_against:
+        criteria: "Enables demolition of historic buildings, displaces longstanding community institutions, degrades natural habitat, or replaces human-scaled neighborhoods with sterile out-of-scale development."
+
