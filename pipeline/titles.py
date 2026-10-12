@@ -146,27 +146,30 @@ def generate_display_title(item: Dict[str, Any], body_text: str = "") -> str:
     
     candidate = ""
     
+    weigh_verb = "weigh" if body == "Planners" else "weighs"
+    approve_verb = "approve" if body == "Planners" else "approves"
+
     # Specific targeted patterns based on topic/content
     if "conservation district" in t_lower and ("rate" in t_lower or "fee" in t_lower or "ordinance" in t_lower):
-        candidate = f"{body} weighs new rates to fund local conservation district"
+        candidate = f"{body} {weigh_verb} new rates to fund local conservation district"
     
     elif "drinking water" in t_lower or "article iii" in t_lower:
-        candidate = f"{body} weighs new rules for local drinking water"
+        candidate = f"{body} {weigh_verb} new rules for local drinking water"
     
-    elif "wetlands" in t_lower:
-        candidate = f"{body} weighs new land rules for local wetlands"
+    elif "wetlands" in t_lower or "24.30" in t_lower:
+        candidate = f"{body} {weigh_verb} new land rules for local wetlands"
     
     elif "fwhca" in t_lower or "wildlife" in t_lower or "fish" in t_lower:
-        candidate = f"{body} weighs new land rules for fish and wildlife habitats"
+        candidate = f"{body} {weigh_verb} new land rules for fish and wildlife habitats"
     
     elif "cdbg" in t_lower or "community development block grant" in t_lower or "hud" in t_lower:
-        candidate = f"{body} approves federal grant for housing and homes"
+        candidate = f"{body} {approve_verb} federal grant for housing and homes"
     
     elif "utility rates" in t_lower or "utility operating budget" in t_lower or "facility charges" in t_lower:
         if "development fees" in t_lower or "impact fees" in t_lower:
-            candidate = f"{body} weighs new city fees and service rates"
+            candidate = f"{body} {weigh_verb} new city fees and service rates"
         else:
-            candidate = f"{body} weighs new city budget and service rates"
+            candidate = f"{body} {weigh_verb} new city budget and service rates"
     
     if not candidate:
         if "public hearing" in t_lower:

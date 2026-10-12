@@ -20,6 +20,20 @@ contacts:
     source_url: "https://www.thurstoncountywa.gov/departments/board-county-commissioners"
     last_verified: "2026-10-09"
 
+  thurston_planning_commission:
+    jurisdiction: thurston
+    entity_name: "Thurston County Planning Commission"
+    role: "Advisory Citizen Commission on Land Use and Development Code"
+    contact_name: "Community Planning & Economic Development Staff"
+    contact_title: "Planning Commission Staff Liaison"
+    phone: "(360) 786-5490"
+    email: null
+    portal_url: "https://www.thurstoncountywa.gov/departments/community-planning-and-economic-development/community-planning/planning-commission"
+    comment_info: "Written comments may be submitted to staff for distribution to the Planning Commission prior to work sessions and public hearings."
+    address: "3000 Pacific Ave SE, Olympia, WA 98501"
+    source_url: "https://www.thurstoncountywa.gov/departments/community-planning-and-economic-development/community-planning/planning-commission"
+    last_verified: "2026-10-09"
+
   thurston_cd:
     jurisdiction: thurston
     entity_name: "Thurston Conservation District"

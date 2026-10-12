@@ -84,10 +84,15 @@ Every upstream influence is documented with direct citations and links to offici
 ## Project Structure
 
 - `ledger`: Simple one-command executable runner (`./ledger run`, `./ledger web`, `./ledger push`).
+- `config/`:
+  - `possible_asks.yaml`: Library of constructive policy correctives ("possible asks") keyed by principle with trigger conditions and evidence requirements (e.g., safe harbor for existing homes/gardens, reasonable-use exceptions for small lots, separating state mandates from local additions, low-cost staff site visits, parcel lookups, and review sunsets).
+  - `contacts.yaml`: Directory of official, verified contacts for local decision-makers, staff liaisons, state agencies, and legislative delegations, complete with source URLs and verification dates.
+  - `principles.yaml`: Definitions and rubrics for the 8 People-First Litmus Test principles.
 - `pipeline/`:
   - `ingest/`: Agenda crawlers for City of Olympia and Thurston County.
   - `documents.py`: Document extraction engine for PDF staff reports, ordinances, and presentations.
-  - `analyze.py`: In-depth analysis and draft generator for the 8 Litmus Test principles.
+  - `analyze.py`: In-depth analysis and draft generator for the 8 Litmus Test principles and 9-part brief structure.
+  - `titles.py`: Plain headline generation (`[Body] [does what] [to what]`) and Flesch-Kincaid grade 8 readability validation.
   - `upstream/`: Registry matching, citation detection, and influence chain tracing.
   - `view.py`: Single-page editorial Control Center (`http://localhost:8000`).
   - `export.py`: Static site builder and PDF brief generator (`docs/`).

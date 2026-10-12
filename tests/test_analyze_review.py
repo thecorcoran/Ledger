@@ -50,21 +50,22 @@ class TestAnalyzeAndReview(unittest.TestCase):
         ]
         brief = generate_brief_markdown(item, refs, "• HUD via funding_strings")
 
-        # Verify the 3 labeled sections are present
-        self.assertIn("## For Staff", brief)
-        self.assertIn("## For Residents", brief)
-        self.assertIn("## Trajectory", brief)
+        # Verify the 9-part brief sections are present
+        self.assertIn("## Why This Matters Now", brief)
+        self.assertIn("## What Changes", brief)
+        self.assertIn("## What's Good Here", brief)
+        self.assertIn("## Our Reading", brief)
+        self.assertIn("## What It's Trying to Do, and How Supporters Would Answer", brief)
+        self.assertIn("## What Would Make It Better", brief)
+        self.assertIn("## What to Do", brief)
+        self.assertIn("## Questions", brief)
 
         # Verify only engaged principles are present (e.g. Cost and who pays)
         self.assertIn("Cost and who pays", brief)
         # Verify non-engaged principles are omitted
         self.assertNotIn("Family and household", brief)
 
-        # Verify upstream section
-        self.assertIn("U.S. Department of Housing and Urban Development", brief)
-
-        # Verify citizen action details
-        self.assertIn("Meeting Date", brief)
+        # Verify action details
         self.assertIn("How to Comment", brief)
 
     def test_design_rubric_evaluations(self):
@@ -74,7 +75,7 @@ class TestAnalyzeAndReview(unittest.TestCase):
             "jurisdiction": "thurston",
             "meeting_date": "2026-09-16",
             "url": "https://example.com/cao",
-            "body_text": "CAO update covering buffers and wetland habitat",
+            "body_text": "Body: Thurston County Planning Commission\nMeeting Date: 2026-09-16\nCAO update covering buffers and habitat",
             "comment_deadline": "2026-09-16 5pm",
         }
         refs = [{
@@ -86,22 +87,23 @@ class TestAnalyzeAndReview(unittest.TestCase):
         }]
         cao_brief = generate_brief_markdown(cao_item, refs, "")
 
-        # Verify the 3 labeled sections and specific factual narrative
-        self.assertIn("## For Staff", cao_brief)
-        self.assertIn("## For Residents", cao_brief)
-        self.assertIn("## Trajectory", cao_brief)
-        self.assertIn("Site Potential Tree Height", cao_brief)
+        # Verify 9-part brief structure
+        self.assertIn("## Why This Matters Now", cao_brief)
+        self.assertIn("## What Changes", cao_brief)
+        self.assertIn("## What's Good Here", cao_brief)
+        self.assertIn("## Our Reading", cao_brief)
+        self.assertIn("## What It's Trying to Do, and How Supporters Would Answer", cao_brief)
+        self.assertIn("## What Would Make It Better", cao_brief)
+        self.assertIn("## What to Do", cao_brief)
+        self.assertIn("## Questions", cao_brief)
 
-        # Verify only the 3 engaged principles are highlighted
-        self.assertIn("**Ownership**:", cao_brief)
-        self.assertIn("**Subsidiarity**:", cao_brief)
-        self.assertIn("**Small and local vs. large and distant**:", cao_brief)
-        # Verify unengaged principles like Family and household or Place are not listed as headers
-        self.assertNotIn("**Family and household**:", cao_brief)
-
-        # Verify upstream and questions
-        self.assertIn("WDFW & Growth Management Act", cao_brief)
-        self.assertIn("Will the county remove prescriptive lawn size limitations", cao_brief)
+        # Verify only the 3 engaged principles are highlighted with hidden verdict comments
+        self.assertIn("**Ownership** <!-- verdict: Cuts against -->:", cao_brief)
+        self.assertIn("**Subsidiarity** <!-- verdict: Mixed -->:", cao_brief)
+        self.assertIn("**Small and local vs. large and distant** <!-- verdict: Cuts against -->:", cao_brief)
+        self.assertIn("**Our reading**:", cao_brief)
+        # Verify unengaged principles like Family and household are not listed
+        self.assertNotIn("**Family and household**", cao_brief)
 
     def test_draft_item_and_review_workflow(self):
         # 1. Generate brief draft
@@ -161,7 +163,8 @@ class TestAnalyzeAndReview(unittest.TestCase):
             self.assertIn("mixed", p["verdicts"])
             self.assertIn("cuts_against", p["verdicts"])
 
-    def test_sharpened_verdict_and_strongest_case(self):
+    def test_sharpened_verdict_and_case_for_it(self):
+        from pipeline.export import markdown_to_html
         tcd_item = {
             "title": "Public Hearing: Proposed Ordinance to Adjust Thurston Conservation District's Rates",
             "jurisdiction": "thurston",
@@ -178,15 +181,81 @@ class TestAnalyzeAndReview(unittest.TestCase):
             "evidence_url": "https://example.com/tcd",
         }]
         brief = generate_brief_markdown(tcd_item, refs, "")
-        self.assertIn("Verdict: Cuts against", brief)
-        self.assertIn("Verdict: Mixed", brief)
-        self.assertIn("The Strongest Case for This", brief)
-        self.assertIn("Questions and Possible Actions", brief)
-        self.assertIn("Who to Contact", brief)
-        self.assertIn("What to Ask or Advocate For", brief)
+        self.assertIn("<!-- verdict: Cuts against -->", brief)
+        self.assertIn("<!-- verdict: Mixed -->", brief)
+        self.assertNotIn("Verdict: Cuts against", brief)
+        self.assertIn("## Our Reading", brief)
+        self.assertIn("**Our reading**:", brief)
+        self.assertIn("## What It's Trying to Do, and How Supporters Would Answer", brief)
+        self.assertIn("means", brief)
+        self.assertIn("## What Would Make It Better", brief)
+        self.assertIn("## What to Do", brief)
+        self.assertIn("## Questions", brief)
         self.assertIn("RCW 89.08", brief)
 
+        # Verify HTML rendering keeps verdict hidden in data-verdict attribute
+        html_out = markdown_to_html(brief)
+        self.assertIn('data-verdict="Cuts against"', html_out)
+        self.assertNotIn("Verdict:", html_out)
+        self.assertNotIn("<!-- verdict:", html_out)
 
-if __name__ == "__main__":
-    unittest.main()
+    def test_stage_detection(self):
+        from pipeline.analyze import detect_body_and_decider, detect_stage
+
+        # Advisory body (Planning Commission)
+        pc_body = detect_body_and_decider("Body: Thurston County Planning Commission\nScope: Land use", "thurston", "CAO Code Draft")
+        self.assertTrue(pc_body["is_advisory"])
+        self.assertIn("Planning Commission", pc_body["body_name"])
+        self.assertEqual(pc_body["decider_name"], "Thurston County Board of County Commissioners")
+        self.assertIn("advisory citizen body", pc_body["role_phrase"])
+
+        pc_stage = detect_stage("DRAFT - CAO Chapter 24.30: Wetlands", "Body: Thurston County Planning Commission", is_advisory=True)
+        self.assertEqual(pc_stage, "advisory review")
+
+        # Hearing
+        hearing_stage = detect_stage("Public Hearing: Proposed Ordinance to Adjust Rates", "Hearing notice", is_advisory=False)
+        self.assertEqual(hearing_stage, "hearing")
+
+        # Appeal
+        appeal_stage = detect_stage("Appeal Hearing - Case 25-100", "Land use appeal", is_advisory=False)
+        self.assertEqual(appeal_stage, "appeal")
+
+        # Final vote
+        vote_stage = detect_stage("Approval of Resolution Authorizing Contract", "Council action", is_advisory=False)
+        self.assertEqual(vote_stage, "final vote")
+
+    def test_past_date_handling(self):
+        from pipeline.analyze import get_meeting_date_status
+
+        today = "2026-10-09"
+        past_res = get_meeting_date_status("2026-10-07", today_str=today)
+        self.assertTrue(past_res["is_past"])
+        self.assertNotIn("scheduled", past_res["status_text"].lower())
+        self.assertIn("2026-10-07", past_res["status_text"])
+        self.assertEqual(past_res["next_step"], "Next step not yet posted.")
+
+        future_res = get_meeting_date_status("2026-10-20", today_str=today)
+        self.assertFalse(future_res["is_past"])
+        self.assertIn("scheduled", future_res["status_text"].lower())
+
+    def test_no_uncited_figures(self):
+        # Generate brief for wetlands
+        item = {
+            "title": "DRAFT - CAO Chapter 24.30: Wetlands",
+            "jurisdiction": "thurston",
+            "meeting_date": "2026-10-07",
+            "url": "https://www.thurstoncountywa.gov/media/35329",
+            "body_text": "Body: Thurston County Planning Commission\nMeeting Date: 2026-10-07\nDocument URL: https://www.thurstoncountywa.gov/media/35329",
+            "comment_deadline": "Check meeting agenda",
+        }
+        brief = generate_brief_markdown(item, [], "")
+
+        # Any specific code table/section references must be Markdown links to source documents
+        self.assertIn("[Table 24.30-1](https://www.thurstoncountywa.gov/media/35329)", brief)
+        self.assertIn("[TCC 24.30.045](https://www.thurstoncountywa.gov/media/35329)", brief)
+        self.assertIn("[TCC 24.30.050](https://www.thurstoncountywa.gov/media/35329)", brief)
+
+        # Figures must cite source documents; no estimated dollar figures for landowner costs
+        self.assertNotIn("estimated at $", brief)
+        self.assertNotIn("costing approximately $", brief)
 

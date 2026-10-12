@@ -83,6 +83,8 @@ def markdown_to_html(md_text: str) -> str:
     html_lines = []
     in_code = False
     in_ul = False
+    in_table = False
+    table_header_done = False
 
     for line in lines:
         if line.startswith("```"):
@@ -100,16 +102,56 @@ def markdown_to_html(md_text: str) -> str:
 
         stripped = line.strip()
 
+        # Markdown Table
+        if stripped.startswith("|") and stripped.endswith("|"):
+            if in_ul:
+                html_lines.append("</ul>")
+                in_ul = False
+            cells = [c.strip() for c in stripped.strip("|").split("|")]
+            # Check if separator row (e.g. | :--- | :--- |)
+            if all(re.match(r"^:?-+:?$", c) for c in cells if c):
+                continue
+            if not in_table:
+                html_lines.append('<table class="ledger-table">')
+                html_lines.append("<thead><tr>")
+                for c in cells:
+                    cell_html = re_links(re_italic(re_bold(html.escape(c))))
+                    html_lines.append(f"<th>{cell_html}</th>")
+                html_lines.append("</tr></thead><tbody>")
+                in_table = True
+                table_header_done = True
+            else:
+                html_lines.append("<tr>")
+                for c in cells:
+                    cell_html = re_links(re_italic(re_bold(html.escape(c))))
+                    html_lines.append(f"<td>{cell_html}</td>")
+                html_lines.append("</tr>")
+            continue
+        else:
+            if in_table:
+                html_lines.append("</tbody></table>")
+                in_table = False
+                table_header_done = False
+
         # Unordered list
         if stripped.startswith("- ") or stripped.startswith("* "):
             if not in_ul:
                 html_lines.append('<ul class="ledger-list">')
                 in_ul = True
-            content = stripped[2:]
-            content = html.escape(content)
+            raw_content = stripped[2:]
+            # Extract hidden verdict comment if present
+            verdict_attr = ""
+            m_verdict = re.search(r"<!--\s*verdict:\s*(.*?)\s*-->", raw_content)
+            if m_verdict:
+                verdict_val = html.escape(m_verdict.group(1).strip())
+                verdict_attr = f' data-verdict="{verdict_val}"'
+                raw_content = re.sub(r"\s*<!--\s*verdict:\s*.*?\s*-->", "", raw_content)
+
+            content = html.escape(raw_content)
             content = re_bold(content)
+            content = re_italic(content)
             content = re_links(content)
-            html_lines.append(f"<li>{content}</li>")
+            html_lines.append(f"<li{verdict_attr}>{content}</li>")
             continue
         else:
             if in_ul:
@@ -132,11 +174,14 @@ def markdown_to_html(md_text: str) -> str:
         else:
             content = html.escape(stripped)
             content = re_bold(content)
+            content = re_italic(content)
             content = re_links(content)
             html_lines.append(f"<p>{content}</p>")
 
     if in_ul:
         html_lines.append("</ul>")
+    if in_table:
+        html_lines.append("</tbody></table>")
     if in_code:
         html_lines.append("</code></pre>")
 
@@ -145,6 +190,10 @@ def markdown_to_html(md_text: str) -> str:
 
 def re_bold(text: str) -> str:
     return re.sub(r"\*\*(.*?)\*\*", r"<strong>\1</strong>", text)
+
+
+def re_italic(text: str) -> str:
+    return re.sub(r"(?<!\*)\*([^\*\n]+)\*(?!\*)", r"<em>\1</em>", text)
 
 
 def re_links(text: str) -> str:

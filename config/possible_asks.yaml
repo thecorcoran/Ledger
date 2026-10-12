@@ -1,0 +1,95 @@
+# Library of Possible Asks for Loretta's Ledger
+# Keyed by principle with trigger conditions and evidence requirements.
+# Each corrective is a "possible ask" tied to document facts or state law, never a certainty or legal conclusion.
+
+asks:
+  - id: separate_state_and_local_rules
+    principle: subsidiarity
+    title: "Separate state-mandated requirements from locally chosen additions"
+    ask_text: "Request that staff clearly separate requirements strictly mandated by state statute or administrative rules from optional local policy additions, and evaluate whether the local extras are necessary."
+    trigger_condition:
+      - state_mandate
+      - critical_areas
+      - comprehensive_plan
+    evidence_required: "The documents cite a state statute (e.g. RCW 36.70A) or state agency guidance (e.g. Ecology, WDFW, Commerce) alongside county-drafted standards."
+
+  - id: protect_existing_legal_uses
+    principle: ownership
+    title: "Protect existing legal uses, homes, yards, and gardens"
+    ask_text: "Add an explicit safe-harbor provision confirming that existing legally established residential homes, maintained yards, gardens, and customary outbuildings are exempt from retroactive buffer expansions or new ongoing maintenance restrictions."
+    trigger_condition:
+      - critical_areas
+      - buffer_expansion
+      - zoning_updates
+    evidence_required: "The proposal establishes expanded setback or buffer dimensions that overlap existing developed parcels or residential areas."
+
+  - id: reasonable_use_for_small_lots
+    principle: ownership
+    title: "Provide an accessible reasonable-use exception path for small or constrained lots"
+    ask_text: "Include an administrative, low-cost reasonable-use exception process so that owners of small, historic, or legally platted lots who cannot meet full expanded buffers can still build a modest single-family home without costly quasi-judicial hearing fees."
+    trigger_condition:
+      - critical_areas
+      - buffer_expansion
+      - subdivision_regulations
+    evidence_required: "The proposal increases buffer widths or setbacks that encumber a significant portion of standard residential parcel footprints."
+
+  - id: voluntary_stewardship_over_mandates
+    principle: subsidiarity
+    title: "Prioritize voluntary incentive stewardship over regulatory mandates for existing homes and farms"
+    ask_text: "Offer voluntary landowner stewardship agreements, technical assistance via the local Conservation District, and cost-share incentives before imposing punitive code enforcement on long-standing rural residents and family farms."
+    trigger_condition:
+      - rural_regulations
+      - conservation_district
+      - critical_areas
+    evidence_required: "The proposal applies regulatory restrictions or compliance burdens to rural or agricultural properties where voluntary programs exist under RCW 36.70A.700 or RCW 89.08."
+
+  - id: county_funded_site_studies
+    principle: small_and_local
+    title: "Provide county-funded or low-cost site reviews instead of requiring private consultants for homeowners"
+    ask_text: "Establish an option for a modest county staff site inspection at nominal cost for individual homeowner permits, rather than requiring ordinary families to hire private professional biologists or wetland consultants costing thousands of dollars."
+    trigger_condition:
+      - critical_areas
+      - specialized_studies
+      - building_permits
+    evidence_required: "The draft code mandates professional delineation reports, wetland rating reports, or specialized scientific studies as a condition of application completeness."
+
+  - id: property_tax_relief_for_buffers
+    principle: cost_and_who_pays
+    title: "Provide property-tax relief for land encumbered by protective buffers"
+    ask_text: "Automatically notify affected property owners of open-space or designated conservation tax reduction programs (such as Chapter 84.34 RCW Current Use taxation) so landowners are not taxed at full market rates on land where private use is legally restricted."
+    trigger_condition:
+      - buffer_expansion
+      - critical_areas
+      - conservation_dedication
+    evidence_required: "The proposal restricts substantial portions of private parcels from private development or commercial use for public environmental benefit."
+
+  - id: scale_requirements_by_project_size
+    principle: small_and_local
+    title: "Scale regulatory and study requirements by project size, with large developers paying mitigation"
+    ask_text: "Scale documentation and mitigation requirements by development intensity: exempt or streamline minor single-family residential additions and repairs while reserving complex mitigation banking, monitoring bonds, and full ecological studies for major commercial subdivisions and industrial developers."
+    trigger_condition:
+      - development_regulations
+      - critical_areas
+      - permitting_fees
+    evidence_required: "The proposal applies uniform technical studies, mitigation ratios, or reporting standards equally to minor residential home improvements and large multi-lot subdivisions."
+
+  - id: mailed_notice_and_parcel_lookup
+    principle: consent_and_process
+    title: "Mail individual notice to affected owners and offer an online parcel lookup"
+    ask_text: "Mail written notice to all real property owners whose parcels fall within newly designated buffer zones, and provide an interactive address lookup tool where residents can see the specific buffer and setback changes proposed for their parcel before the final public hearing."
+    trigger_condition:
+      - critical_areas
+      - zoning_updates
+      - rate_assessments
+    evidence_required: "The proposal applies map-based or formula-based regulatory designations across hundreds or thousands of private county parcels."
+
+  - id: review_date_with_success_measures
+    principle: consent_and_process
+    title: "Include a required review date with stated, measurable outcomes"
+    ask_text: "Insert a mandatory 3-to-5 year legislative review sunset requiring staff to report back to elected commissioners with documented data on permit timelines, actual homeowner compliance costs, number of reasonable-use waivers granted, and measured ecological benefits before the rules become permanent."
+    trigger_condition:
+      - new_regulatory_program
+      - critical_areas
+      - rate_adjustments
+    evidence_required: "The proposal adopts a major new regulatory scheme, fee structure, or broad code overhaul without an established sunset or re-authorization requirement."
+
