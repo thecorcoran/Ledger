@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>4.G Approval of a Resolution Authorizing Amendments to the Affordable Housing and Homeless Services Contracts with Thurston County for Funding for Operation of the Quince Street Tiny Home Village — Loretta's Ledger</title>
+    <title>City Council approves contract changes for Quince Street Tiny Home Village — Loretta's Ledger</title>
     <style>
         :root {
             --bg: #fcfaf5;
@@ -152,6 +152,91 @@
             color: #4a1715;
         }
 
+        .btn-brief {
+            display: inline-block;
+            background: var(--oxblood);
+            color: #ffffff !important;
+            text-decoration: none !important;
+            padding: 6px 14px;
+            font-size: 13px;
+            font-weight: 600;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+            border: 1px solid var(--oxblood);
+            transition: background 0.15s ease;
+        }
+
+        .btn-brief:hover {
+            background: #521a17;
+        }
+
+        .btn-secondary {
+            display: inline-block;
+            background: transparent;
+            color: var(--oxblood) !important;
+            text-decoration: none !important;
+            padding: 5px 12px;
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+            border: 1px solid var(--oxblood);
+        }
+
+        .attention-card {
+            background: var(--surface);
+            border: 1px solid var(--rule);
+            border-left: 4px solid var(--oxblood);
+            padding: 18px 20px;
+            margin-bottom: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 20px;
+        }
+
+        .attention-card-main {
+            flex: 1;
+        }
+
+        .attention-card-action {
+            flex-shrink: 0;
+            padding-top: 4px;
+        }
+
+        details.calendar-group {
+            border-bottom: 1px solid var(--rule);
+            padding: 10px 0;
+        }
+
+        details.calendar-group summary {
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 15px;
+            color: var(--ink);
+            list-style: none;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        details.calendar-group summary::-webkit-details-marker {
+            display: none;
+        }
+
+        details.calendar-group summary::after {
+            content: "+ Show items";
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--oxblood);
+            font-weight: 600;
+        }
+
+        details.calendar-group[open] summary::after {
+            content: "− Hide items";
+        }
+
         /* Ledger table styles */
         table.ledger-table {
             width: 100%;
@@ -187,7 +272,7 @@
         /* Ruled boxes and entries */
         .ledger-entry {
             border-bottom: 1px solid var(--rule);
-            padding: 18px 0;
+            padding: 16px 0;
         }
 
         .ledger-entry:first-child {
@@ -199,7 +284,7 @@
             text-transform: uppercase;
             letter-spacing: 0.06em;
             color: var(--ink-faint);
-            margin-bottom: 6px;
+            margin-bottom: 5px;
         }
 
         .tag-oxblood {
@@ -218,6 +303,22 @@
             letter-spacing: 0.05em;
             margin-right: 6px;
             display: inline-block;
+        }
+
+        .status-badge {
+            display: inline-block;
+            font-size: 12px;
+            font-weight: 600;
+            padding: 2px 8px;
+            border: 1px solid var(--rule-dark);
+            background: #f4eee2;
+            color: var(--ink);
+        }
+
+        .status-badge.ready {
+            background: var(--oxblood-tint);
+            border-color: var(--oxblood);
+            color: var(--oxblood);
         }
 
         .timeline-block {
@@ -262,6 +363,7 @@
             .top-row { flex-direction: column; gap: 4px; }
             nav.ledger-nav a { display: inline-block; margin: 4px 8px; font-size: 13px; }
             .masthead-title a { font-size: 28px; }
+            .attention-card { flex-direction: column; gap: 12px; }
             table.ledger-table { display: block; overflow-x: auto; }
         }
 
@@ -278,7 +380,7 @@
     <header class="broadsheet-masthead">
         <div class="masthead-inner">
             <div class="top-row">
-                <span>Independent Public Account &bull; Olympia & Thurston County</span>
+                <span>Independent Public Account &bull; Olympia &amp; Thurston County</span>
                 <span class="meta-date">Vol. I &bull; Record Current to October 2026</span>
             </div>
             <div class="masthead-title">
@@ -288,8 +390,8 @@
                 An Account of Local Decisions, Upstream Influences, and Public Trajectory
             </div>
             <nav class="ledger-nav">
-                <a href="../index.html" class="">This Week</a>
-                <a href="../matters.html" class="">Matters</a>
+                <a href="../index.html" class="">Home</a>
+                <a href="../briefs.html" class="active">Briefs</a>
                 <a href="../actors.html" class="">Who's in the Room</a>
                 <a href="../principles.html" class="">Principles</a>
                 <a href="../about.html" class="">About</a>
@@ -297,7 +399,11 @@
         </div>
     </header>
     <div class="container">
-        <h1 class="headline-title">City Council weighs local road plan</h1>
+        
+            <div class="ledger-meta" style="margin-bottom: 12px;">
+                <a href="../briefs.html">&larr; All Briefs</a> &bull; Olympia City Council &bull; Oct 6, 2026
+            </div>
+            <h1 class="headline-title">City Council approves contract changes for Quince Street Tiny Home Village</h1>
 <p><strong>Official Title</strong>: 4.G Approval of a resolution (a formal policy direction or decision) Authorizing Amendments to the Affordable Housing and Homeless Services Contracts with Thurston County for Funding for Operation of the Quince Street Tiny Home Village | <strong>Docket</strong>: Olympia • 2026-10-06 | <strong>Stage</strong>: Final Vote</p>
 <div class="spacer"></div>
 <h2 class="section-label">Why This Matters Now</h2>
@@ -367,6 +473,19 @@
 <p>1. Which specific local non-profit housing sub-recipients are designated to receive formula CDBG awards under the Program Year 2026 Annual Action Plan?</p>
 <p>2. What administrative compliance overhead is required of city staff to monitor federal grant strings compared to unrestricted local housing funds?</p>
 <div class="spacer"></div>
+    <h2 class="section-label">Timeline &amp; Documented Record</h2>
+    <div class="timeline-block">
+        
+        <div class="timeline-item">
+            <div class="ledger-meta">Oct 6, 2026 &bull; City Council</div>
+            <div><strong>Amendments to the Affordable Housing and Homeless Services Contracts with Thurston County for Funding for Operation of the Quince Street Tiny Home Village</strong></div>
+            <div style="font-size: 13px; color: var(--ink-muted); margin-top: 2px;">
+                <a href="https://olympia.legistar.com/MeetingDetail.aspx?LEGID=7131&amp;GID=218&amp;G=19510D34-31FB-48B8-9C02-4D026953451C" target="_blank" rel="noopener">Official Meeting Packet &amp; Record &rarr;</a>
+            </div>
+        </div>
+        
+    </div>
+    
     </div>
     <footer class="broadsheet-footer">
         Loretta's Ledger &bull; Documented Public Record for Thurston County and City of Olympia &bull; Strictly Factual &bull; <a href="../glossary.html">Glossary</a>

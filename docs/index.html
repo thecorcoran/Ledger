@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>This Week — Loretta's Ledger</title>
+    <title>Home — Loretta's Ledger</title>
     <style>
         :root {
             --bg: #fcfaf5;
@@ -152,6 +152,91 @@
             color: #4a1715;
         }
 
+        .btn-brief {
+            display: inline-block;
+            background: var(--oxblood);
+            color: #ffffff !important;
+            text-decoration: none !important;
+            padding: 6px 14px;
+            font-size: 13px;
+            font-weight: 600;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+            border: 1px solid var(--oxblood);
+            transition: background 0.15s ease;
+        }
+
+        .btn-brief:hover {
+            background: #521a17;
+        }
+
+        .btn-secondary {
+            display: inline-block;
+            background: transparent;
+            color: var(--oxblood) !important;
+            text-decoration: none !important;
+            padding: 5px 12px;
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+            border: 1px solid var(--oxblood);
+        }
+
+        .attention-card {
+            background: var(--surface);
+            border: 1px solid var(--rule);
+            border-left: 4px solid var(--oxblood);
+            padding: 18px 20px;
+            margin-bottom: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 20px;
+        }
+
+        .attention-card-main {
+            flex: 1;
+        }
+
+        .attention-card-action {
+            flex-shrink: 0;
+            padding-top: 4px;
+        }
+
+        details.calendar-group {
+            border-bottom: 1px solid var(--rule);
+            padding: 10px 0;
+        }
+
+        details.calendar-group summary {
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 15px;
+            color: var(--ink);
+            list-style: none;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        details.calendar-group summary::-webkit-details-marker {
+            display: none;
+        }
+
+        details.calendar-group summary::after {
+            content: "+ Show items";
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--oxblood);
+            font-weight: 600;
+        }
+
+        details.calendar-group[open] summary::after {
+            content: "− Hide items";
+        }
+
         /* Ledger table styles */
         table.ledger-table {
             width: 100%;
@@ -187,7 +272,7 @@
         /* Ruled boxes and entries */
         .ledger-entry {
             border-bottom: 1px solid var(--rule);
-            padding: 18px 0;
+            padding: 16px 0;
         }
 
         .ledger-entry:first-child {
@@ -199,7 +284,7 @@
             text-transform: uppercase;
             letter-spacing: 0.06em;
             color: var(--ink-faint);
-            margin-bottom: 6px;
+            margin-bottom: 5px;
         }
 
         .tag-oxblood {
@@ -218,6 +303,22 @@
             letter-spacing: 0.05em;
             margin-right: 6px;
             display: inline-block;
+        }
+
+        .status-badge {
+            display: inline-block;
+            font-size: 12px;
+            font-weight: 600;
+            padding: 2px 8px;
+            border: 1px solid var(--rule-dark);
+            background: #f4eee2;
+            color: var(--ink);
+        }
+
+        .status-badge.ready {
+            background: var(--oxblood-tint);
+            border-color: var(--oxblood);
+            color: var(--oxblood);
         }
 
         .timeline-block {
@@ -262,6 +363,7 @@
             .top-row { flex-direction: column; gap: 4px; }
             nav.ledger-nav a { display: inline-block; margin: 4px 8px; font-size: 13px; }
             .masthead-title a { font-size: 28px; }
+            .attention-card { flex-direction: column; gap: 12px; }
             table.ledger-table { display: block; overflow-x: auto; }
         }
 
@@ -278,7 +380,7 @@
     <header class="broadsheet-masthead">
         <div class="masthead-inner">
             <div class="top-row">
-                <span>Independent Public Account &bull; Olympia & Thurston County</span>
+                <span>Independent Public Account &bull; Olympia &amp; Thurston County</span>
                 <span class="meta-date">Vol. I &bull; Record Current to October 2026</span>
             </div>
             <div class="masthead-title">
@@ -288,8 +390,8 @@
                 An Account of Local Decisions, Upstream Influences, and Public Trajectory
             </div>
             <nav class="ledger-nav">
-                <a href="index.html" class="active">This Week</a>
-                <a href="matters.html" class="">Matters</a>
+                <a href="index.html" class="active">Home</a>
+                <a href="briefs.html" class="">Briefs</a>
                 <a href="actors.html" class="">Who's in the Room</a>
                 <a href="principles.html" class="">Principles</a>
                 <a href="about.html" class="">About</a>
@@ -298,695 +400,311 @@
     </header>
     <div class="container">
         
-    <h1 class="headline-title">This Week: Upcoming Hearings & Decisions</h1>
-    <p style="font-size: 15px; color: var(--ink-muted); margin-bottom: 24px;">A weekly docket of scheduled public hearings, upcoming votes, and comment deadlines in Thurston County and the City of Olympia.</p>
+    <p style="font-size: 17px; color: var(--ink); margin-bottom: 28px; border-bottom: 1px solid var(--rule); padding-bottom: 14px;">
+        Loretta's Ledger reads Olympia and Thurston County public meeting packets to state plainly what is being decided, who is shaping it, and how residents can weigh in.
+    </p>
 
-    <table class="ledger-table">
-        <thead>
-            <tr>
-                <th style="width: 105px;">Date</th>
-                <th style="width: 120px;">Jurisdiction</th>
-                <th>What Is Happening</th>
-                <th>What's at Stake</th>
-                <th style="width: 140px;">Status</th>
-            </tr>
-        </thead>
-        <tbody>
-            
-        <tr>
-            <td><strong>2026-10-01</strong></td>
-            <td>Olympia</td>
-            <td>
+    <h2 class="section-label" style="margin-top: 0;">Worth Your Attention</h2>
+    <div>
+        
+        <div class="attention-card">
+            <div class="attention-card-main">
+                <div class="ledger-meta">
+                    <span class="tag-testcase">Test Case</span><strong>Thurston County Board of Health</strong> &bull; Oct 13, 2026 (Tomorrow (1 day left))
+                </div>
+                <h3 style="margin: 4px 0 4px 0; font-size: 20px;">
+                    <a href="briefs/brief-thurston-bocc-2026-10-13-9809f687c7.html" style="text-decoration: none; color: var(--ink);">Health Board weighs updates to county drinking water code</a>
+                </h3>
+                <div style="font-size: 13px; color: var(--ink-muted);">Official title: BOH Public Hearing: Revisions to Drinking Water Code for Thurston County Article III</div>
+                <p style="margin: 6px 0 0 0; font-size: 15px; color: var(--ink);"><strong>What&#x27;s at stake:</strong> Revisions to Sanitary Code Article III governing Group B private and shared residential drinking water wells.</p>
+            </div>
+            <div class="attention-card-action">
+                <a href="briefs/brief-thurston-bocc-2026-10-13-9809f687c7.html" class="btn-brief">Read the brief &rarr;</a>
+            </div>
+        </div>
+        
+        <div class="attention-card">
+            <div class="attention-card-main">
+                <div class="ledger-meta">
+                    <span class="tag-testcase">Test Case</span><strong>Thurston County Commissioners</strong> &bull; Oct 20, 2026 (In 8 days)
+                </div>
+                <h3 style="margin: 4px 0 4px 0; font-size: 20px;">
+                    <a href="briefs/brief-thurston-bocc-2026-10-20-6123bedc0c.html" style="text-decoration: none; color: var(--ink);">County weighs new rates to fund Thurston Conservation District</a>
+                </h3>
+                <div style="font-size: 13px; color: var(--ink-muted);">Official title: Public Hearing: Proposed Ordinance to Adjust Thurston Conservation District&#x27;s Rates</div>
+                <p style="margin: 6px 0 0 0; font-size: 15px; color: var(--ink);"><strong>What&#x27;s at stake:</strong> Proposed multi-year assessment adjustment on real property parcels under RCW 89.08.400 to fund conservation district operations.</p>
+            </div>
+            <div class="attention-card-action">
+                <a href="briefs/brief-thurston-bocc-2026-10-20-6123bedc0c.html" class="btn-brief">Read the brief &rarr;</a>
+            </div>
+        </div>
+        
+        <div class="attention-card">
+            <div class="attention-card-main">
+                <div class="ledger-meta">
+                    <strong>Thurston County Commissioners</strong> &bull; Oct 20, 2026 (In 8 days)
+                </div>
+                <h3 style="margin: 4px 0 4px 0; font-size: 20px;">
+                    <a href="briefs/brief-thurston-bocc-2026-10-20-bac13684ae.html" style="text-decoration: none; color: var(--ink);">County holds hearing on transferring part of Yelm-Rainier Tenino Trail</a>
+                </h3>
+                <div style="font-size: 13px; color: var(--ink-muted);">Official title: Public Hearing: Consider the Transfer of Portions of the Yelm-Rainier Tenino Trail to the City of Yelm</div>
+                <p style="margin: 6px 0 0 0; font-size: 15px; color: var(--ink);"><strong>What&#x27;s at stake:</strong> Proposed intergovernmental transfer of county-owned portions of the Yelm-Rainier-Tenino Trail to the City of Yelm.</p>
+            </div>
+            <div class="attention-card-action">
+                <a href="briefs/brief-thurston-bocc-2026-10-20-bac13684ae.html" class="btn-brief">Read the brief &rarr;</a>
+            </div>
+        </div>
+        
+    </div>
+
+    <h2 class="section-label">Just Happened (Last 7 Days)</h2>
+    <div>
+        
+        <div class="ledger-entry" style="display: flex; justify-content: space-between; align-items: flex-start; gap: 16px;">
+            <div>
+                <div class="ledger-meta"><strong>Olympia Cultural Access Program Advisory Board</strong> &bull; Oct 8, 2026 (4 days ago) &bull; Outcome not yet posted</div>
+                <div style="font-size: 17px;"><a href="briefs/brief-olympia-event-7293-item-102342.html"><strong>Cultural Access Board weighs Inspire Olympia 2027 Budget</strong></a></div>
+                <div style="font-size: 12px; color: var(--ink-muted); margin-top: 2px;">Official: Inspire Olympia 2027 Budget</div>
                 
-                <strong>City Council votes on AGENDA (5:35-5:40 PM)</strong>
-                <div style="font-size: 13px; color: var(--ink-muted); margin-top: 3px;">
-                    Official: 2. APPROVAL OF AGENDA (5:35-5:40 PM)
-                </div>
-            </td>
-            <td>Review of local regulatory terms, public contracts, or budget allocations.</td>
-            <td>Deliberation<br><a href="https://olympia.legistar.com/MeetingDetail.aspx?LEGID=7191&amp;GID=218&amp;G=19510D34-31FB-48B8-9C02-4D026953451C" target="_blank" rel="noopener">Official Agenda &rarr;</a></td>
-        </tr>
+            </div>
+            <div style="flex-shrink: 0; padding-top: 4px;">
+                <a href="briefs/brief-olympia-event-7293-item-102342.html" class="btn-secondary">Read the brief &rarr;</a>
+            </div>
+        </div>
         
-        <tr>
-            <td><strong>2026-10-01</strong></td>
-            <td>Olympia</td>
-            <td>
+        <div class="ledger-entry" style="display: flex; justify-content: space-between; align-items: flex-start; gap: 16px;">
+            <div>
+                <div class="ledger-meta"><strong>Thurston County Planning Commission</strong> &bull; Oct 7, 2026 (5 days ago) &bull; Brief ready</div>
+                <div style="font-size: 17px;"><a href="briefs/brief-thurston-pc-2026-10-07-media-35329.html"><strong>Planning Commission weighs draft rules for local wetlands</strong></a></div>
+                <div style="font-size: 12px; color: var(--ink-muted); margin-top: 2px;">Official: DRAFT (changes since Sept 2, 2026) - CAO Chapter 24.30: Wetlands</div>
+                <div style="font-size: 14px; color: var(--ink); margin-top: 4px;">Updates to Critical Areas Ordinance Chapter 24.30 wetland buffer widths, rating manuals, and reasonable-use rules.</div>
+            </div>
+            <div style="flex-shrink: 0; padding-top: 4px;">
+                <a href="briefs/brief-thurston-pc-2026-10-07-media-35329.html" class="btn-secondary">Read the brief &rarr;</a>
+            </div>
+        </div>
+        
+        <div class="ledger-entry" style="display: flex; justify-content: space-between; align-items: flex-start; gap: 16px;">
+            <div>
+                <div class="ledger-meta"><strong>Thurston County Planning Commission</strong> &bull; Oct 7, 2026 (5 days ago) &bull; Brief ready</div>
+                <div style="font-size: 17px;"><a href="briefs/brief-thurston-pc-2026-10-07-media-35330.html"><strong>Planning Commission weighs draft rules for fish and wildlife habitat</strong></a></div>
+                <div style="font-size: 12px; color: var(--ink-muted); margin-top: 2px;">Official: DRAFT (changes since of Sept 2, 2026) - CAO Chapter 24.25: FWHCAs</div>
+                <div style="font-size: 14px; color: var(--ink); margin-top: 4px;">Updates to Chapter 24.25 stream riparian management zones, prairie soil rules, and residential yard allowances.</div>
+            </div>
+            <div style="flex-shrink: 0; padding-top: 4px;">
+                <a href="briefs/brief-thurston-pc-2026-10-07-media-35330.html" class="btn-secondary">Read the brief &rarr;</a>
+            </div>
+        </div>
+        
+        <div class="ledger-entry" style="display: flex; justify-content: space-between; align-items: flex-start; gap: 16px;">
+            <div>
+                <div class="ledger-meta"><strong>Olympia Metropolitan Park District Advisory Committee</strong> &bull; Oct 7, 2026 (5 days ago) &bull; Outcome not yet posted</div>
+                <div style="font-size: 17px;"><a href="briefs/brief-olympia-event-7218-item-102313.html"><strong>Park District Committee weighs 2027 draft Budget Preview</strong></a></div>
+                <div style="font-size: 12px; color: var(--ink-muted); margin-top: 2px;">Official: 5.B 2027 Preliminary Budget Preview</div>
                 
-                <strong>City Council votes on MINUTES (5:40-5:45 PM)</strong>
-                <div style="font-size: 13px; color: var(--ink-muted); margin-top: 3px;">
-                    Official: 3. APPROVAL OF MINUTES (5:40-5:45 PM)
-                </div>
-            </td>
-            <td>Review of local regulatory terms, public contracts, or budget allocations.</td>
-            <td>Deliberation<br><a href="https://olympia.legistar.com/MeetingDetail.aspx?LEGID=7191&amp;GID=218&amp;G=19510D34-31FB-48B8-9C02-4D026953451C" target="_blank" rel="noopener">Official Agenda &rarr;</a></td>
-        </tr>
+            </div>
+            <div style="flex-shrink: 0; padding-top: 4px;">
+                <a href="briefs/brief-olympia-event-7218-item-102313.html" class="btn-secondary">Read the brief &rarr;</a>
+            </div>
+        </div>
         
-        <tr>
-            <td><strong>2026-10-01</strong></td>
-            <td>Olympia</td>
-            <td>
-                
-                <strong>City Council votes on local measure</strong>
-                <div style="font-size: 13px; color: var(--ink-muted); margin-top: 3px;">
-                    Official: 5. ANNOUNCEMENTS (6:00-6:15 PM)
-                </div>
-            </td>
-            <td>Review of local regulatory terms, public contracts, or budget allocations.</td>
-            <td>Deliberation<br><a href="https://olympia.legistar.com/MeetingDetail.aspx?LEGID=7191&amp;GID=218&amp;G=19510D34-31FB-48B8-9C02-4D026953451C" target="_blank" rel="noopener">Official Agenda &rarr;</a></td>
-        </tr>
+        <div class="ledger-entry" style="display: flex; justify-content: space-between; align-items: flex-start; gap: 16px;">
+            <div>
+                <div class="ledger-meta"><strong>Olympia City Council</strong> &bull; Oct 6, 2026 (6 days ago) &bull; Brief ready</div>
+                <div style="font-size: 17px;"><a href="briefs/brief-olympia-event-7131-item-102417.html"><strong>City Council approves contract changes for Quince Street Tiny Home Village</strong></a></div>
+                <div style="font-size: 12px; color: var(--ink-muted); margin-top: 2px;">Official: 4.G Approval of a Resolution Authorizing Amendments to the Affordable Housing and Homeless Services Contracts with Thurston County for Funding for Operation of the Quince Street Tiny Home Village</div>
+                <div style="font-size: 14px; color: var(--ink); margin-top: 4px;">Intergovernmental contract amendments with Thurston County funding operations at Quince Street Tiny Home Village.</div>
+            </div>
+            <div style="flex-shrink: 0; padding-top: 4px;">
+                <a href="briefs/brief-olympia-event-7131-item-102417.html" class="btn-secondary">Read the brief &rarr;</a>
+            </div>
+        </div>
         
-        <tr>
-            <td><strong>2026-10-01</strong></td>
-            <td>Olympia</td>
-            <td>
-                
-                <strong>City Council weighs CALL TO ORDER (5:30-5:35 PM)</strong>
-                <div style="font-size: 13px; color: var(--ink-muted); margin-top: 3px;">
-                    Official: 1.A CALL TO ORDER (5:30-5:35 PM)
-                </div>
-            </td>
-            <td>Review of local regulatory terms, public contracts, or budget allocations.</td>
-            <td>Deliberation<br><a href="https://olympia.legistar.com/MeetingDetail.aspx?LEGID=7191&amp;GID=218&amp;G=19510D34-31FB-48B8-9C02-4D026953451C" target="_blank" rel="noopener">Official Agenda &rarr;</a></td>
-        </tr>
+        <div class="ledger-entry" style="display: flex; justify-content: space-between; align-items: flex-start; gap: 16px;">
+            <div>
+                <div class="ledger-meta"><strong>Olympia City Council</strong> &bull; Oct 6, 2026 (6 days ago) &bull; Brief ready</div>
+                <div style="font-size: 17px;"><a href="briefs/brief-olympia-event-7131-item-102421.html"><strong>City Council approves grant for local housing and homes</strong></a></div>
+                <div style="font-size: 12px; color: var(--ink-muted); margin-top: 2px;">Official: 4.J Approval of a Resolution Authorizing a Grant Agreement with the U.S. Department of Housing and Urban Development for the Program Year 2026 Community Development Block Grant Award</div>
+                <div style="font-size: 14px; color: var(--ink); margin-top: 4px;">Acceptance of $376,415.00 in federal Community Development Block Grant funds with federal compliance conditions.</div>
+            </div>
+            <div style="flex-shrink: 0; padding-top: 4px;">
+                <a href="briefs/brief-olympia-event-7131-item-102421.html" class="btn-secondary">Read the brief &rarr;</a>
+            </div>
+        </div>
         
-        <tr>
-            <td><strong>2026-10-01</strong></td>
-            <td>Olympia</td>
-            <td>
-                
-                <strong>City Council weighs PLEASE NOTE: Actual beginning and start times for a specific...</strong>
-                <div style="font-size: 13px; color: var(--ink-muted); margin-top: 3px;">
-                    Official: PLEASE NOTE: Actual beginning and start times for a specific agenda item may vary. The times listed below are estimates only.
-                </div>
-            </td>
-            <td>Review of local regulatory terms, public contracts, or budget allocations.</td>
-            <td>Deliberation<br><a href="https://olympia.legistar.com/MeetingDetail.aspx?LEGID=7191&amp;GID=218&amp;G=19510D34-31FB-48B8-9C02-4D026953451C" target="_blank" rel="noopener">Official Agenda &rarr;</a></td>
-        </tr>
+        <div class="ledger-entry" style="display: flex; justify-content: space-between; align-items: flex-start; gap: 16px;">
+            <div>
+                <div class="ledger-meta"><strong>Olympia City Council</strong> &bull; Oct 6, 2026 (6 days ago) &bull; Outcome not yet posted</div>
+                <div style="font-size: 17px;"><a href="briefs/brief-olympia-event-7131-item-102423.html"><strong>City Council reviews 2027 dedicated tax and housing budgets</strong></a></div>
+                <div style="font-size: 12px; color: var(--ink-muted); margin-top: 2px;">Official: 6.A Review of the Proposed 2027 Special (Dedicated) Revenues Program Budgets, Including Lodging Tax, Inspire Olympia, Parking &amp; Business Improvement Area, and Housing/Homeless Response</div>
+                <div style="font-size: 14px; color: var(--ink); margin-top: 4px;">Proposed 2027 allocations for Lodging Tax, Inspire Olympia, PBIA, and housing/homeless response funds.</div>
+            </div>
+            <div style="flex-shrink: 0; padding-top: 4px;">
+                <a href="briefs/brief-olympia-event-7131-item-102423.html" class="btn-secondary">Read the brief &rarr;</a>
+            </div>
+        </div>
         
-        <tr>
-            <td><strong>2026-10-01</strong></td>
-            <td>Olympia</td>
-            <td>
-                
-                <strong>City Council weighs PUBLIC COMMENT (5:45-6:00 PM)</strong>
-                <div style="font-size: 13px; color: var(--ink-muted); margin-top: 3px;">
-                    Official: 4. PUBLIC COMMENT (5:45-6:00 PM)
-                </div>
-            </td>
-            <td>Review of local regulatory terms, public contracts, or budget allocations.</td>
-            <td>Deliberation<br><a href="https://olympia.legistar.com/MeetingDetail.aspx?LEGID=7191&amp;GID=218&amp;G=19510D34-31FB-48B8-9C02-4D026953451C" target="_blank" rel="noopener">Official Agenda &rarr;</a></td>
-        </tr>
+        <div class="ledger-entry" style="display: flex; justify-content: space-between; align-items: flex-start; gap: 16px;">
+            <div>
+                <div class="ledger-meta"><strong>Olympia City Council</strong> &bull; Oct 6, 2026 (6 days ago) &bull; Outcome not yet posted</div>
+                <div style="font-size: 17px;"><a href="briefs/brief-olympia-event-7131-item-102424.html"><strong>City Council weighs 2027 water and sewer rates and fees</strong></a></div>
+                <div style="font-size: 12px; color: var(--ink-muted); margin-top: 2px;">Official: 6.B Review of the Proposed 2027 Development Fees, Impact Fees, Parking Rates, Utility Rates, and General Facility Charges</div>
+                <div style="font-size: 14px; color: var(--ink); margin-top: 4px;">Proposed 2027 rate and fee adjustments for municipal water, sewer, stormwater, and development impact charges.</div>
+            </div>
+            <div style="flex-shrink: 0; padding-top: 4px;">
+                <a href="briefs/brief-olympia-event-7131-item-102424.html" class="btn-secondary">Read the brief &rarr;</a>
+            </div>
+        </div>
         
-        <tr>
-            <td><strong>2026-10-01</strong></td>
-            <td>Olympia</td>
-            <td>
-                
-                <strong>City Council weighs STAFF PRESENT</strong>
-                <div style="font-size: 13px; color: var(--ink-muted); margin-top: 3px;">
-                    Official: 1.C STAFF PRESENT
-                </div>
-            </td>
-            <td>Review of local regulatory terms, public contracts, or budget allocations.</td>
-            <td>Deliberation<br><a href="https://olympia.legistar.com/MeetingDetail.aspx?LEGID=7191&amp;GID=218&amp;G=19510D34-31FB-48B8-9C02-4D026953451C" target="_blank" rel="noopener">Official Agenda &rarr;</a></td>
-        </tr>
+        <div class="ledger-entry" style="display: flex; justify-content: space-between; align-items: flex-start; gap: 16px;">
+            <div>
+                <div class="ledger-meta"><strong>Olympia City Council</strong> &bull; Oct 6, 2026 (6 days ago) &bull; Outcome not yet posted</div>
+                <div style="font-size: 17px;"><a href="briefs/brief-olympia-event-7131-item-102436.html"><strong>City Council backs Timberland library levy lid lift</strong></a></div>
+                <div style="font-size: 12px; color: var(--ink-muted); margin-top: 2px;">Official: 1.E Consideration of a Resolution Expressing Collective City Council Support for the Timberland Regional Library District Levy Lid Lift Proposition No. 1</div>
+                <div style="font-size: 14px; color: var(--ink); margin-top: 4px;">Council endorsement of Timberland Regional Library District Proposition No. 1 property tax levy lid lift.</div>
+            </div>
+            <div style="flex-shrink: 0; padding-top: 4px;">
+                <a href="briefs/brief-olympia-event-7131-item-102436.html" class="btn-secondary">Read the brief &rarr;</a>
+            </div>
+        </div>
         
-        <tr>
-            <td><strong>2026-10-01</strong></td>
-            <td>Olympia</td>
-            <td>
-                
-                <strong>City Council weighs new city budget and service rates</strong>
-                <div style="font-size: 13px; color: var(--ink-muted); margin-top: 3px;">
-                    Official: Preliminary 2027 Utility Operating Budget, Rates, Capital Facilities Plan, and General Facility Charges
-                </div>
-            </td>
-            <td>Annual municipal operating expenditures and capital program priorities.</td>
-            <td>Deliberation<br><a href="https://olympia.legistar.com/MeetingDetail.aspx?LEGID=7191&amp;GID=218&amp;G=19510D34-31FB-48B8-9C02-4D026953451C" target="_blank" rel="noopener">Official Agenda &rarr;</a></td>
-        </tr>
+        <div class="ledger-entry" style="display: flex; justify-content: space-between; align-items: flex-start; gap: 16px;">
+            <div>
+                <div class="ledger-meta"><strong>Thurston County Commissioners</strong> &bull; Oct 6, 2026 (6 days ago) &bull; Outcome not yet posted</div>
+                <div style="font-size: 17px;"><a href="briefs/brief-thurston-bocc-2026-10-06-1d812203e0.html"><strong>County holds hearing on county road speed limits</strong></a></div>
+                <div style="font-size: 12px; color: var(--ink-muted); margin-top: 2px;">Official: Public Hearing: Proposed Ordinance Revising the Speed Limit Schedule for Various County Roads</div>
+                <div style="font-size: 14px; color: var(--ink); margin-top: 4px;">Proposed ordinance revising maximum vehicle speed limits across designated unincorporated county roads.</div>
+            </div>
+            <div style="flex-shrink: 0; padding-top: 4px;">
+                <a href="briefs/brief-thurston-bocc-2026-10-06-1d812203e0.html" class="btn-secondary">Read the brief &rarr;</a>
+            </div>
+        </div>
         
-        <tr>
-            <td><strong>2026-10-01</strong></td>
-            <td>Olympia</td>
-            <td>
-                
-                <strong>City Council weighs water and sewer update for LOTT Clean Water Alliance</strong>
-                <div style="font-size: 13px; color: var(--ink-muted); margin-top: 3px;">
-                    Official: Utility update for LOTT Clean Water Alliance
-                </div>
-            </td>
-            <td>Review of local regulatory terms, public contracts, or budget allocations.</td>
-            <td>Deliberation<br><a href="https://olympia.legistar.com/MeetingDetail.aspx?LEGID=7191&amp;GID=218&amp;G=19510D34-31FB-48B8-9C02-4D026953451C" target="_blank" rel="noopener">Official Agenda &rarr;</a></td>
-        </tr>
+        <div class="ledger-entry" style="display: flex; justify-content: space-between; align-items: flex-start; gap: 16px;">
+            <div>
+                <div class="ledger-meta"><strong>Thurston County Commissioners</strong> &bull; Oct 6, 2026 (6 days ago) &bull; Outcome not yet posted</div>
+                <div style="font-size: 17px;"><a href="briefs/brief-thurston-bocc-2026-10-06-a0a7e4f88d.html"><strong>County holds hearing on six-year road and transit plan</strong></a></div>
+                <div style="font-size: 12px; color: var(--ink-muted); margin-top: 2px;">Official: Public Hearing: Six-Year Transportation Improvement Program for 2027-2032</div>
+                <div style="font-size: 14px; color: var(--ink); margin-top: 4px;">Six-year county road, bridge, and trail capital improvement priority list for 2027–2032.</div>
+            </div>
+            <div style="flex-shrink: 0; padding-top: 4px;">
+                <a href="briefs/brief-thurston-bocc-2026-10-06-a0a7e4f88d.html" class="btn-secondary">Read the brief &rarr;</a>
+            </div>
+        </div>
         
-        <tr>
-            <td><strong>2026-10-04</strong></td>
-            <td>Thurston County</td>
-            <td>
-                
-                <strong>County weighs Weekly Schedule</strong>
-                <div style="font-size: 13px; color: var(--ink-muted); margin-top: 3px;">
-                    Official: Weekly Schedule
-                </div>
-            </td>
-            <td>Review of local regulatory terms, public contracts, or budget allocations.</td>
-            <td>Deliberation<br><a href="https://www.thurstoncountywa.gov/media/35336" target="_blank" rel="noopener">Official Agenda &rarr;</a></td>
-        </tr>
+        <div class="ledger-entry" style="display: flex; justify-content: space-between; align-items: flex-start; gap: 16px;">
+            <div>
+                <div class="ledger-meta"><strong>Thurston County Commissioners</strong> &bull; Oct 6, 2026 (6 days ago) &bull; Outcome not yet posted</div>
+                <div style="font-size: 17px;"><a href="briefs/brief-thurston-bocc-2026-10-06-f644d79284.html"><strong>County holds hearing on Title 2 conduct rules for county buildings</strong></a></div>
+                <div style="font-size: 12px; color: var(--ink-muted); margin-top: 2px;">Official: Public Hearing: Proposed Ordinance Amending Thurston County Code Title 2 - Administration and Personnel by adding Chapter 2.03 - County Facilities - Conduct and Solicitation</div>
+                <div style="font-size: 14px; color: var(--ink); margin-top: 4px;">New county code chapter regulating public conduct and solicitation inside Thurston County facilities.</div>
+            </div>
+            <div style="flex-shrink: 0; padding-top: 4px;">
+                <a href="briefs/brief-thurston-bocc-2026-10-06-f644d79284.html" class="btn-secondary">Read the brief &rarr;</a>
+            </div>
+        </div>
         
-        <tr>
-            <td><strong>2026-10-05</strong></td>
-            <td>Olympia</td>
-            <td>
-                
-                <strong>City Council votes on MINUTES</strong>
-                <div style="font-size: 13px; color: var(--ink-muted); margin-top: 3px;">
-                    Official: 3. APPROVAL OF MINUTES
-                </div>
-            </td>
-            <td>Review of local regulatory terms, public contracts, or budget allocations.</td>
-            <td>Deliberation<br><a href="https://olympia.legistar.com/MeetingDetail.aspx?LEGID=7066&amp;GID=218&amp;G=19510D34-31FB-48B8-9C02-4D026953451C" target="_blank" rel="noopener">Official Agenda &rarr;</a></td>
-        </tr>
+        <div class="ledger-entry" style="display: flex; justify-content: space-between; align-items: flex-start; gap: 16px;">
+            <div>
+                <div class="ledger-meta"><strong>Olympia Planning Commission</strong> &bull; Oct 5, 2026 (7 days ago) &bull; Outcome not yet posted</div>
+                <div style="font-size: 17px;"><a href="briefs/brief-olympia-event-7066-item-102325.html"><strong>Planning Commission weighs changes to minimum parking rules</strong></a></div>
+                <div style="font-size: 12px; color: var(--ink-muted); margin-top: 2px;">Official: 6.B Minimum Parking Requirements Code Amendments</div>
+                <div style="font-size: 14px; color: var(--ink); margin-top: 4px;">Proposed municipal zoning code amendments reducing or removing minimum off-street parking mandates.</div>
+            </div>
+            <div style="flex-shrink: 0; padding-top: 4px;">
+                <a href="briefs/brief-olympia-event-7066-item-102325.html" class="btn-secondary">Read the brief &rarr;</a>
+            </div>
+        </div>
         
-        <tr>
-            <td><strong>2026-10-05</strong></td>
-            <td>Olympia</td>
-            <td>
-                
-                <strong>City Council votes on local measure</strong>
-                <div style="font-size: 13px; color: var(--ink-muted); margin-top: 3px;">
-                    Official: 5. STAFF ANNOUNCEMENTS
-                </div>
-            </td>
-            <td>Review of local regulatory terms, public contracts, or budget allocations.</td>
-            <td>Deliberation<br><a href="https://olympia.legistar.com/MeetingDetail.aspx?LEGID=7066&amp;GID=218&amp;G=19510D34-31FB-48B8-9C02-4D026953451C" target="_blank" rel="noopener">Official Agenda &rarr;</a></td>
-        </tr>
+        <div class="ledger-entry" style="display: flex; justify-content: space-between; align-items: flex-start; gap: 16px;">
+            <div>
+                <div class="ledger-meta"><strong>Olympia Planning Commission</strong> &bull; Oct 5, 2026 (7 days ago) &bull; Outcome not yet posted</div>
+                <div style="font-size: 17px;"><a href="briefs/brief-olympia-event-7066-item-102326.html"><strong>Planning Commission holds hearing on critical area land rules</strong></a></div>
+                <div style="font-size: 12px; color: var(--ink-muted); margin-top: 2px;">Official: 6.A Critical Area Ordinance Update - Public Hearing</div>
+                <div style="font-size: 14px; color: var(--ink); margin-top: 4px;">City of Olympia updates to critical area buffer regulations and environmental review rules.</div>
+            </div>
+            <div style="flex-shrink: 0; padding-top: 4px;">
+                <a href="briefs/brief-olympia-event-7066-item-102326.html" class="btn-secondary">Read the brief &rarr;</a>
+            </div>
+        </div>
         
-        <tr>
-            <td><strong>2026-10-05</strong></td>
-            <td>Olympia</td>
-            <td>
-                
-                <strong>City Council weighs OTHERS PRESENT</strong>
-                <div style="font-size: 13px; color: var(--ink-muted); margin-top: 3px;">
-                    Official: 1.B OTHERS PRESENT
-                </div>
-            </td>
-            <td>Review of local regulatory terms, public contracts, or budget allocations.</td>
-            <td>Deliberation<br><a href="https://olympia.legistar.com/MeetingDetail.aspx?LEGID=7066&amp;GID=218&amp;G=19510D34-31FB-48B8-9C02-4D026953451C" target="_blank" rel="noopener">Official Agenda &rarr;</a></td>
-        </tr>
+    </div>
+
+    <h2 class="section-label">Also on the Calendar</h2>
+    <p style="font-size: 13px; color: var(--ink-muted); margin-bottom: 12px;">Other contracts, grants, and committee briefings grouped by meeting.</p>
+    <div>
         
-        <tr>
-            <td><strong>2026-10-05</strong></td>
-            <td>Thurston County</td>
-            <td>
-                
-                <strong>County weighs new land use plan</strong>
-                <div style="font-size: 13px; color: var(--ink-muted); margin-top: 3px;">
-                    Official: County Commissioner Working Lands Farm Tour
-                </div>
-            </td>
-            <td>Review of local regulatory terms, public contracts, or budget allocations.</td>
-            <td>Deliberation<br><a href="https://www.thurstoncountywa.gov/media/35337" target="_blank" rel="noopener">Official Agenda &rarr;</a></td>
-        </tr>
+        <details class="calendar-group">
+            <summary><span>Olympia Site Plan Review Committee, Oct 21: 1 item</span></summary>
+            <ul class="ledger-list" style="margin-top: 10px;">
+                <li><strong>Site Plan Committee reviews Cooper Point Pharmacy drive-through plan</strong> <span style="font-size: 12px; color: var(--ink-muted);">(Cooper Point Pharmacy Drive-Through, 1217 Cooper Point Rd SW #1, 26-5942)</span> &bull; <a href="https://olympia.legistar.com/MeetingDetail.aspx?LEGID=6957&amp;GID=218&amp;G=19510D34-31FB-48B8-9C02-4D026953451C" target="_blank" rel="noopener" style="font-size: 12px;">Agenda record &rarr;</a></li>
+            </ul>
+        </details>
         
-        <tr>
-            <td><strong>2026-10-05</strong></td>
-            <td>Olympia</td>
-            <td>
-                
-                <strong>Planners weighs local policy plan</strong>
-                <div style="font-size: 13px; color: var(--ink-muted); margin-top: 3px;">
-                    Official: 3.B Approval of September 21, 2026, Olympia Planning Commission Meeting Minutes
-                </div>
-            </td>
-            <td>Review of local regulatory terms, public contracts, or budget allocations.</td>
-            <td>Deliberation<br><a href="https://olympia.legistar.com/MeetingDetail.aspx?LEGID=7066&amp;GID=218&amp;G=19510D34-31FB-48B8-9C02-4D026953451C" target="_blank" rel="noopener">Official Agenda &rarr;</a></td>
-        </tr>
+        <details class="calendar-group">
+            <summary><span>Olympia Parks and Recreation Advisory Committee, Oct 15: 2 items</span></summary>
+            <ul class="ledger-list" style="margin-top: 10px;">
+                <li><strong>Parks Committee approves Parks Committee work plan update</strong> <span style="font-size: 12px; color: var(--ink-muted);">(Parks and Recreation Advisory Committee (PRAC) Work Plan Update for City Council)</span> &bull; <a href="https://olympia.legistar.com/MeetingDetail.aspx?LEGID=7244&amp;GID=218&amp;G=19510D34-31FB-48B8-9C02-4D026953451C" target="_blank" rel="noopener" style="font-size: 12px;">Agenda record &rarr;</a></li><li><strong>Parks Committee reviews Recreation Program - Summer Camp Briefing</strong> <span style="font-size: 12px; color: var(--ink-muted);">(Recreation Program - Summer Camp Briefing)</span> &bull; <a href="https://olympia.legistar.com/MeetingDetail.aspx?LEGID=7244&amp;GID=218&amp;G=19510D34-31FB-48B8-9C02-4D026953451C" target="_blank" rel="noopener" style="font-size: 12px;">Agenda record &rarr;</a></li>
+            </ul>
+        </details>
         
-        <tr>
-            <td><strong>2026-10-06</strong></td>
-            <td>Olympia</td>
-            <td>
-                
-                <strong>City Council approves federal grant for housing and homes</strong>
-                <div style="font-size: 13px; color: var(--ink-muted); margin-top: 3px;">
-                    Official: 4.J Approval of a Resolution Authorizing a Grant Agreement with the U.S. Department of Housing and Urban Development for the Program Year 2026 Community Development Block Grant Award
-                </div>
-            </td>
-            <td>Receipt of federal Community Development Block Grant funds with attached compliance terms.</td>
-            <td><span class="tag-oxblood">Brief Published</span><br><a href="briefs/brief-olympia-event-7131-item-102421.html">Read Brief &rarr;</a></td>
-        </tr>
+        <details class="calendar-group">
+            <summary><span>Olympia Lodging Tax Advisory Committee, Oct 15: 1 item</span></summary>
+            <ul class="ledger-list" style="margin-top: 10px;">
+                <li><strong>Lodging Tax Committee reviews 2027 lodging tax tourism grant proposals</strong> <span style="font-size: 12px; color: var(--ink-muted);">(2027 Lodging Tax Funding Tourism Service Proposals)</span> &bull; <a href="https://olympia.legistar.com/MeetingDetail.aspx?LEGID=7269&amp;GID=218&amp;G=19510D34-31FB-48B8-9C02-4D026953451C" target="_blank" rel="noopener" style="font-size: 12px;">Agenda record &rarr;</a></li>
+            </ul>
+        </details>
         
-        <tr>
-            <td><strong>2026-10-06</strong></td>
-            <td>Olympia</td>
-            <td>
-                
-                <strong>City Council votes on a Bid Award for the Transmission Main Seismic Valves...</strong>
-                <div style="font-size: 13px; color: var(--ink-muted); margin-top: 3px;">
-                    Official: 4.E Approval of a Bid Award for the Transmission Main Seismic Valves Installation Project
-                </div>
-            </td>
-            <td>Review of local regulatory terms, public contracts, or budget allocations.</td>
-            <td>Deliberation<br><a href="https://olympia.legistar.com/MeetingDetail.aspx?LEGID=7131&amp;GID=218&amp;G=19510D34-31FB-48B8-9C02-4D026953451C" target="_blank" rel="noopener">Official Agenda &rarr;</a></td>
-        </tr>
+        <details class="calendar-group">
+            <summary><span>Olympia City Council, Oct 13: 2 items</span></summary>
+            <ul class="ledger-list" style="margin-top: 10px;">
+                <li><strong>City Council reviews One Community Plan Update</strong> <span style="font-size: 12px; color: var(--ink-muted);">(One Community Plan Update)</span> &bull; <a href="https://olympia.legistar.com/MeetingDetail.aspx?LEGID=7132&amp;GID=218&amp;G=19510D34-31FB-48B8-9C02-4D026953451C" target="_blank" rel="noopener" style="font-size: 12px;">Agenda record &rarr;</a></li><li><strong>City Council reviews community events permit rules and resources</strong> <span style="font-size: 12px; color: var(--ink-muted);">(Briefing on the Community Events Permitting Process and Resource Review)</span> &bull; <a href="https://olympia.legistar.com/MeetingDetail.aspx?LEGID=7132&amp;GID=218&amp;G=19510D34-31FB-48B8-9C02-4D026953451C" target="_blank" rel="noopener" style="font-size: 12px;">Agenda record &rarr;</a></li>
+            </ul>
+        </details>
         
-        <tr>
-            <td><strong>2026-10-06</strong></td>
-            <td>Olympia</td>
-            <td>
-                
-                <strong>City Council votes on local measure</strong>
-                <div style="font-size: 13px; color: var(--ink-muted); margin-top: 3px;">
-                    Official: 2.A Special Recognition - Proclamation Recognizing Indigenous Peoples’ Day
-                </div>
-            </td>
-            <td>Review of local regulatory terms, public contracts, or budget allocations.</td>
-            <td>Deliberation<br><a href="https://olympia.legistar.com/MeetingDetail.aspx?LEGID=7131&amp;GID=218&amp;G=19510D34-31FB-48B8-9C02-4D026953451C" target="_blank" rel="noopener">Official Agenda &rarr;</a></td>
-        </tr>
+        <details class="calendar-group">
+            <summary><span>Olympia Social Justice &amp; Equity Commission, Oct 10: 1 item</span></summary>
+            <ul class="ledger-list" style="margin-top: 10px;">
+                <li><strong>Equity Commission approves Equity Commission work plan update</strong> <span style="font-size: 12px; color: var(--ink-muted);">(Social Justice &amp; Equity Commission Work Plan Update for City Council)</span> &bull; <a href="https://olympia.legistar.com/MeetingDetail.aspx?LEGID=7283&amp;GID=218&amp;G=19510D34-31FB-48B8-9C02-4D026953451C" target="_blank" rel="noopener" style="font-size: 12px;">Agenda record &rarr;</a></li>
+            </ul>
+        </details>
         
-        <tr>
-            <td><strong>2026-10-06</strong></td>
-            <td>Olympia</td>
-            <td>
-                
-                <strong>City Council weighs local road plan</strong>
-                <div style="font-size: 13px; color: var(--ink-muted); margin-top: 3px;">
-                    Official: 4.G Approval of a Resolution Authorizing Amendments to the Affordable Housing and Homeless Services Contracts with Thurston County for Funding for Operation of the Quince Street Tiny Home Village
-                </div>
-            </td>
-            <td>Contract terms and neighborhood protocols for supportive housing operations.</td>
-            <td><span class="tag-oxblood">Brief Published</span><br><a href="briefs/brief-olympia-event-7131-item-102417.html">Read Brief &rarr;</a></td>
-        </tr>
+        <details class="calendar-group">
+            <summary><span>Olympia Cultural Access Program Advisory Board, Oct 8: 2 items</span></summary>
+            <ul class="ledger-list" style="margin-top: 10px;">
+                <li><strong>Cultural Access Board weighs Recruitment Subcommittee</strong> <span style="font-size: 12px; color: var(--ink-muted);">(Recruitment Subcommittee)</span> &bull; <a href="https://olympia.legistar.com/MeetingDetail.aspx?LEGID=7293&amp;GID=218&amp;G=19510D34-31FB-48B8-9C02-4D026953451C" target="_blank" rel="noopener" style="font-size: 12px;">Agenda record &rarr;</a></li><li><strong>Cultural Access Board weighs City Council Study Session Outcome</strong> <span style="font-size: 12px; color: var(--ink-muted);">(City Council Study Session Outcome)</span> &bull; <a href="https://olympia.legistar.com/MeetingDetail.aspx?LEGID=7293&amp;GID=218&amp;G=19510D34-31FB-48B8-9C02-4D026953451C" target="_blank" rel="noopener" style="font-size: 12px;">Agenda record &rarr;</a></li>
+            </ul>
+        </details>
         
-        <tr>
-            <td><strong>2026-10-06</strong></td>
-            <td>Olympia</td>
-            <td>
-                
-                <strong>City Council weighs new city fees and service rates</strong>
-                <div style="font-size: 13px; color: var(--ink-muted); margin-top: 3px;">
-                    Official: 6.B Review of the Proposed 2027 Development Fees, Impact Fees, Parking Rates, Utility Rates, and General Facility Charges
-                </div>
-            </td>
-            <td>Proposed 2027 fee updates for city water, sewer, stormwater, and development charges.</td>
-            <td>Deliberation<br><a href="https://olympia.legistar.com/MeetingDetail.aspx?LEGID=7131&amp;GID=218&amp;G=19510D34-31FB-48B8-9C02-4D026953451C" target="_blank" rel="noopener">Official Agenda &rarr;</a></td>
-        </tr>
+        <details class="calendar-group">
+            <summary><span>Olympia PBIA Advisory Board, Oct 7: 1 item</span></summary>
+            <ul class="ledger-list" style="margin-top: 10px;">
+                <li><strong>Parking &amp; Business Board reviews PBIA Phase 2 Discussion</strong> <span style="font-size: 12px; color: var(--ink-muted);">(PBIA Phase 2 Discussion)</span> &bull; <a href="https://olympia.legistar.com/MeetingDetail.aspx?LEGID=7033&amp;GID=218&amp;G=19510D34-31FB-48B8-9C02-4D026953451C" target="_blank" rel="noopener" style="font-size: 12px;">Agenda record &rarr;</a></li>
+            </ul>
+        </details>
         
-        <tr>
-            <td><strong>2026-10-06</strong></td>
-            <td>Olympia</td>
-            <td>
-                
-                <strong>City Council weighs new land use plan</strong>
-                <div style="font-size: 13px; color: var(--ink-muted); margin-top: 3px;">
-                    Official: 1.E Consideration of a Resolution Expressing Collective City Council Support for the Timberland Regional Library District Levy Lid Lift Proposition No. 1
-                </div>
-            </td>
-            <td>Review of local regulatory terms, public contracts, or budget allocations.</td>
-            <td>Deliberation<br><a href="https://olympia.legistar.com/MeetingDetail.aspx?LEGID=7131&amp;GID=218&amp;G=19510D34-31FB-48B8-9C02-4D026953451C" target="_blank" rel="noopener">Official Agenda &rarr;</a></td>
-        </tr>
+        <details class="calendar-group">
+            <summary><span>Olympia Metropolitan Park District Advisory Committee, Oct 7: 1 item</span></summary>
+            <ul class="ledger-list" style="margin-top: 10px;">
+                <li><strong>Park District Committee reviews annual report on 2025 park funding compliance</strong> <span style="font-size: 12px; color: var(--ink-muted);">(Review public feedback and finalize the annual report to Olympia Metropolitan Park District (OMPD) Board and City Council regarding the compliance of 2025 funding levels)</span> &bull; <a href="https://olympia.legistar.com/MeetingDetail.aspx?LEGID=7218&amp;GID=218&amp;G=19510D34-31FB-48B8-9C02-4D026953451C" target="_blank" rel="noopener" style="font-size: 12px;">Agenda record &rarr;</a></li>
+            </ul>
+        </details>
         
-        <tr>
-            <td><strong>2026-10-06</strong></td>
-            <td>Thurston County</td>
-            <td>
-                
-                <strong>County holds hearing on Proposed new law Revising the Speed Limit Schedule for...</strong>
-                <div style="font-size: 13px; color: var(--ink-muted); margin-top: 3px;">
-                    Official: Public Hearing: Proposed Ordinance Revising the Speed Limit Schedule for Various County Roads
-                </div>
-            </td>
-            <td>Review of local regulatory terms, public contracts, or budget allocations.</td>
-            <td>Public Hearing<br><a href="https://www.thurstoncountywa.gov/media/35173" target="_blank" rel="noopener">Official Agenda &rarr;</a></td>
-        </tr>
+        <details class="calendar-group">
+            <summary><span>Olympia City Council, Oct 6: 9 items</span></summary>
+            <ul class="ledger-list" style="margin-top: 10px;">
+                <li><strong>City Council approves lease for fire vehicle storage</strong> <span style="font-size: 12px; color: var(--ink-muted);">(a Lease Agreement with Terry Kissick Investments LLC for Fire Vehicles Storage)</span> &bull; <a href="https://olympia.legistar.com/MeetingDetail.aspx?LEGID=7131&amp;GID=218&amp;G=19510D34-31FB-48B8-9C02-4D026953451C" target="_blank" rel="noopener" style="font-size: 12px;">Agenda record &rarr;</a></li><li><strong>City Council approves funding changes for Franz Anderson Tiny Home Village</strong> <span style="font-size: 12px; color: var(--ink-muted);">(an Amendment to the Funding Agreement with Valeo Vocation for Operation of the Franz Anderson Tiny Home Village)</span> &bull; <a href="https://olympia.legistar.com/MeetingDetail.aspx?LEGID=7131&amp;GID=218&amp;G=19510D34-31FB-48B8-9C02-4D026953451C" target="_blank" rel="noopener" style="font-size: 12px;">Agenda record &rarr;</a></li><li><strong>City Council approves bid for Yelm Highway Community Park construction</strong> <span style="font-size: 12px; color: var(--ink-muted);">(Bid Award for the Yelm Highway Community Park Phase 1 Construction Project)</span> &bull; <a href="https://olympia.legistar.com/MeetingDetail.aspx?LEGID=7131&amp;GID=218&amp;G=19510D34-31FB-48B8-9C02-4D026953451C" target="_blank" rel="noopener" style="font-size: 12px;">Agenda record &rarr;</a></li><li><strong>City Council approves school bus funding for cultural access trips</strong> <span style="font-size: 12px; color: var(--ink-muted);">(an Interlocal Agreement with Olympia School District for Cultural Access Tax Transportation Funding for the 2026-2027 School Year)</span> &bull; <a href="https://olympia.legistar.com/MeetingDetail.aspx?LEGID=7131&amp;GID=218&amp;G=19510D34-31FB-48B8-9C02-4D026953451C" target="_blank" rel="noopener" style="font-size: 12px;">Agenda record &rarr;</a></li><li><strong>City Council approves bid for water main seismic valves</strong> <span style="font-size: 12px; color: var(--ink-muted);">(Bid Award for the Transmission Main Seismic Valves Installation Project)</span> &bull; <a href="https://olympia.legistar.com/MeetingDetail.aspx?LEGID=7131&amp;GID=218&amp;G=19510D34-31FB-48B8-9C02-4D026953451C" target="_blank" rel="noopener" style="font-size: 12px;">Agenda record &rarr;</a></li><li><strong>City Council approves contract for Hands On Children&#x27;s Museum expansion</strong> <span style="font-size: 12px; color: var(--ink-muted);">(an Amendment to the Design/Build Agreement with Forma Construction Company for the Hands On Children’s Museum Expansion Project)</span> &bull; <a href="https://olympia.legistar.com/MeetingDetail.aspx?LEGID=7131&amp;GID=218&amp;G=19510D34-31FB-48B8-9C02-4D026953451C" target="_blank" rel="noopener" style="font-size: 12px;">Agenda record &rarr;</a></li><li><strong>City Council approves lease for city garbage truck</strong> <span style="font-size: 12px; color: var(--ink-muted);">(a Lease Agreement with Western Peterbilt, LLC for a Refuse Collection Truck)</span> &bull; <a href="https://olympia.legistar.com/MeetingDetail.aspx?LEGID=7131&amp;GID=218&amp;G=19510D34-31FB-48B8-9C02-4D026953451C" target="_blank" rel="noopener" style="font-size: 12px;">Agenda record &rarr;</a></li><li><strong>City Council weighs funding for school visits to OlyAHA Museum</strong> <span style="font-size: 12px; color: var(--ink-muted);">(Approve Funding to Support Development of Olympia School District (OSD) Student Visitation Program at the OlyAHA Museum)</span> &bull; <a href="https://olympia.legistar.com/MeetingDetail.aspx?LEGID=7131&amp;GID=218&amp;G=19510D34-31FB-48B8-9C02-4D026953451C" target="_blank" rel="noopener" style="font-size: 12px;">Agenda record &rarr;</a></li><li><strong>City Council weighs funding for downtown seasonal lights</strong> <span style="font-size: 12px; color: var(--ink-muted);">(the Use of City Council Goal Funds to Support the Olympia Downtown Alliance Downtown Seasonal Lighting Program)</span> &bull; <a href="https://olympia.legistar.com/MeetingDetail.aspx?LEGID=7131&amp;GID=218&amp;G=19510D34-31FB-48B8-9C02-4D026953451C" target="_blank" rel="noopener" style="font-size: 12px;">Agenda record &rarr;</a></li>
+            </ul>
+        </details>
         
-        <tr>
-            <td><strong>2026-10-06</strong></td>
-            <td>Thurston County</td>
-            <td>
-                
-                <strong>County weighs Board Work Session</strong>
-                <div style="font-size: 13px; color: var(--ink-muted); margin-top: 3px;">
-                    Official: Board Work Session
-                </div>
-            </td>
-            <td>Review of local regulatory terms, public contracts, or budget allocations.</td>
-            <td>Deliberation<br><a href="https://www.thurstoncountywa.gov/media/35333" target="_blank" rel="noopener">Official Agenda &rarr;</a></td>
-        </tr>
+        <details class="calendar-group">
+            <summary><span>Thurston County Commissioners, Oct 5: 1 item</span></summary>
+            <ul class="ledger-list" style="margin-top: 10px;">
+                <li><strong>County Commissioners join Working Lands Farm Tour</strong> <span style="font-size: 12px; color: var(--ink-muted);">(County Commissioner Working Lands Farm Tour)</span> &bull; <a href="https://www.thurstoncountywa.gov/media/35337" target="_blank" rel="noopener" style="font-size: 12px;">Agenda record &rarr;</a></li>
+            </ul>
+        </details>
         
-        <tr>
-            <td><strong>2026-10-06</strong></td>
-            <td>Thurston County</td>
-            <td>
-                
-                <strong>County weighs local policy plan</strong>
-                <div style="font-size: 13px; color: var(--ink-muted); margin-top: 3px;">
-                    Official: Public Hearing: Six-Year Transportation Improvement Program for 2027-2032
-                </div>
-            </td>
-            <td>Review of local regulatory terms, public contracts, or budget allocations.</td>
-            <td>Public Hearing<br><a href="https://www.thurstoncountywa.gov/media/34801" target="_blank" rel="noopener">Official Agenda &rarr;</a></td>
-        </tr>
-        
-        <tr>
-            <td><strong>2026-10-07</strong></td>
-            <td>Olympia</td>
-            <td>
-                
-                <strong>City Council votes on MINUTES</strong>
-                <div style="font-size: 13px; color: var(--ink-muted); margin-top: 3px;">
-                    Official: 3. APPROVAL OF MINUTES
-                </div>
-            </td>
-            <td>Review of local regulatory terms, public contracts, or budget allocations.</td>
-            <td>Deliberation<br><a href="https://olympia.legistar.com/MeetingDetail.aspx?LEGID=7033&amp;GID=218&amp;G=19510D34-31FB-48B8-9C02-4D026953451C" target="_blank" rel="noopener">Official Agenda &rarr;</a></td>
-        </tr>
-        
-        <tr>
-            <td><strong>2026-10-07</strong></td>
-            <td>Olympia</td>
-            <td>
-                
-                <strong>City Council votes on local measure</strong>
-                <div style="font-size: 13px; color: var(--ink-muted); margin-top: 3px;">
-                    Official: 3.A Approval of the September 2, 2026 PBIA Meeting Minutes
-                </div>
-            </td>
-            <td>Review of local regulatory terms, public contracts, or budget allocations.</td>
-            <td>Deliberation<br><a href="https://olympia.legistar.com/MeetingDetail.aspx?LEGID=7033&amp;GID=218&amp;G=19510D34-31FB-48B8-9C02-4D026953451C" target="_blank" rel="noopener">Official Agenda &rarr;</a></td>
-        </tr>
-        
-        <tr>
-            <td><strong>2026-10-07</strong></td>
-            <td>Olympia</td>
-            <td>
-                
-                <strong>City Council weighs 2027 draft Budget Preview</strong>
-                <div style="font-size: 13px; color: var(--ink-muted); margin-top: 3px;">
-                    Official: 5.B 2027 Preliminary Budget Preview
-                </div>
-            </td>
-            <td>Annual municipal operating expenditures and capital program priorities.</td>
-            <td>Deliberation<br><a href="https://olympia.legistar.com/MeetingDetail.aspx?LEGID=7218&amp;GID=218&amp;G=19510D34-31FB-48B8-9C02-4D026953451C" target="_blank" rel="noopener">Official Agenda &rarr;</a></td>
-        </tr>
-        
-        <tr>
-            <td><strong>2026-10-07</strong></td>
-            <td>Olympia</td>
-            <td>
-                
-                <strong>City Council weighs PBIA Phase 2 Discussion</strong>
-                <div style="font-size: 13px; color: var(--ink-muted); margin-top: 3px;">
-                    Official: 6.A PBIA Phase 2 Discussion
-                </div>
-            </td>
-            <td>Review of local regulatory terms, public contracts, or budget allocations.</td>
-            <td>Deliberation<br><a href="https://olympia.legistar.com/MeetingDetail.aspx?LEGID=7033&amp;GID=218&amp;G=19510D34-31FB-48B8-9C02-4D026953451C" target="_blank" rel="noopener">Official Agenda &rarr;</a></td>
-        </tr>
-        
-        <tr>
-            <td><strong>2026-10-07</strong></td>
-            <td>Olympia</td>
-            <td>
-                
-                <strong>City Council weighs new local fee plan</strong>
-                <div style="font-size: 13px; color: var(--ink-muted); margin-top: 3px;">
-                    Official: 5.A Review public feedback and finalize the annual report to Olympia Metropolitan Park District (OMPD) Board and City Council regarding the compliance of 2025 funding levels
-                </div>
-            </td>
-            <td>Review of local regulatory terms, public contracts, or budget allocations.</td>
-            <td>Deliberation<br><a href="https://olympia.legistar.com/MeetingDetail.aspx?LEGID=7218&amp;GID=218&amp;G=19510D34-31FB-48B8-9C02-4D026953451C" target="_blank" rel="noopener">Official Agenda &rarr;</a></td>
-        </tr>
-        
-        <tr>
-            <td><strong>2026-10-07</strong></td>
-            <td>Thurston County</td>
-            <td>
-                
-                <strong>County weighs Board Work Session</strong>
-                <div style="font-size: 13px; color: var(--ink-muted); margin-top: 3px;">
-                    Official: Board Work Session
-                </div>
-            </td>
-            <td>Review of local regulatory terms, public contracts, or budget allocations.</td>
-            <td>Deliberation<br><a href="https://www.thurstoncountywa.gov/media/35334" target="_blank" rel="noopener">Official Agenda &rarr;</a></td>
-        </tr>
-        
-        <tr>
-            <td><strong>2026-10-07</strong></td>
-            <td>Thurston County</td>
-            <td>
-                
-                <strong>Planners weighs Public Comment for 10/07/2026</strong>
-                <div style="font-size: 13px; color: var(--ink-muted); margin-top: 3px;">
-                    Official: Public Comment for 10/07/2026
-                </div>
-            </td>
-            <td>Review of local regulatory terms, public contracts, or budget allocations.</td>
-            <td>Deliberation<br><a href="https://www.thurstoncountywa.gov/media/35370" target="_blank" rel="noopener">Official Agenda &rarr;</a></td>
-        </tr>
-        
-        <tr>
-            <td><strong>2026-10-07</strong></td>
-            <td>Thurston County</td>
-            <td>
-                
-                <strong>Planners weighs local policy plan</strong>
-                <div style="font-size: 13px; color: var(--ink-muted); margin-top: 3px;">
-                    Official: Planning Commission: Agenda (2026-10-07)
-                </div>
-            </td>
-            <td>Review of local regulatory terms, public contracts, or budget allocations.</td>
-            <td>Deliberation<br><a href="https://www.thurstoncountywa.gov/media/35328" target="_blank" rel="noopener">Official Agenda &rarr;</a></td>
-        </tr>
-        
-        <tr>
-            <td><strong>2026-10-07</strong></td>
-            <td>Thurston County</td>
-            <td>
-                
-                <strong>Planners weighs nd Public Comment for 10/07/2026</strong>
-                <div style="font-size: 13px; color: var(--ink-muted); margin-top: 3px;">
-                    Official: 2nd Public Comment for 10/07/2026
-                </div>
-            </td>
-            <td>Review of local regulatory terms, public contracts, or budget allocations.</td>
-            <td>Deliberation<br><a href="https://www.thurstoncountywa.gov/media/35379" target="_blank" rel="noopener">Official Agenda &rarr;</a></td>
-        </tr>
-        
-        <tr>
-            <td><strong>2026-10-07</strong></td>
-            <td>Thurston County</td>
-            <td>
-                
-                <strong>Planners weighs new land rules for fish and wildlife habitats</strong>
-                <div style="font-size: 13px; color: var(--ink-muted); margin-top: 3px;">
-                    Official: DRAFT (changes since of Sept 2, 2026) - CAO Chapter 24.25: FWHCAs
-                </div>
-            </td>
-            <td>Riparian management zones and tree height buffer restrictions near water bodies and habitats.</td>
-            <td><span class="tag-oxblood">Brief Published</span><br><a href="briefs/brief-thurston-pc-2026-10-07-media-35330.html">Read Brief &rarr;</a></td>
-        </tr>
-        
-        <tr>
-            <td><strong>2026-10-07</strong></td>
-            <td>Thurston County</td>
-            <td>
-                
-                <strong>Planners weighs new land rules for local wetlands</strong>
-                <div style="font-size: 13px; color: var(--ink-muted); margin-top: 3px;">
-                    Official: DRAFT (changes since Sept 2, 2026) - CAO Chapter 24.30: Wetlands
-                </div>
-            </td>
-            <td>Critical areas buffer widths and agricultural exemptions across unincorporated county lands.</td>
-            <td><span class="tag-oxblood">Brief Published</span><br><a href="briefs/brief-thurston-pc-2026-10-07-media-35329.html">Read Brief &rarr;</a></td>
-        </tr>
-        
-        <tr>
-            <td><strong>2026-10-08</strong></td>
-            <td>Olympia</td>
-            <td>
-                
-                <strong>City Council votes on MINUTES</strong>
-                <div style="font-size: 13px; color: var(--ink-muted); margin-top: 3px;">
-                    Official: 3. APPROVAL OF MINUTES
-                </div>
-            </td>
-            <td>Review of local regulatory terms, public contracts, or budget allocations.</td>
-            <td>Deliberation<br><a href="https://olympia.legistar.com/MeetingDetail.aspx?LEGID=7293&amp;GID=218&amp;G=19510D34-31FB-48B8-9C02-4D026953451C" target="_blank" rel="noopener">Official Agenda &rarr;</a></td>
-        </tr>
-        
-        <tr>
-            <td><strong>2026-10-08</strong></td>
-            <td>Olympia</td>
-            <td>
-                
-                <strong>City Council votes on local measure</strong>
-                <div style="font-size: 13px; color: var(--ink-muted); margin-top: 3px;">
-                    Official: Approval of August 11 Cultural Access Advisory Board Meeting Minutes
-                </div>
-            </td>
-            <td>Review of local regulatory terms, public contracts, or budget allocations.</td>
-            <td>Deliberation<br><a href="https://olympia.legistar.com/MeetingDetail.aspx?LEGID=7293&amp;GID=218&amp;G=19510D34-31FB-48B8-9C02-4D026953451C" target="_blank" rel="noopener">Official Agenda &rarr;</a></td>
-        </tr>
-        
-        <tr>
-            <td><strong>2026-10-08</strong></td>
-            <td>Olympia</td>
-            <td>
-                
-                <strong>City Council weighs STAFF REPORT</strong>
-                <div style="font-size: 13px; color: var(--ink-muted); margin-top: 3px;">
-                    Official: 7. STAFF REPORT
-                </div>
-            </td>
-            <td>Review of local regulatory terms, public contracts, or budget allocations.</td>
-            <td>Deliberation<br><a href="https://olympia.legistar.com/MeetingDetail.aspx?LEGID=7293&amp;GID=218&amp;G=19510D34-31FB-48B8-9C02-4D026953451C" target="_blank" rel="noopener">Official Agenda &rarr;</a></td>
-        </tr>
-        
-        <tr>
-            <td><strong>2026-10-10</strong></td>
-            <td>Olympia</td>
-            <td>
-                
-                <strong>City Council votes on local measure</strong>
-                <div style="font-size: 13px; color: var(--ink-muted); margin-top: 3px;">
-                    Official: 6.B Approval of the Social Justice &amp; Equity Commission Work Plan Update for City Council
-                </div>
-            </td>
-            <td>Review of local regulatory terms, public contracts, or budget allocations.</td>
-            <td>Deliberation<br><a href="https://olympia.legistar.com/MeetingDetail.aspx?LEGID=7283&amp;GID=218&amp;G=19510D34-31FB-48B8-9C02-4D026953451C" target="_blank" rel="noopener">Official Agenda &rarr;</a></td>
-        </tr>
-        
-        <tr>
-            <td><strong>2026-10-13</strong></td>
-            <td>Olympia</td>
-            <td>
-                
-                <strong>City Council votes on local measure</strong>
-                <div style="font-size: 13px; color: var(--ink-muted); margin-top: 3px;">
-                    Official: 2.B One Community Plan Update
-                </div>
-            </td>
-            <td>Review of local regulatory terms, public contracts, or budget allocations.</td>
-            <td>Deliberation<br><a href="https://olympia.legistar.com/MeetingDetail.aspx?LEGID=7132&amp;GID=218&amp;G=19510D34-31FB-48B8-9C02-4D026953451C" target="_blank" rel="noopener">Official Agenda &rarr;</a></td>
-        </tr>
-        
-        <tr>
-            <td><strong>2026-10-13</strong></td>
-            <td>Thurston County</td>
-            <td>
-                <span class="tag-testcase">&#9888; Test Case</span>
-                <strong>Health Board weighs new rules for local drinking water</strong>
-                <div style="font-size: 13px; color: var(--ink-muted); margin-top: 3px;">
-                    Official: BOH Public Hearing: Revisions to Drinking Water Code for Thurston County Article III
-                </div>
-            </td>
-            <td>Revisions to Group B private and community water system testing and compliance standards.</td>
-            <td><span class="tag-oxblood">Brief Published</span><br><a href="briefs/brief-thurston-bocc-2026-10-13-9809f687c7.html">Read Brief &rarr;</a></td>
-        </tr>
-        
-        <tr>
-            <td><strong>2026-10-15</strong></td>
-            <td>Olympia</td>
-            <td>
-                
-                <strong>City Council votes on local measure</strong>
-                <div style="font-size: 13px; color: var(--ink-muted); margin-top: 3px;">
-                    Official: 3.A Approval of the August 14, 2026 Lodging Tax Advisory Committee Meeting Minutes
-                </div>
-            </td>
-            <td>Review of local regulatory terms, public contracts, or budget allocations.</td>
-            <td>Deliberation<br><a href="https://olympia.legistar.com/MeetingDetail.aspx?LEGID=7269&amp;GID=218&amp;G=19510D34-31FB-48B8-9C02-4D026953451C" target="_blank" rel="noopener">Official Agenda &rarr;</a></td>
-        </tr>
-        
-        <tr>
-            <td><strong>2026-10-15</strong></td>
-            <td>Olympia</td>
-            <td>
-                
-                <strong>City Council votes on local measure</strong>
-                <div style="font-size: 13px; color: var(--ink-muted); margin-top: 3px;">
-                    Official: 3.B Approval of the August 21, 2026 Lodging Tax Advisory Committee Meeting Minutes
-                </div>
-            </td>
-            <td>Review of local regulatory terms, public contracts, or budget allocations.</td>
-            <td>Deliberation<br><a href="https://olympia.legistar.com/MeetingDetail.aspx?LEGID=7269&amp;GID=218&amp;G=19510D34-31FB-48B8-9C02-4D026953451C" target="_blank" rel="noopener">Official Agenda &rarr;</a></td>
-        </tr>
-        
-        <tr>
-            <td><strong>2026-10-15</strong></td>
-            <td>Olympia</td>
-            <td>
-                
-                <strong>City Council votes on local measure</strong>
-                <div style="font-size: 13px; color: var(--ink-muted); margin-top: 3px;">
-                    Official: 6.A Review of 2027 Lodging Tax Funding Tourism Service Proposals
-                </div>
-            </td>
-            <td>Review of local regulatory terms, public contracts, or budget allocations.</td>
-            <td>Deliberation<br><a href="https://olympia.legistar.com/MeetingDetail.aspx?LEGID=7269&amp;GID=218&amp;G=19510D34-31FB-48B8-9C02-4D026953451C" target="_blank" rel="noopener">Official Agenda &rarr;</a></td>
-        </tr>
-        
-        <tr>
-            <td><strong>2026-10-15</strong></td>
-            <td>Olympia</td>
-            <td>
-                
-                <strong>City Council votes on local measure</strong>
-                <div style="font-size: 13px; color: var(--ink-muted); margin-top: 3px;">
-                    Official: 3.A Approval of September, 17, 2026 Parks and Recreation Advisory Committee Meeting Minutes
-                </div>
-            </td>
-            <td>Review of local regulatory terms, public contracts, or budget allocations.</td>
-            <td>Deliberation<br><a href="https://olympia.legistar.com/MeetingDetail.aspx?LEGID=7244&amp;GID=218&amp;G=19510D34-31FB-48B8-9C02-4D026953451C" target="_blank" rel="noopener">Official Agenda &rarr;</a></td>
-        </tr>
-        
-        <tr>
-            <td><strong>2026-10-20</strong></td>
-            <td>Thurston County</td>
-            <td>
-                
-                <strong>County weighs local policy plan</strong>
-                <div style="font-size: 13px; color: var(--ink-muted); margin-top: 3px;">
-                    Official: Public Hearing: Consider the Transfer of Portions of the Yelm-Rainier Tenino Trail to the City of Yelm
-                </div>
-            </td>
-            <td>Review of local regulatory terms, public contracts, or budget allocations.</td>
-            <td>Public Hearing<br><a href="https://www.thurstoncountywa.gov/meetings-and-agendas" target="_blank" rel="noopener">Official Agenda &rarr;</a></td>
-        </tr>
-        
-        <tr>
-            <td><strong>2026-10-20</strong></td>
-            <td>Thurston County</td>
-            <td>
-                <span class="tag-testcase">&#9888; Test Case</span>
-                <strong>County weighs new rates to fund local conservation district</strong>
-                <div style="font-size: 13px; color: var(--ink-muted); margin-top: 3px;">
-                    Official: Public Hearing: Proposed Ordinance to Adjust Thurston Conservation District&#x27;s Rates
-                </div>
-            </td>
-            <td>Proposed assessment adjustment on real property parcels to fund natural resource stewardship.</td>
-            <td><span class="tag-oxblood">Brief Published</span><br><a href="briefs/brief-thurston-bocc-2026-10-20-6123bedc0c.html">Read Brief &rarr;</a></td>
-        </tr>
-        
-        <tr>
-            <td><strong>2026-10-21</strong></td>
-            <td>Olympia</td>
-            <td>
-                
-                <strong>City Council votes on local measure</strong>
-                <div style="font-size: 13px; color: var(--ink-muted); margin-top: 3px;">
-                    Official: 2. PRESUBMISSION CONFERENCE
-                </div>
-            </td>
-            <td>Review of local regulatory terms, public contracts, or budget allocations.</td>
-            <td>Deliberation<br><a href="https://olympia.legistar.com/MeetingDetail.aspx?LEGID=6957&amp;GID=218&amp;G=19510D34-31FB-48B8-9C02-4D026953451C" target="_blank" rel="noopener">Official Agenda &rarr;</a></td>
-        </tr>
-        
-        </tbody>
-    </table>
+    </div>
     
     </div>
     <footer class="broadsheet-footer">

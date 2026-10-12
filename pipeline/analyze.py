@@ -16,17 +16,19 @@ import yaml
 from pipeline.db import DEFAULT_DB_PATH, get_db_connection
 from pipeline.upstream.chains import get_item_lineage, format_lineage_display
 from pipeline.documents import get_all_documents_for_item, extract_factual_profile
-from pipeline.titles import generate_display_title
+from pipeline.titles import classify_item_tier, generate_display_title
 
 logger = logging.getLogger(__name__)
 
 DEFAULT_CONTACTS_PATH = Path(__file__).resolve().parent.parent / "config" / "contacts.yaml"
 DEFAULT_POSSIBLE_ASKS_PATH = Path(__file__).resolve().parent.parent / "config" / "possible_asks.yaml"
-TODAY_DATE = "2026-10-09"
+TODAY_DATE = "2026-10-12"
 
 
 def is_procedural_or_header(title: str) -> bool:
     """Detects whether an item is an agenda heading, minutes, procedural item, or media file."""
+    if classify_item_tier({"title": title}, has_brief=False, is_test_case=False) == 3:
+        return True
     t = title.strip().lower()
     t_clean = re.sub(r"^[0-9]+(\.[0-9a-zA-Z]+)*\.?\s*", "", t).strip()
     t_clean = re.sub(r"&[a-z]+;", " ", t_clean)
@@ -287,15 +289,15 @@ def get_meeting_date_status(meeting_date: Optional[str], today_str: str = TODAY_
     elif meeting_date == today_str:
         return {
             "is_past": False,
-            "status_text": f"Deliberation scheduled for today ({meeting_date}).",
+            "status_text": f"Meeting scheduled for today ({meeting_date}).",
             "next_step": "Action or committee transmittal following today's session.",
             "date_phrase": f"its meeting today ({meeting_date})",
         }
     else:
         return {
             "is_past": False,
-            "status_text": f"Scheduled for deliberation on {meeting_date}.",
-            "next_step": f"Public deliberation and vote scheduled for {meeting_date}.",
+            "status_text": f"Scheduled for review or vote on {meeting_date}.",
+            "next_step": f"Public review and vote scheduled for {meeting_date}.",
             "date_phrase": f"its meeting on {meeting_date}",
         }
 
@@ -960,13 +962,16 @@ def draft_item(conn, item_id: str, force: bool = False, today_str: str = TODAY_D
     brief_md = generate_brief_markdown(item_dict, refs_list, lineage_str, today_str=today_str)
 
     # Check if drafts already exist for item_id
-    existing = conn.execute("SELECT id, kind, reviewed FROM drafts WHERE item_id = ? AND kind = 'brief'", (item_id,)).fetchall()
+    existing = conn.execute("SELECT id, kind, reviewed, reviewed_at FROM drafts WHERE item_id = ? AND kind = 'brief' ORDER BY reviewed DESC, id DESC", (item_id,)).fetchall()
     if existing:
-        for r in existing:
-            if r["reviewed"] == 0 or force:
-                conn.execute("UPDATE drafts SET markdown = ? WHERE id = ?", (brief_md, r["id"]))
+        keep = existing[0]
+        if len(existing) > 1:
+            for extra in existing[1:]:
+                conn.execute("DELETE FROM drafts WHERE id = ?", (extra["id"],))
+        if keep["reviewed"] == 0 or force:
+            conn.execute("UPDATE drafts SET markdown = ? WHERE id = ?", (brief_md, keep["id"]))
         conn.commit()
-        return {"created": 0, "updated": len(existing), "skipped": False}
+        return {"created": 0, "updated": 1, "skipped": False}
 
     # Insert new brief draft
     conn.execute(
@@ -1028,13 +1033,30 @@ def run_drafts(conn, limit: int = 15, today_str: str = TODAY_DATE) -> int:
 
 
 def regenerate_all_unreviewed_drafts(conn, force: bool = False, today_str: str = TODAY_DATE) -> int:
-    """Regenerates drafts for items in the drafts table, removing procedural and duplicate drafts."""
+    """Regenerates drafts for items in the drafts table, removing procedural and duplicate/superseded drafts."""
+    # Remove duplicate/superseded CAO attachment drafts so only canonical Oct 7 Wetlands (35329) and FWHCAs (35330) briefs remain
+    superseded_ids = (
+        "thurston-pc-2026-10-07-media-35331",
+        "thurston-pc-2026-10-07-media-35332",
+        "thurston-pc-2026-09-16-media-35084",
+        "thurston-pc-2026-09-16-media-34944",
+        "thurston-pc-2026-09-02-media-34662",
+        "thurston-pc-2026-08-19-media-34603",
+        "thurston-pc-2026-08-19-media-34452",
+        "thurston-pc-2026-08-05-media-34353",
+        "thurston-pc-2026-08-05-media-34299",
+    )
+    placeholders = ",".join("?" * len(superseded_ids))
+    conn.execute(f"DELETE FROM drafts WHERE item_id IN ({placeholders})", superseded_ids)
+    conn.commit()
+
     query = "SELECT DISTINCT item_id FROM drafts" if force else "SELECT DISTINCT item_id FROM drafts WHERE reviewed = 0"
     rows = conn.execute(query).fetchall()
     count = 0
     for r in rows:
-        draft_item(conn, r["item_id"], force=force, today_str=today_str)
-        count += 1
+        res = draft_item(conn, r["item_id"], force=force, today_str=today_str)
+        if not res.get("skipped"):
+            count += 1
     return count
 
 

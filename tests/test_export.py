@@ -127,7 +127,7 @@ class TestExport(unittest.TestCase):
         with open(brief_file, "r", encoding="utf-8") as f:
             html = f.read()
         self.assertIn('<a href="../index.html">Loretta\'s Ledger</a>', html)
-        self.assertIn('<a href="../matters.html" class="">Matters</a>', html)
+        self.assertIn('<a href="../briefs.html" class="active">Briefs</a>', html)
 
     def test_dashboard_handler_routes(self):
         import io
@@ -147,7 +147,7 @@ class TestExport(unittest.TestCase):
         for test_path in ["/docs", "/docs/", "/public", "/public/", "/docs/index.html"]:
             h = MockHandler(test_path)
             out = h.wfile.getvalue().decode("utf-8")
-            self.assertIn("This Week — Loretta's Ledger", out)
+            self.assertIn("Loretta's Ledger", out)
 
 
 if __name__ == "__main__":

@@ -1,55 +1,192 @@
 """Static site exporter and broadsheet / account-book ledger designer for Loretta's Ledger.
 
 Information architecture:
-- Nav: This Week | Matters | Who's in the Room | Archive | Method
-- Matters: unified pages per matter with origin, timeline/events, current stage, likely next steps.
-  Test case status is a flag & filter on Matters (not a separate tab).
-- This Week: upcoming meetings and hearings with comment deadlines.
-- Who's in the Room: per-actor pages (consultants, advisory bodies, funders, repeat applicants, outside groups, state/regional bodies)
-  listing documented facts only with source links.
-- Policy Briefs: 3 labeled sections: "For Staff", "For Residents", and "Trajectory".
-- Design: broadsheet / account-book aesthetic. Cream background (#fbf8f1), near-black ink (#1c1c1c),
-  muted oxblood accent (#7a2828), classical serif typography, ruled lines, ledger-style tables.
-  Single source of truth in Eleventy / static build directory (docs/ and site/_site/).
+- Nav: Home | Briefs | Who's in the Room | Principles | About
+- Home (index.html):
+  (a) One sentence on what the Ledger is.
+  (b) "Worth your attention": up to 6 Tier 1 upcoming items, each with plain headline, date and days remaining, body, one-line stake (only when supported by documents), and a "Read the brief" button.
+  (c) "Just happened": items from the last 7 days.
+  (d) "Also on the calendar": collapsed and grouped by meeting (e.g. "Olympia City Council, Oct 13: 2 items"), Tier 2 only.
+- Briefs (briefs.html, with matters.html alias):
+  One row per matter (merged duplicates, no Tier 3 procedural rows).
+  Shows plain headline, body, date, and plain status ("Hearing", "Vote", "Recommendation stage", "Brief ready", "Outcome not yet posted").
+  Hides internal identifiers. Filters: Upcoming, Past, Test cases.
+  The brief and its timeline are on the same page (`briefs/brief-<item_id>.html`).
 """
 
 import argparse
 import html
-import json
 import logging
 import re
-from datetime import datetime
+import shutil
+from datetime import datetime, timedelta
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Tuple
 
 from pipeline.db import DEFAULT_DB_PATH, get_db_connection
-from pipeline.titles import generate_display_title
+from pipeline.titles import (
+    classify_item_tier,
+    clean_agenda_title,
+    determine_exact_body_name,
+    generate_display_title,
+)
 
 logger = logging.getLogger(__name__)
 
+DEFAULT_TODAY_STR = "2026-10-12"
 
-def get_whats_at_stake(item: Dict[str, Any]) -> str:
-    """Returns a concise, one-line summary of the core public stake for an item."""
-    title = (item.get("title") or "").lower()
+
+def get_whats_at_stake(item: Dict[str, Any]) -> Optional[str]:
+    """Returns a concise, one-line summary of the core public stake ONLY when supported by documents.
+
+    Returns None when the documents do not support a specific stake (never returns generic filler).
+    """
+    title = html.unescape(item.get("title") or "").lower()
     if "conservation district" in title and ("rate" in title or "ordinance" in title):
-        return "Proposed assessment adjustment on real property parcels to fund natural resource stewardship."
+        return "Proposed multi-year assessment adjustment on real property parcels under RCW 89.08.400 to fund conservation district operations."
     if "drinking water" in title or "article iii" in title:
-        return "Revisions to Group B private and community water system testing and compliance standards."
-    if "wetland" in title:
-        return "Critical areas buffer widths and agricultural exemptions across unincorporated county lands."
-    if "fwhca" in title or "wildlife" in title or "fish" in title:
-        return "Riparian management zones and tree height buffer restrictions near water bodies and habitats."
+        return "Revisions to Sanitary Code Article III governing Group B private and shared residential drinking water wells."
+    if ("wetland" in title or "24.30" in title) and "fwhca" not in title:
+        return "Updates to Critical Areas Ordinance Chapter 24.30 wetland buffer widths, rating manuals, and reasonable-use rules."
+    if "fwhca" in title or "24.25" in title or "fish and wildlife" in title or "fish & wildlife" in title:
+        return "Updates to Chapter 24.25 stream riparian management zones, prairie soil rules, and residential yard allowances."
     if any(k in title for k in ("cdbg", "hud", "housing and urban development")):
-        return "Receipt of federal Community Development Block Grant funds with attached compliance terms."
-    if "development fees" in title or "impact fees" in title or "utility rates" in title:
-        return "Proposed 2027 fee updates for city water, sewer, stormwater, and development charges."
+        return "Acceptance of $376,415.00 in federal Community Development Block Grant funds with federal compliance conditions."
+    if "development fees" in title or ("impact fees" in title and "utility rates" in title):
+        return "Proposed 2027 rate and fee adjustments for municipal water, sewer, stormwater, and development impact charges."
+    if "2027 utility operating budget" in title:
+        return "Draft 2027 utility operating budget, capital facilities plan, and general facility connection charges."
+    if "2027 special (dedicated) revenues" in title:
+        return "Proposed 2027 allocations for Lodging Tax, Inspire Olympia, PBIA, and housing/homeless response funds."
     if "west bay marina" in title:
-        return "Environmental cleanup conditions and public shoreline access along West Bay."
-    if "quince street" in title or "franz anderson" in title:
-        return "Contract terms and neighborhood protocols for supportive housing operations."
-    if "budget" in title or "operating" in title:
-        return "Annual municipal operating expenditures and capital program priorities."
-    return "Review of local regulatory terms, public contracts, or budget allocations."
+        return "Shoreline substantial development permit and environmental mitigation conditions for replacing West Bay Marina."
+    if "springwood garden" in title:
+        return "Preliminary plat approval for a 37-lot single-family subdivision on 7.2 acres with dedicated wetland buffers."
+    if "quince street" in title:
+        return "Intergovernmental contract amendments with Thurston County funding operations at Quince Street Tiny Home Village."
+    if "franz anderson" in title and "tiny home" in title:
+        return "Funding agreement amendment supporting operations at the Franz Anderson Tiny Home Village."
+    if "timberland regional library" in title and "levy" in title:
+        return "Council endorsement of Timberland Regional Library District Proposition No. 1 property tax levy lid lift."
+    if "yelm-rainier tenino trail" in title:
+        return "Proposed intergovernmental transfer of county-owned portions of the Yelm-Rainier-Tenino Trail to the City of Yelm."
+    if "speed limit schedule" in title:
+        return "Proposed ordinance revising maximum vehicle speed limits across designated unincorporated county roads."
+    if "six-year transportation improvement program" in title:
+        return "Six-year county road, bridge, and trail capital improvement priority list for 2027–2032."
+    if "conduct and solicitation" in title or "chapter 2.03" in title:
+        return "New county code chapter regulating public conduct and solicitation inside Thurston County facilities."
+    if "minimum parking requirements" in title:
+        return "Proposed municipal zoning code amendments reducing or removing minimum off-street parking mandates."
+    if "critical area ordinance update" in title:
+        return "City of Olympia updates to critical area buffer regulations and environmental review rules."
+    if "home based businesses" in title:
+        return "Proposed municipal code revisions governing residential home-based business permits and neighborhood limits."
+    return None
+
+
+def format_short_date(date_str: str) -> str:
+    """Formats '2026-10-13' as 'Oct 13, 2026' or 'Oct 13'."""
+    try:
+        dt = datetime.strptime(date_str[:10], "%Y-%m-%d")
+        return dt.strftime("%b %-d, %Y")
+    except Exception:
+        return date_str or "Date not specified"
+
+
+def format_month_day(date_str: str) -> str:
+    """Formats '2026-10-13' as 'Oct 13'."""
+    try:
+        dt = datetime.strptime(date_str[:10], "%Y-%m-%d")
+        return dt.strftime("%b %-d")
+    except Exception:
+        return date_str or ""
+
+
+def format_days_remaining(meeting_date: str, today_str: str) -> str:
+    """Returns plain days-remaining label relative to today_str."""
+    try:
+        m_dt = datetime.strptime(meeting_date[:10], "%Y-%m-%d").date()
+        t_dt = datetime.strptime(today_str[:10], "%Y-%m-%d").date()
+        diff = (m_dt - t_dt).days
+        if diff == 0:
+            return "Today"
+        if diff == 1:
+            return "Tomorrow (1 day left)"
+        if diff > 1:
+            return f"In {diff} days"
+        if diff == -1:
+            return "Yesterday"
+        return f"{abs(diff)} days ago"
+    except Exception:
+        return ""
+
+
+def determine_plain_status(
+    item: Dict[str, Any],
+    body_name: str,
+    has_brief: bool,
+    today_str: str,
+) -> str:
+    """Returns one of the five plain status labels:
+    'Hearing', 'Vote', 'Recommendation stage', 'Brief ready', 'Outcome not yet posted'.
+    Never returns 'Deliberation'.
+    """
+    meeting_date = (item.get("meeting_date") or "")[:10]
+    title_lower = (item.get("title") or "").lower()
+    is_past = bool(meeting_date and meeting_date < today_str[:10])
+    is_advisory = any(
+        k in body_name.lower()
+        for k in ("commission", "committee", "advisory", "board")
+    ) and "county commissioners" not in body_name.lower() and "board of health" not in body_name.lower()
+
+    if is_past:
+        if has_brief:
+            return "Brief ready"
+        return "Outcome not yet posted"
+
+    if "hearing" in title_lower:
+        return "Hearing"
+    if is_advisory:
+        return "Recommendation stage"
+    if has_brief:
+        return "Brief ready"
+    return "Vote"
+
+
+def normalize_dedupe_key(item: Dict[str, Any], display_title: str) -> str:
+    """Builds a canonical key to merge duplicate matters/items across IDs and stages."""
+    raw = html.unescape(item.get("title") or "")
+    raw_lower = raw.lower()
+    jur = (item.get("jurisdiction") or "").lower()
+    # Check for explicit Case number (e.g. 25-1692, 25-0980, 26-5942)
+    m_case = re.search(r"\b(?:case|permit)[:\s#]*([0-9]{2}-[0-9]{4})\b", raw, re.IGNORECASE)
+    if m_case:
+        return f"case-{m_case.group(1)}"
+    # Check for TCC chapter or Thurston CAO subject (e.g. 24.30 Wetlands, 24.25 FWHCA, 24.20 Flood)
+    m_chap = re.search(r"\bchapter\s+(24\.[0-9]+)\b", raw, re.IGNORECASE)
+    if m_chap:
+        return f"tcc-{m_chap.group(1)}"
+    if jur == "thurston" or "cao" in raw_lower:
+        if "fwhca" in raw_lower or "fish and wildlife" in raw_lower or "fish & wildlife" in raw_lower:
+            return "tcc-24.25"
+        if "wetland" in raw_lower:
+            return "tcc-24.30"
+        if "frequently flooded" in raw_lower:
+            return "tcc-24.20"
+    # Multi-stage Olympia matters
+    if "critical area ordinance update" in raw_lower:
+        return "olympia-cao-update"
+    if "development fees" in raw_lower and "utility rates" in raw_lower:
+        return "olympia-2027-utility-rates-fees"
+    if "2027-2032 capital facilities plan" in raw_lower or "capital facilities plan 2027-2032" in raw_lower:
+        return "olympia-2027-2032-cfp"
+    if "2027 budget update" in raw_lower or "2027 proposed budget update" in raw_lower:
+        return "olympia-2027-budget-update"
+    # Otherwise normalize display_title
+    norm_disp = re.sub(r"[^a-z0-9]+", "-", display_title.lower()).strip("-")
+    return f"title-{norm_disp}"
+
 
 ROOT_DIR = Path(__file__).resolve().parent.parent
 SITE_SRC_DIR = ROOT_DIR / "site" / "src"
@@ -59,19 +196,18 @@ BRIEFS_DIR = ROOT_DIR / "briefs"
 
 
 def ensure_directories():
+    for base in (SITE_SRC_DIR, SITE_OUT_DIR, DOCS_DIR):
+        for legacy_sub in ("matters", "archive", "test-cases", "influences", "action-pages"):
+            legacy_path = base / legacy_sub
+            if legacy_path.exists():
+                shutil.rmtree(legacy_path, ignore_errors=True)
     for d in (
         SITE_SRC_DIR / "briefs",
-        SITE_SRC_DIR / "matters",
         SITE_SRC_DIR / "actors",
-        SITE_SRC_DIR / "archive",
         SITE_OUT_DIR / "briefs",
-        SITE_OUT_DIR / "matters",
         SITE_OUT_DIR / "actors",
-        SITE_OUT_DIR / "archive",
         DOCS_DIR / "briefs",
-        DOCS_DIR / "matters",
         DOCS_DIR / "actors",
-        DOCS_DIR / "archive",
         BRIEFS_DIR,
     ):
         d.mkdir(parents=True, exist_ok=True)
@@ -84,7 +220,6 @@ def markdown_to_html(md_text: str) -> str:
     in_code = False
     in_ul = False
     in_table = False
-    table_header_done = False
 
     for line in lines:
         if line.startswith("```"):
@@ -108,7 +243,6 @@ def markdown_to_html(md_text: str) -> str:
                 html_lines.append("</ul>")
                 in_ul = False
             cells = [c.strip() for c in stripped.strip("|").split("|")]
-            # Check if separator row (e.g. | :--- | :--- |)
             if all(re.match(r"^:?-+:?$", c) for c in cells if c):
                 continue
             if not in_table:
@@ -119,7 +253,6 @@ def markdown_to_html(md_text: str) -> str:
                     html_lines.append(f"<th>{cell_html}</th>")
                 html_lines.append("</tr></thead><tbody>")
                 in_table = True
-                table_header_done = True
             else:
                 html_lines.append("<tr>")
                 for c in cells:
@@ -131,7 +264,6 @@ def markdown_to_html(md_text: str) -> str:
             if in_table:
                 html_lines.append("</tbody></table>")
                 in_table = False
-                table_header_done = False
 
         # Unordered list
         if stripped.startswith("- ") or stripped.startswith("* "):
@@ -139,7 +271,6 @@ def markdown_to_html(md_text: str) -> str:
                 html_lines.append('<ul class="ledger-list">')
                 in_ul = True
             raw_content = stripped[2:]
-            # Extract hidden verdict comment if present
             verdict_attr = ""
             m_verdict = re.search(r"<!--\s*verdict:\s*(.*?)\s*-->", raw_content)
             if m_verdict:
@@ -200,8 +331,10 @@ def re_links(text: str) -> str:
     return re.sub(r"\[(.*?)\]\((.*?)\)", r'<a href="\2" target="_blank" rel="noopener">\1</a>', text)
 
 
-def get_base_html_page(title: str, content: str, active_nav: str = "this-week", root_prefix: str = "") -> str:
-    """Account-book and broadsheet layout template."""
+def get_base_html_page(title: str, content: str, active_nav: str = "home", root_prefix: str = "") -> str:
+    """Account-book and broadsheet layout template with unified 5-item nav:
+    Home | Briefs | Who's in the Room | Principles | About
+    """
     return f"""<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -356,6 +489,91 @@ def get_base_html_page(title: str, content: str, active_nav: str = "this-week", 
             color: #4a1715;
         }}
 
+        .btn-brief {{
+            display: inline-block;
+            background: var(--oxblood);
+            color: #ffffff !important;
+            text-decoration: none !important;
+            padding: 6px 14px;
+            font-size: 13px;
+            font-weight: 600;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+            border: 1px solid var(--oxblood);
+            transition: background 0.15s ease;
+        }}
+
+        .btn-brief:hover {{
+            background: #521a17;
+        }}
+
+        .btn-secondary {{
+            display: inline-block;
+            background: transparent;
+            color: var(--oxblood) !important;
+            text-decoration: none !important;
+            padding: 5px 12px;
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+            border: 1px solid var(--oxblood);
+        }}
+
+        .attention-card {{
+            background: var(--surface);
+            border: 1px solid var(--rule);
+            border-left: 4px solid var(--oxblood);
+            padding: 18px 20px;
+            margin-bottom: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 20px;
+        }}
+
+        .attention-card-main {{
+            flex: 1;
+        }}
+
+        .attention-card-action {{
+            flex-shrink: 0;
+            padding-top: 4px;
+        }}
+
+        details.calendar-group {{
+            border-bottom: 1px solid var(--rule);
+            padding: 10px 0;
+        }}
+
+        details.calendar-group summary {{
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 15px;
+            color: var(--ink);
+            list-style: none;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }}
+
+        details.calendar-group summary::-webkit-details-marker {{
+            display: none;
+        }}
+
+        details.calendar-group summary::after {{
+            content: "+ Show items";
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--oxblood);
+            font-weight: 600;
+        }}
+
+        details.calendar-group[open] summary::after {{
+            content: "− Hide items";
+        }}
+
         /* Ledger table styles */
         table.ledger-table {{
             width: 100%;
@@ -391,7 +609,7 @@ def get_base_html_page(title: str, content: str, active_nav: str = "this-week", 
         /* Ruled boxes and entries */
         .ledger-entry {{
             border-bottom: 1px solid var(--rule);
-            padding: 18px 0;
+            padding: 16px 0;
         }}
 
         .ledger-entry:first-child {{
@@ -403,7 +621,7 @@ def get_base_html_page(title: str, content: str, active_nav: str = "this-week", 
             text-transform: uppercase;
             letter-spacing: 0.06em;
             color: var(--ink-faint);
-            margin-bottom: 6px;
+            margin-bottom: 5px;
         }}
 
         .tag-oxblood {{
@@ -422,6 +640,22 @@ def get_base_html_page(title: str, content: str, active_nav: str = "this-week", 
             letter-spacing: 0.05em;
             margin-right: 6px;
             display: inline-block;
+        }}
+
+        .status-badge {{
+            display: inline-block;
+            font-size: 12px;
+            font-weight: 600;
+            padding: 2px 8px;
+            border: 1px solid var(--rule-dark);
+            background: #f4eee2;
+            color: var(--ink);
+        }}
+
+        .status-badge.ready {{
+            background: var(--oxblood-tint);
+            border-color: var(--oxblood);
+            color: var(--oxblood);
         }}
 
         .timeline-block {{
@@ -466,6 +700,7 @@ def get_base_html_page(title: str, content: str, active_nav: str = "this-week", 
             .top-row {{ flex-direction: column; gap: 4px; }}
             nav.ledger-nav a {{ display: inline-block; margin: 4px 8px; font-size: 13px; }}
             .masthead-title a {{ font-size: 28px; }}
+            .attention-card {{ flex-direction: column; gap: 12px; }}
             table.ledger-table {{ display: block; overflow-x: auto; }}
         }}
 
@@ -482,7 +717,7 @@ def get_base_html_page(title: str, content: str, active_nav: str = "this-week", 
     <header class="broadsheet-masthead">
         <div class="masthead-inner">
             <div class="top-row">
-                <span>Independent Public Account &bull; Olympia & Thurston County</span>
+                <span>Independent Public Account &bull; Olympia &amp; Thurston County</span>
                 <span class="meta-date">Vol. I &bull; Record Current to October 2026</span>
             </div>
             <div class="masthead-title">
@@ -492,8 +727,8 @@ def get_base_html_page(title: str, content: str, active_nav: str = "this-week", 
                 An Account of Local Decisions, Upstream Influences, and Public Trajectory
             </div>
             <nav class="ledger-nav">
-                <a href="{root_prefix}index.html" class="{'active' if active_nav == 'this-week' else ''}">This Week</a>
-                <a href="{root_prefix}matters.html" class="{'active' if active_nav == 'matters' else ''}">Matters</a>
+                <a href="{root_prefix}index.html" class="{'active' if active_nav in ('home', 'this-week') else ''}">Home</a>
+                <a href="{root_prefix}briefs.html" class="{'active' if active_nav in ('briefs', 'matters') else ''}">Briefs</a>
                 <a href="{root_prefix}actors.html" class="{'active' if active_nav == 'actors' else ''}">Who's in the Room</a>
                 <a href="{root_prefix}principles.html" class="{'active' if active_nav == 'principles' else ''}">Principles</a>
                 <a href="{root_prefix}about.html" class="{'active' if active_nav == 'about' else ''}">About</a>
@@ -511,162 +746,421 @@ def get_base_html_page(title: str, content: str, active_nav: str = "this-week", 
 """
 
 
-def export_site_content(conn, out_dirs: Optional[List[Path]] = None) -> Dict[str, int]:
-    """Exports the entire broadsheet site structure to docs/ and site/_site/."""
+def build_item_timeline_html(conn, item: Dict[str, Any], dedupe_key: str) -> str:
+    """Builds the unified Documented Timeline & Record section to embed directly at the bottom of a Brief page."""
+    # Find all items that share the same matter or same dedupe_key
+    all_items = conn.execute(
+        "SELECT id, title, display_title, jurisdiction, source_id, meeting_date, url, body_text FROM items ORDER BY meeting_date DESC"
+    ).fetchall()
+
+    related_events: List[Dict[str, Any]] = []
+    seen_event_keys = set()
+
+    # Also check matter_events linked to the same matter_id
+    matter_rows = conn.execute(
+        "SELECT DISTINCT matter_id FROM matter_events WHERE item_id = ? AND confidence = 'confirmed'",
+        (item["id"],),
+    ).fetchall()
+    matter_ids = [r["matter_id"] for r in matter_rows]
+    matter_item_ids = set()
+    if matter_ids:
+        placeholders = ",".join("?" * len(matter_ids))
+        me_rows = conn.execute(
+            f"SELECT item_id FROM matter_events WHERE matter_id IN ({placeholders}) AND confidence = 'confirmed'",
+            matter_ids,
+        ).fetchall()
+        matter_item_ids = {r["item_id"] for r in me_rows}
+
+    for r in all_items:
+        d = dict(r)
+        tier = classify_item_tier(d)
+        if tier == 3 and d["id"] != item["id"]:
+            continue
+        disp = d.get("display_title") or generate_display_title(d, d.get("body_text") or "")
+        r_key = normalize_dedupe_key(d, disp)
+        if d["id"] == item["id"] or d["id"] in matter_item_ids or r_key == dedupe_key:
+            ev_sig = (d.get("meeting_date") or "", clean_agenda_title(d.get("title") or "").lower())
+            if ev_sig in seen_event_keys:
+                continue
+            seen_event_keys.add(ev_sig)
+            related_events.append(d)
+
+    if not related_events:
+        related_events.append(item)
+
+    timeline_items_html = []
+    for ev in related_events:
+        body_name = determine_exact_body_name(ev, ev.get("body_text") or "")
+        date_label = format_short_date(ev.get("meeting_date") or "")
+        cleaned_t = clean_agenda_title(ev.get("title") or "")
+        timeline_items_html.append(f"""
+        <div class="timeline-item">
+            <div class="ledger-meta">{html.escape(date_label)} &bull; {html.escape(body_name)}</div>
+            <div><strong>{html.escape(cleaned_t)}</strong></div>
+            <div style="font-size: 13px; color: var(--ink-muted); margin-top: 2px;">
+                <a href="{html.escape(ev.get('url') or '')}" target="_blank" rel="noopener">Official Meeting Packet &amp; Record &rarr;</a>
+            </div>
+        </div>
+        """)
+
+    return f"""
+    <h2 class="section-label">Timeline &amp; Documented Record</h2>
+    <div class="timeline-block">
+        {''.join(timeline_items_html)}
+    </div>
+    """
+
+
+def export_site_content(
+    conn,
+    out_dirs: Optional[List[Path]] = None,
+    today_str: str = DEFAULT_TODAY_STR,
+) -> Dict[str, int]:
+    """Exports the simplified broadsheet site structure to docs/ and site/_site/."""
     ensure_directories()
     target_dirs = out_dirs if out_dirs is not None else [DOCS_DIR, SITE_OUT_DIR]
     for d in target_dirs:
-        for sub in ("briefs", "matters", "actors", "archive"):
-            (d / sub).mkdir(parents=True, exist_ok=True)
-    stats = {"matters": 0, "briefs": 0, "actors": 0, "test_cases": 0}
-    # Count published test cases (items flagged as test cases that have approved briefs)
-    published_tc_count = conn.execute(
-        """
-        SELECT COUNT(DISTINCT t.item_id)
-        FROM test_cases t
-        JOIN drafts d ON d.item_id = t.item_id
-        WHERE d.kind = 'brief' AND d.reviewed = 1
-        """
-    ).fetchone()[0]
-    stats["test_cases"] = published_tc_count
+        for legacy_sub in ("matters", "archive", "test-cases", "influences", "action-pages"):
+            legacy_path = d / legacy_sub
+            if legacy_path.exists():
+                shutil.rmtree(legacy_path, ignore_errors=True)
+        for legacy_file in ("matters.html", "archive.html", "method.html"):
+            lf = d / legacy_file
+            if lf.exists():
+                lf.unlink()
+        for sub in ("briefs", "actors"):
+            sub_dir = d / sub
+            sub_dir.mkdir(parents=True, exist_ok=True)
+            for old_html in sub_dir.glob("*.html"):
+                old_html.unlink()
 
-    # 1. Export Matters and Matter Pages
-    matters = conn.execute(
+    stats = {"matters": 0, "briefs": 0, "actors": 0, "test_cases": 0}
+
+    today_dt = datetime.strptime(today_str[:10], "%Y-%m-%d").date()
+    seven_days_ago_str = (today_dt - timedelta(days=7)).strftime("%Y-%m-%d")
+
+    # Fetch all items with their latest approved brief (if any) and test_case status
+    all_rows = conn.execute(
         """
-        SELECT m.*
-        FROM matters m
-        ORDER BY m.is_test_case DESC, m.updated_at DESC
+        SELECT i.*,
+               t.flagged_reason as test_case_reason,
+               (SELECT d.id FROM drafts d WHERE d.item_id = i.id AND d.kind = 'brief' AND d.reviewed = 1 ORDER BY d.id DESC LIMIT 1) as brief_id,
+               (SELECT d.markdown FROM drafts d WHERE d.item_id = i.id AND d.kind = 'brief' AND d.reviewed = 1 ORDER BY d.id DESC LIMIT 1) as brief_markdown,
+               (SELECT d.markdown FROM drafts d WHERE d.item_id = i.id AND d.kind = 'brief' ORDER BY d.reviewed DESC, d.id DESC LIMIT 1) as any_brief_markdown
+        FROM items i
+        LEFT JOIN test_cases t ON i.id = t.item_id
+        ORDER BY i.meeting_date DESC, i.id ASC
         """
     ).fetchall()
 
-    matters_table_rows = []
-    for m in matters:
-        events = conn.execute(
-            """
-            SELECT me.*, i.title as item_title, i.meeting_date, i.comment_deadline, i.url as item_url
-            FROM matter_events me
-            JOIN items i ON me.item_id = i.id
-            WHERE me.matter_id = ? AND me.confidence = 'confirmed'
-            ORDER BY me.action_date DESC
-            """,
-            (m["id"],),
-        ).fetchall()
+    # Process and classify all items, merging duplicates
+    processed_items: List[Dict[str, Any]] = []
+    for r in all_rows:
+        d = dict(r)
+        bt = d.get("body_text") or ""
+        disp_title = generate_display_title(d, bt)
+        body_name = determine_exact_body_name(d, bt)
+        has_brief = bool(d.get("brief_id"))
+        is_tc = bool(d.get("test_case_reason"))
+        tier = classify_item_tier(d, has_brief=has_brief, is_test_case=is_tc)
+        if tier == 3:
+            continue
 
-        # Check if there is an approved brief
-        brief_row = conn.execute(
-            """
-            SELECT d.*, i.id as item_id
-            FROM drafts d
-            JOIN matter_events me ON d.item_id = me.item_id
-            JOIN items i ON d.item_id = i.id
-            WHERE me.matter_id = ? AND d.kind = 'brief' AND d.reviewed = 1
-            LIMIT 1
-            """,
-            (m["id"],),
-        ).fetchone()
+        jur_label = "Olympia" if (d.get("jurisdiction") or "").lower() == "olympia" else "Thurston County"
+        if jur_label.lower() in body_name.lower():
+            full_body_label = body_name
+        elif jur_label == "Thurston County" and body_name.lower().startswith("county"):
+            full_body_label = f"Thurston {body_name}"
+        else:
+            full_body_label = f"{jur_label} {body_name}"
+        stake = get_whats_at_stake(d)
+        status_label = determine_plain_status(d, body_name, has_brief=has_brief, today_str=today_str)
+        dedupe_key = normalize_dedupe_key(d, disp_title)
 
-        # Generate individual Matter Page
-        events_timeline_html = []
-        for ev in events:
-            events_timeline_html.append(f"""
-            <div class="timeline-item">
-                <div class="ledger-meta">{ev['action_date']} &bull; {ev['action_type']}</div>
-                <div><strong>{html.escape(ev['item_title'])}</strong></div>
-                <div style="font-size: 13px; color: var(--ink-muted); margin-top: 3px;">
-                    {html.escape(ev['notes'] or '')} &bull; <a href="{html.escape(ev['record_url'])}" target="_blank" rel="noopener">Official Meeting Record &rarr;</a>
+        d.update({
+            "display_title": disp_title,
+            "body_name": body_name,
+            "full_body_label": full_body_label,
+            "has_brief": has_brief,
+            "is_test_case": is_tc,
+            "tier": tier,
+            "stake": stake,
+            "status_label": status_label,
+            "dedupe_key": dedupe_key,
+        })
+        processed_items.append(d)
+
+    # Deduplicate Tier 1 / brief / test-case items into canonical matters first
+    briefs_page_candidates = [
+        it for it in processed_items
+        if it["tier"] == 1 or it["has_brief"] or it["is_test_case"]
+    ]
+    # Sort so items with an approved brief or latest meeting date come first when merging duplicates
+    briefs_page_candidates.sort(
+        key=lambda x: (1 if x["has_brief"] else 0, 1 if x["is_test_case"] else 0, x.get("meeting_date") or ""),
+        reverse=True,
+    )
+
+    merged_matters: List[Dict[str, Any]] = []
+    seen_matter_keys = set()
+    canonical_by_key: Dict[str, Dict[str, Any]] = {}
+    for it in briefs_page_candidates:
+        if it["dedupe_key"] in seen_matter_keys:
+            continue
+        seen_matter_keys.add(it["dedupe_key"])
+        merged_matters.append(it)
+        canonical_by_key[it["dedupe_key"]] = it
+
+    # Sort merged_matters by meeting_date DESC
+    merged_matters.sort(key=lambda x: x.get("meeting_date") or "", reverse=True)
+
+    # 1. Export Unified Brief + Timeline pages (`briefs/brief-<item_id>.html`) for canonical deduplicated matters
+    exported_brief_ids = set()
+    for it in merged_matters:
+        md_source = it.get("brief_markdown") or it.get("any_brief_markdown")
+        if not md_source and it["tier"] == 1:
+            from pipeline.analyze import generate_brief_markdown
+            md_source = generate_brief_markdown(it, [], "", today_str=today_str)
+
+        if md_source:
+            html_body = markdown_to_html(md_source)
+            timeline_html = build_item_timeline_html(conn, it, it["dedupe_key"])
+            back_bar = f"""
+            <div class="ledger-meta" style="margin-bottom: 12px;">
+                <a href="../briefs.html">&larr; All Briefs</a> &bull; {html.escape(it['full_body_label'])} &bull; {html.escape(format_short_date(it.get('meeting_date') or ''))}
+            </div>
+            """
+            full_brief_html = back_bar + html_body + timeline_html
+            page_html = get_base_html_page(it["display_title"], full_brief_html, active_nav="briefs", root_prefix="../")
+
+            file_slug = f"brief-{it['id']}.html"
+            for out_base in target_dirs:
+                with open(out_base / "briefs" / file_slug, "w", encoding="utf-8") as f:
+                    f.write(page_html)
+            exported_brief_ids.add(it["id"])
+            if it["has_brief"]:
+                stats["briefs"] += 1
+
+    # 2. Build Home Page (`index.html`)
+    # (a) One sentence on what the Ledger is.
+    # (b) "Worth your attention": up to 6 Tier 1 upcoming items (meeting_date >= today_str), deduplicated.
+    # (c) "Just happened": last 7 days (seven_days_ago_str <= meeting_date < today_str), deduplicated.
+    # (d) "Also on the calendar": collapsed and grouped by meeting (e.g. "Olympia City Council, Oct 13: 2 items"), Tier 2 only.
+
+    # Upcoming Tier 1 items (meeting_date >= today_str), ordered soonest first
+    upcoming_t1_raw = [
+        it for it in merged_matters
+        if it["tier"] == 1 and (it.get("meeting_date") or "") >= today_str
+    ]
+    upcoming_t1_raw.sort(key=lambda x: (x.get("meeting_date") or "9999-99-99", 0 if x["has_brief"] else 1))
+    upcoming_t1 = upcoming_t1_raw[:6]
+
+    worth_attention_cards = []
+    for it in upcoming_t1:
+        days_rem = format_days_remaining(it["meeting_date"], today_str)
+        date_fmt = format_short_date(it["meeting_date"])
+        tc_badge = '<span class="tag-testcase">Test Case</span>' if it["is_test_case"] else ""
+        stake_html = f'<p style="margin: 6px 0 0 0; font-size: 15px; color: var(--ink);"><strong>What&#x27;s at stake:</strong> {html.escape(it["stake"])}</p>' if it["stake"] else ""
+        brief_href = f"briefs/brief-{it['id']}.html"
+
+        worth_attention_cards.append(f"""
+        <div class="attention-card">
+            <div class="attention-card-main">
+                <div class="ledger-meta">
+                    {tc_badge}<strong>{html.escape(it['full_body_label'])}</strong> &bull; {html.escape(date_fmt)} ({html.escape(days_rem)})
                 </div>
+                <h3 style="margin: 4px 0 4px 0; font-size: 20px;">
+                    <a href="{brief_href}" style="text-decoration: none; color: var(--ink);">{html.escape(it['display_title'])}</a>
+                </h3>
+                <div style="font-size: 13px; color: var(--ink-muted);">Official title: {html.escape(it['title'])}</div>
+                {stake_html}
             </div>
-            """)
-
-        next_step_html = f"<p><strong>Likely Next Step:</strong> {html.escape(m['likely_next_step'])}</p>" if m["likely_next_step"] else "<p><strong>Likely Next Step:</strong> No subsequent action stated in public documents reviewed.</p>"
-        test_case_badge = f'<span class="tag-testcase">&#9888; Test Case Precedent: {html.escape(m["test_case_reason"] or "")}</span>' if m["is_test_case"] else ''
-
-        brief_link_html = ""
-        if brief_row:
-            brief_link_html = f"""
-            <div class="memo-box" style="margin-top: 24px;">
-                <div class="ledger-meta">Approved Publication</div>
-                <h3 style="margin: 0 0 6px 0;"><a href="../briefs/brief-{brief_row['item_id']}.html">Read Full Policy Brief: {html.escape(m['title'])} &rarr;</a></h3>
-                <p style="font-size: 14px; margin: 0; color: var(--ink-muted);">Includes detailed memos For Staff, For Residents, and complete policy Trajectory.</p>
+            <div class="attention-card-action">
+                <a href="{brief_href}" class="btn-brief">Read the brief &rarr;</a>
             </div>
-            """
-
-        matter_page_content = f"""
-        <div class="ledger-meta">
-            <a href="../matters.html">&larr; Back to All Matters</a> &bull; {m['jurisdiction'].upper()} &bull; Primary Identifier: {html.escape(m['primary_identifier'] or 'None')}
         </div>
-        <h1 class="headline-title" style="margin-top: 8px;">{html.escape(m['title'])}</h1>
-        {f'<div style="margin-bottom: 16px;">{test_case_badge}</div>' if test_case_badge else ''}
+        """)
 
-        <div class="memo-box">
-            <h3 style="margin-top:0;">Matter Summary & Origin</h3>
-            <p><strong>Origin:</strong> {html.escape(m['origin_summary'] or 'Local government deliberation.')}</p>
-            <p><strong>Current Stage:</strong> {html.escape(m['current_stage'] or 'Scheduled')}</p>
-            {next_step_html}
+    # (c) "Just happened" for the last 7 days (seven_days_ago_str <= meeting_date < today_str)
+    just_happened_list = [
+        it for it in merged_matters
+        if it["tier"] == 1 and seven_days_ago_str <= (it.get("meeting_date") or "") < today_str
+    ]
+    just_happened_list.sort(key=lambda x: (x.get("meeting_date") or "", 1 if x["has_brief"] else 0), reverse=True)
+
+    just_happened_rows = []
+    for it in just_happened_list:
+        date_fmt = format_short_date(it["meeting_date"])
+        days_ago = format_days_remaining(it["meeting_date"], today_str)
+        stake_line = f'<div style="font-size: 14px; color: var(--ink); margin-top: 4px;">{html.escape(it["stake"])}</div>' if it["stake"] else ""
+        if it["id"] in exported_brief_ids:
+            title_html = f'<a href="briefs/brief-{it["id"]}.html"><strong>{html.escape(it["display_title"])}</strong></a>'
+            action_html = f'<a href="briefs/brief-{it["id"]}.html" class="btn-secondary">Read the brief &rarr;</a>'
+        else:
+            title_html = f'<strong>{html.escape(it["display_title"])}</strong>'
+            action_html = f'<a href="{html.escape(it["url"])}" target="_blank" rel="noopener" style="font-size: 13px;">Official record &rarr;</a>'
+
+        just_happened_rows.append(f"""
+        <div class="ledger-entry" style="display: flex; justify-content: space-between; align-items: flex-start; gap: 16px;">
+            <div>
+                <div class="ledger-meta"><strong>{html.escape(it['full_body_label'])}</strong> &bull; {html.escape(date_fmt)} ({html.escape(days_ago)}) &bull; {html.escape(it['status_label'])}</div>
+                <div style="font-size: 17px;">{title_html}</div>
+                <div style="font-size: 12px; color: var(--ink-muted); margin-top: 2px;">Official: {html.escape(it['title'])}</div>
+                {stake_line}
+            </div>
+            <div style="flex-shrink: 0; padding-top: 4px;">
+                {action_html}
+            </div>
         </div>
+        """)
 
-        {brief_link_html}
+    # (d) "Also on the calendar": collapsed and grouped by meeting (e.g. "Olympia City Council, Oct 6: 9 items"), Tier 2 only.
+    # Include upcoming and recent (last 7 days) Tier 2 items grouped by (full_body_label, meeting_date)
+    tier2_calendar_items = [
+        it for it in processed_items
+        if it["tier"] == 2 and (it.get("meeting_date") or "") >= seven_days_ago_str
+    ]
+    # Group by (full_body_label, meeting_date)
+    meeting_groups: Dict[Tuple[str, str], List[Dict[str, Any]]] = {}
+    seen_t2_per_group: Dict[Tuple[str, str], set] = {}
+    for it in tier2_calendar_items:
+        g_key = (it["full_body_label"], it.get("meeting_date") or "")
+        seen_set = seen_t2_per_group.setdefault(g_key, set())
+        if it["dedupe_key"] in seen_set:
+            continue
+        seen_set.add(it["dedupe_key"])
+        meeting_groups.setdefault(g_key, []).append(it)
 
-        <h2 class="section-label">Matter Timeline & Documented Events</h2>
-        <div class="timeline-block">
-            {''.join(events_timeline_html) if events_timeline_html else '<p>No linked timeline items recorded.</p>'}
-        </div>
-        """
+    # Sort descending by date for clean reading
+    sorted_group_keys = sorted(meeting_groups.keys(), key=lambda k: k[1], reverse=True)
 
-        matter_html = get_base_html_page(m["title"], matter_page_content, active_nav="matters", root_prefix="../")
-        file_slug = f"{m['id']}.html"
+    calendar_groups_html = []
+    for body_lbl, m_date in sorted_group_keys:
+        g_items = meeting_groups[(body_lbl, m_date)]
+        count = len(g_items)
+        item_word = "item" if count == 1 else "items"
+        short_md = format_month_day(m_date)
+        summary_label = f"{body_lbl}, {short_md}: {count} {item_word}"
 
-        for out_base in target_dirs:
-            with open(out_base / "matters" / file_slug, "w", encoding="utf-8") as f:
-                f.write(matter_html)
+        li_rows = []
+        for git in g_items:
+            li_rows.append(
+                f'<li><strong>{html.escape(git["display_title"])}</strong> '
+                f'<span style="font-size: 12px; color: var(--ink-muted);">({html.escape(clean_agenda_title(git["title"]))})</span> '
+                f'&bull; <a href="{html.escape(git["url"])}" target="_blank" rel="noopener" style="font-size: 12px;">Agenda record &rarr;</a></li>'
+            )
 
-        # Build row for Matters Index
-        tc_pill = '<span class="tag-testcase">Test Case</span>' if m["is_test_case"] else ""
-        if m["is_test_case"]:
+        calendar_groups_html.append(f"""
+        <details class="calendar-group">
+            <summary><span>{html.escape(summary_label)}</span></summary>
+            <ul class="ledger-list" style="margin-top: 10px;">
+                {''.join(li_rows)}
+            </ul>
+        </details>
+        """)
+
+    home_content = f"""
+    <p style="font-size: 17px; color: var(--ink); margin-bottom: 28px; border-bottom: 1px solid var(--rule); padding-bottom: 14px;">
+        Loretta's Ledger reads Olympia and Thurston County public meeting packets to state plainly what is being decided, who is shaping it, and how residents can weigh in.
+    </p>
+
+    <h2 class="section-label" style="margin-top: 0;">Worth Your Attention</h2>
+    <div>
+        {''.join(worth_attention_cards) if worth_attention_cards else '<p>No major hearings or ordinance votes scheduled this week.</p>'}
+    </div>
+
+    <h2 class="section-label">Just Happened (Last 7 Days)</h2>
+    <div>
+        {''.join(just_happened_rows) if just_happened_rows else '<p>No major items concluded in the past 7 days.</p>'}
+    </div>
+
+    <h2 class="section-label">Also on the Calendar</h2>
+    <p style="font-size: 13px; color: var(--ink-muted); margin-bottom: 12px;">Other contracts, grants, and committee briefings grouped by meeting.</p>
+    <div>
+        {''.join(calendar_groups_html) if calendar_groups_html else '<p>No additional calendar items.</p>'}
+    </div>
+    """
+
+    # 3. Build Briefs Page (`briefs.html`)
+    briefs_table_rows = []
+    for it in merged_matters:
+        m_date = (it.get("meeting_date") or "")[:10]
+        is_upcoming = 1 if m_date >= today_str else 0
+        is_past = 1 if m_date < today_str else 0
+        is_tc = 1 if (it["is_test_case"] and it["has_brief"]) else 0
+        if is_tc:
             stats["test_cases"] += 1
-        brief_indicator = f'<a href="briefs/brief-{brief_row["item_id"]}.html" style="font-size:12px; margin-left:8px;">[Brief &rarr;]</a>' if brief_row else ""
 
-        matters_table_rows.append(f"""
-        <tr data-testcase="{1 if m['is_test_case'] else 0}">
-            <td><a href="matters/{file_slug}"><strong>{html.escape(m['title'])}</strong></a> {brief_indicator}</td>
-            <td>{html.escape(m['jurisdiction'].upper())}</td>
-            <td>{tc_pill or html.escape(m['current_stage'] or 'Scheduled')}</td>
-            <td>{html.escape(m['primary_identifier'] or '—')}</td>
+        tc_pill = '<span class="tag-testcase">Test Case</span> ' if is_tc else ""
+        stake_sub = f'<div style="font-size: 13px; color: var(--ink-muted); margin-top: 3px;">{html.escape(it["stake"])}</div>' if it["stake"] else ""
+        href = f"briefs/brief-{it['id']}.html" if it["id"] in exported_brief_ids else html.escape(it["url"])
+        status_cls = "status-badge ready" if it["status_label"] in ("Brief ready", "Hearing") else "status-badge"
+
+        briefs_table_rows.append(f"""
+        <tr data-upcoming="{is_upcoming}" data-past="{is_past}" data-testcase="{is_tc}">
+            <td>
+                {tc_pill}<a href="{href}"><strong>{html.escape(it['display_title'])}</strong></a>
+                <div style="font-size: 12px; color: var(--ink-faint); margin-top: 2px;">Official: {html.escape(clean_agenda_title(it['title']))}</div>
+                {stake_sub}
+            </td>
+            <td>{html.escape(it['full_body_label'])}</td>
+            <td>{html.escape(format_short_date(m_date))}</td>
+            <td><span class="{status_cls}">{html.escape(it['status_label'])}</span></td>
         </tr>
         """)
         stats["matters"] += 1
 
-    # 2. Export Reviewed Policy Briefs (One page per matter brief with 3 sections)
-    briefs = conn.execute(
-        """
-        SELECT d.*, i.title as item_title, i.jurisdiction, i.meeting_date, i.url as item_url
-        FROM drafts d
-        JOIN items i ON d.item_id = i.id
-        WHERE d.kind = 'brief' AND d.reviewed = 1
-        ORDER BY i.meeting_date DESC
-        """
-    ).fetchall()
+    briefs_index_content = f"""
+    <p style="font-size: 16px; color: var(--ink-muted); margin-bottom: 20px;">
+        Every major local ordinance, public hearing, and policy brief tracked by Loretta's Ledger, with its full timeline on one page.
+    </p>
 
-    archive_rows = []
-    for b in briefs:
-        html_body = markdown_to_html(b["markdown"])
-        page_html = get_base_html_page(b["item_title"], html_body, active_nav="archive", root_prefix="../")
-
-        file_slug = f"brief-{b['item_id']}.html"
-        for out_base in target_dirs:
-            with open(out_base / "briefs" / file_slug, "w", encoding="utf-8") as f:
-                f.write(page_html)
-
-        archive_rows.append(f"""
-        <div class="ledger-entry">
-            <div class="ledger-meta">{b['jurisdiction'].upper()} &bull; Meeting Date: {b['meeting_date']}</div>
-            <h3 style="margin: 0 0 6px 0;"><a href="briefs/{file_slug}">{html.escape(b['item_title'])}</a></h3>
-            <div style="font-size: 13px;"><a href="briefs/{file_slug}">Read Three-Section Policy Brief &rarr;</a></div>
+    <div style="display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 10px; margin-bottom: 12px;">
+        <h1 class="headline-title" style="margin: 0; border: none; padding: 0;">Policy Briefs</h1>
+        <div style="font-size: 13px; text-transform: uppercase; letter-spacing: 0.05em; display: flex; gap: 14px; align-items: center; flex-wrap: wrap;">
+            <label style="cursor: pointer;"><input type="radio" name="brief-filter" value="all" checked onchange="filterBriefs(this.value)"> <strong>All ({len(merged_matters)})</strong></label>
+            <label style="cursor: pointer;"><input type="radio" name="brief-filter" value="upcoming" onchange="filterBriefs(this.value)"> <strong>Upcoming</strong></label>
+            <label style="cursor: pointer;"><input type="radio" name="brief-filter" value="past" onchange="filterBriefs(this.value)"> <strong>Past</strong></label>
+            <label style="cursor: pointer;"><input type="radio" name="brief-filter" value="testcase" onchange="filterBriefs(this.value)"> <strong>Test cases</strong></label>
         </div>
-        """)
-        stats["briefs"] += 1
+    </div>
 
-    # 3. Export Who's in the Room Actor Pages (Consultants, advisory bodies, funders, repeat applicants, state/regional bodies)
+    <table class="ledger-table" id="briefs-table">
+        <thead>
+            <tr>
+                <th>Matter</th>
+                <th style="width: 210px;">Body</th>
+                <th style="width: 130px;">Date</th>
+                <th style="width: 175px;">Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {''.join(briefs_table_rows)}
+        </tbody>
+    </table>
+
+    <script>
+        function filterBriefs(val) {{
+            var rows = document.querySelectorAll('#briefs-table tbody tr');
+            rows.forEach(function(r) {{
+                var isUp = r.getAttribute('data-upcoming') === '1';
+                var isPast = r.getAttribute('data-past') === '1';
+                var isTc = r.getAttribute('data-testcase') === '1';
+                if (val === 'all') {{
+                    r.style.display = '';
+                }} else if (val === 'upcoming') {{
+                    r.style.display = isUp ? '' : 'none';
+                }} else if (val === 'past') {{
+                    r.style.display = isPast ? '' : 'none';
+                }} else if (val === 'testcase') {{
+                    r.style.display = isTc ? '' : 'none';
+                }}
+            }});
+        }}
+    </script>
+    """
+
+    # 4. Export Who's in the Room Actor Pages
     actors = conn.execute(
         """
         SELECT a.*, COUNT(DISTINCT r.item_id) as items_touched
@@ -683,25 +1177,38 @@ def export_site_content(conn, out_dirs: Optional[List[Path]] = None) -> Dict[str
     for act in actors:
         refs = conn.execute(
             """
-            SELECT r.*, i.title as item_title, i.meeting_date, i.jurisdiction, i.url as item_url
+            SELECT r.*, i.title as item_title, i.display_title, i.meeting_date, i.jurisdiction, i.url as item_url, i.body_text
             FROM upstream_refs r
             JOIN items i ON r.item_id = i.id
             JOIN drafts d ON d.item_id = r.item_id
             WHERE r.actor_id = ? AND d.reviewed = 1
+            GROUP BY r.item_id
             ORDER BY i.meeting_date DESC
             """,
             (act["id"],),
         ).fetchall()
 
-        # Build individual actor page
         actor_touch_rows = []
+        seen_actor_keys = set()
         for r in refs:
+            r_dict = dict(r)
+            r_dict["title"] = r_dict.get("item_title") or ""
+            disp_t = r_dict.get("display_title") or generate_display_title(r_dict, r_dict.get("body_text") or "")
+            r_key = normalize_dedupe_key(r_dict, disp_t)
+            if r_key in seen_actor_keys:
+                continue
+            seen_actor_keys.add(r_key)
+            canon_it = canonical_by_key.get(r_key)
+            target_id = canon_it["id"] if canon_it else r["item_id"]
+            target_disp = canon_it["display_title"] if canon_it else disp_t
+            target_date = canon_it["meeting_date"] if canon_it else r["meeting_date"]
+            body_nm = canon_it["full_body_label"] if canon_it else determine_exact_body_name(r_dict, r_dict.get("body_text") or "")
             actor_touch_rows.append(f"""
             <tr>
-                <td>{r['meeting_date']}</td>
-                <td>{html.escape(r['jurisdiction'].upper())}</td>
-                <td><strong>{html.escape(r['item_title'])}</strong></td>
-                <td><code>{html.escape(r['mechanism'])}</code></td>
+                <td>{html.escape(format_short_date(target_date))}</td>
+                <td>{html.escape(body_nm)}</td>
+                <td><a href="../briefs/brief-{target_id}.html"><strong>{html.escape(target_disp)}</strong></a></td>
+                <td>{html.escape(r['mechanism'].replace('_', ' '))}</td>
                 <td><a href="{html.escape(r['evidence_url'] or r['item_url'])}" target="_blank" rel="noopener">Official Source Record &rarr;</a></td>
             </tr>
             """)
@@ -711,23 +1218,23 @@ def export_site_content(conn, out_dirs: Optional[List[Path]] = None) -> Dict[str
             <a href="../actors.html">&larr; Back to Who's in the Room</a> &bull; {html.escape(act['upstream_type'].replace('_', ' ').title())}
         </div>
         <h1 class="headline-title" style="margin-top: 8px;">{html.escape(act['name'])}</h1>
-        
+
         <div class="memo-box">
             <p><strong>Documented Classification:</strong> {html.escape(act['upstream_type'].replace('_', ' ').title())}</p>
             <p><strong>Factual Record:</strong> {html.escape(act['notes'] or 'Documented participant in municipal agenda items.')}</p>
             {f'<p><a href="{act["home_url"]}" target="_blank" rel="noopener">Official Public Site &rarr;</a></p>' if act["home_url"] else ''}
         </div>
 
-        <h2 class="section-label">Documented Local Matters Touched ({len(refs)})</h2>
-        <p style="font-size: 13px; color: var(--ink-muted);">State documented facts only. This table records formal statutory, advisory, financial, or regulatory references in official agenda files.</p>
-        
+        <h2 class="section-label">Documented Local Briefs Touched ({len(actor_touch_rows)})</h2>
+        <p style="font-size: 13px; color: var(--ink-muted);">This table records formal statutory, advisory, financial, or regulatory references in official agenda files.</p>
+
         <table class="ledger-table">
             <thead>
                 <tr>
                     <th>Date</th>
-                    <th>Jurisdiction</th>
-                    <th>Matter / Item</th>
-                    <th>Documented Relationship</th>
+                    <th>Body</th>
+                    <th>Brief</th>
+                    <th>Documented Role</th>
                     <th>Source Verification</th>
                 </tr>
             </thead>
@@ -745,156 +1252,31 @@ def export_site_content(conn, out_dirs: Optional[List[Path]] = None) -> Dict[str
 
         actor_cards.append(f"""
         <div class="ledger-entry">
-            <div class="ledger-meta">{html.escape(act['upstream_type'].replace('_', ' ').title())} &bull; Touched {act['items_touched']} Approved Matters</div>
+            <div class="ledger-meta">{html.escape(act['upstream_type'].replace('_', ' ').title())} &bull; Touched {len(actor_touch_rows)} Briefs</div>
             <h3 style="margin: 0 0 6px 0;"><a href="actors/{act_file_slug}">{html.escape(act['name'])}</a></h3>
             <p style="font-size: 14px; margin-bottom: 6px;">{html.escape(act['notes'] or '')}</p>
-            <div style="font-size: 13px;"><a href="actors/{act_file_slug}">View Documented Touch Record &rarr;</a></div>
+            <div style="font-size: 13px;"><a href="actors/{act_file_slug}">View Documented Record &rarr;</a></div>
         </div>
         """)
         stats["actors"] += 1
 
-    # 4. Generate Main Top-Level Nav Pages:
-    # A. "This Week" (Upcoming meetings, hearings, comment deadlines)
-    # Deduplicate so one agenda item appears once
-    upcoming_items = conn.execute(
-        """
-        SELECT i.id, i.jurisdiction, i.title, i.display_title, i.meeting_date, i.comment_deadline, i.url,
-               t.flagged_reason as test_case_reason,
-               d.id as brief_id
-        FROM items i
-        LEFT JOIN test_cases t ON i.id = t.item_id
-        LEFT JOIN drafts d ON i.id = d.item_id AND d.kind = 'brief' AND d.reviewed = 1
-        WHERE i.meeting_date >= '2026-10-01'
-        GROUP BY COALESCE(i.display_title, i.title), i.meeting_date, i.jurisdiction
-        ORDER BY i.meeting_date ASC
-        LIMIT 100
-        """
-    ).fetchall()
-
-    upcoming_rows = []
-    for u in upcoming_items:
-        tc_flag = f'<span class="tag-testcase">&#9888; Test Case</span>' if u["test_case_reason"] else ''
-        disp_title = u["display_title"] or generate_display_title(dict(u))
-        whats_at_stake = get_whats_at_stake(dict(u))
-        jur_label = "Olympia" if u["jurisdiction"].lower() == "olympia" else "Thurston County"
-        
-        if u["brief_id"]:
-            status_html = f'<span class="tag-oxblood">Brief Published</span><br><a href="briefs/brief-{u["id"]}.html">Read Brief &rarr;</a>'
-        elif "hearing" in u["title"].lower():
-            status_html = f'Public Hearing<br><a href="{html.escape(u["url"])}" target="_blank" rel="noopener">Official Agenda &rarr;</a>'
-        else:
-            status_html = f'Deliberation<br><a href="{html.escape(u["url"])}" target="_blank" rel="noopener">Official Agenda &rarr;</a>'
-
-        upcoming_rows.append(f"""
-        <tr>
-            <td><strong>{u['meeting_date']}</strong></td>
-            <td>{jur_label}</td>
-            <td>
-                {tc_flag}
-                <strong>{html.escape(disp_title)}</strong>
-                <div style="font-size: 13px; color: var(--ink-muted); margin-top: 3px;">
-                    Official: {html.escape(u['title'])}
-                </div>
-            </td>
-            <td>{html.escape(whats_at_stake)}</td>
-            <td>{status_html}</td>
-        </tr>
-        """)
-
-    this_week_content = f"""
-    <h1 class="headline-title">This Week: Upcoming Hearings & Decisions</h1>
-    <p style="font-size: 15px; color: var(--ink-muted); margin-bottom: 24px;">A weekly docket of scheduled public hearings, upcoming votes, and comment deadlines in Thurston County and the City of Olympia.</p>
-
-    <table class="ledger-table">
-        <thead>
-            <tr>
-                <th style="width: 105px;">Date</th>
-                <th style="width: 120px;">Jurisdiction</th>
-                <th>What Is Happening</th>
-                <th>What's at Stake</th>
-                <th style="width: 140px;">Status</th>
-            </tr>
-        </thead>
-        <tbody>
-            {''.join(upcoming_rows)}
-        </tbody>
-    </table>
-    """
-
-    # B. "Matters" (Unified list with Active, Past, and Test-Case filters)
-    matters_content = f"""
-    <div style="display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 10px; margin-bottom: 6px;">
-        <h1 class="headline-title" style="margin: 0; border: none; padding: 0;">Public Matters Register</h1>
-        <div style="font-size: 13px; text-transform: uppercase; letter-spacing: 0.05em; display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
-            <label style="cursor: pointer;"><input type="radio" name="matter-filter" value="all" checked onchange="filterMatters(this.value)"> <strong>All</strong></label>
-            <label style="cursor: pointer;"><input type="radio" name="matter-filter" value="active" onchange="filterMatters(this.value)"> <strong>Active</strong></label>
-            <label style="cursor: pointer;"><input type="radio" name="matter-filter" value="past" onchange="filterMatters(this.value)"> <strong>Past / Completed</strong></label>
-            <label style="cursor: pointer;"><input type="radio" name="matter-filter" value="testcase" onchange="filterMatters(this.value)"> <strong>Test Cases Only</strong></label>
-        </div>
-    </div>
-    <p style="font-size: 15px; color: var(--ink-muted); margin-bottom: 24px;">A complete register of local policy matters tracked across sessions from origin to legislative outcome.</p>
-
-    <table class="ledger-table" id="matters-table">
-        <thead>
-            <tr>
-                <th>Matter Title</th>
-                <th style="width: 110px;">Jurisdiction</th>
-                <th style="width: 220px;">Current Stage / Status</th>
-                <th style="width: 150px;">Identifier</th>
-            </tr>
-        </thead>
-        <tbody>
-            {''.join(matters_table_rows)}
-        </tbody>
-    </table>
-
-    <script>
-        function filterMatters(val) {{
-            var rows = document.querySelectorAll('#matters-table tbody tr');
-            rows.forEach(function(r) {{
-                var isTc = r.getAttribute('data-testcase') === '1';
-                var isPast = r.getAttribute('data-stage') && (r.getAttribute('data-stage').toLowerCase().includes('concluded') || r.getAttribute('data-stage').toLowerCase().includes('approved') || r.getAttribute('data-stage').toLowerCase().includes('past'));
-                if (val === 'all') {{
-                    r.style.display = '';
-                }} else if (val === 'testcase') {{
-                    r.style.display = isTc ? '' : 'none';
-                }} else if (val === 'past') {{
-                    r.style.display = isPast ? '' : 'none';
-                }} else if (val === 'active') {{
-                    r.style.display = !isPast ? '' : 'none';
-                }}
-            }});
-        }}
-    </script>
-    """
-
-    # C. "Who's in the Room"
     actors_content = f"""
+    <p style="font-size: 16px; color: var(--ink-muted); margin-bottom: 20px;">
+        An index of state and federal agencies, consultants, funders, and regional bodies documented inside Olympia and Thurston County meeting packets.
+    </p>
     <h1 class="headline-title">Who's in the Room</h1>
-    <p style="font-size: 15px; color: var(--ink-muted); margin-bottom: 24px;">An index of outside agencies, consultants, advisory groups, and regional bodies documented in official local policy records.</p>
-
-    <div style="margin-top: 24px;">
+    <div style="margin-top: 20px;">
         {''.join(actor_cards) if actor_cards else '<p>No upstream actors linked to approved briefs yet.</p>'}
     </div>
     """
 
-    # D. "Archive" (Maintained for bookmarks, points into Matters past filter)
-    archive_content = f"""
-    <h1 class="headline-title">Public Matters Archive</h1>
-    <p style="font-size: 15px; color: var(--ink-muted); margin-bottom: 24px;">Past and completed matters are organized within the unified Matters register.</p>
-    <p><a href="matters.html">View All Past Matters in the Public Matters Register &rarr;</a></p>
-
-    <h2 class="section-label" style="margin-top: 32px;">Approved Policy Briefs</h2>
-    <div style="margin-top: 14px;">
-        {''.join(archive_rows) if archive_rows else '<p>No approved briefs in archive.</p>'}
-    </div>
-    """
-
-    # E. "About: Why This Exists"
-    about_content = f"""
+    # 5. About, Principles, and Glossary pages
+    about_content = """
+    <p style="font-size: 16px; color: var(--ink-muted); margin-bottom: 20px;">
+        Why Loretta's Ledger exists, how it reads public records, and what standards it holds itself to.
+    </p>
     <h1 class="headline-title">Why This Exists</h1>
-    <p style="font-size: 15px; color: var(--ink-muted); margin-bottom: 24px;">An independent public account of local decisions, upstream influences, and policy outcomes in Olympia and Thurston County.</p>
-    
+
     <p>Loretta's Ledger is named for my grandmother, Loretta Corcoran. She ran Loretta's Cafe at 213 North Capitol Way in downtown Olympia for many years, and she made meals for the Olympia jail. The café closed when its building was demolished to make way for the Olympia Center.</p>
 
     <div class="memo-box" style="font-style: italic; color: var(--ink-muted); margin: 20px 0;">
@@ -937,25 +1319,11 @@ def export_site_content(conn, out_dirs: Optional[List[Path]] = None) -> Dict[str
     <p>If something here is wrong, tell us at <a href="mailto:thecorcoran@gmail.com">thecorcoran@gmail.com</a>. We'll fix it and note the change on the page.</p>
     """
 
-    # F. "Method"
-    method_content = f"""
-    <h1 class="headline-title">Editorial Method & Standard of Evidence</h1>
-    <div class="memo-box">
-        <p><strong>The People-First Standard:</strong> Loretta's Ledger provides independent scrutiny of local government actions in Olympia and Thurston County through the lens of local ownership, subsidiarity, and skepticism of concentrated power.</p>
-        <p><strong>Strict Evidentiary Rules:</strong></p>
-        <ul class="ledger-list">
-            <li><strong>Factual Source Links:</strong> Every factual statement links directly to an official meeting agenda, staff report, or statute.</li>
-            <li><strong>Upstream Lineage:</strong> Outside actors, model policies, and state statutes are recorded solely when cited in official records.</li>
-            <li><strong>Zero Motive Assertion:</strong> We state documented relationships and statutory gates. We never assert coordination or intent.</li>
-            <li><strong>Human Review:</strong> No automated draft publishes without human verification in the review dashboard.</li>
-        </ul>
-    </div>
-    """
-
-    # G. "Principles: Plain-Language Guide"
-    principles_content = f"""
+    principles_content = """
+    <p style="font-size: 16px; color: var(--ink-muted); margin-bottom: 20px;">
+        The eight plain-language principles Loretta's Ledger uses to evaluate local ordinances, budgets, and land-use rules.
+    </p>
     <h1 class="headline-title">Our Principles</h1>
-    <p>Loretta's Ledger evaluates every local policy proposal through eight core principles grounded in plain language and everyday household life. These principles help us understand who decides, who pays, and who benefits.</p>
 
     <div class="memo-box">
         <h2 style="font-size: 18px; margin: 0 0 10px 0; color: var(--oxblood);">1. Subsidiarity (Who Decides?)</h2>
@@ -1006,10 +1374,11 @@ def export_site_content(conn, out_dirs: Optional[List[Path]] = None) -> Dict[str
     </div>
     """
 
-    # H. "Glossary of Local Government Terms"
-    glossary_content = f"""
+    glossary_content = """
+    <p style="font-size: 16px; color: var(--ink-muted); margin-bottom: 20px;">
+        Plain-language definitions for legal, policy, and planning terms commonly used across Olympia and Thurston County public dockets.
+    </p>
     <h1 class="headline-title">Glossary of Local Government Terms</h1>
-    <p style="font-size: 15px; color: var(--ink-muted); margin-bottom: 24px;">Plain-language definitions for legal, policy, and planning terms commonly used across Olympia and Thurston County public dockets.</p>
 
     <div class="ledger-entry">
         <div class="ledger-meta">Local Legislation</div>
@@ -1072,15 +1441,13 @@ def export_site_content(conn, out_dirs: Optional[List[Path]] = None) -> Dict[str
     </div>
     """
 
-    # Write the canonical pages to both docs/ and site/_site/
+    # Write canonical pages only (Home | Briefs | Who's in the Room | Principles | About + Glossary)
     pages_to_write = [
-        ("index.html", "This Week", this_week_content, "this-week"),
-        ("matters.html", "Matters Register", matters_content, "matters"),
+        ("index.html", "Home", home_content, "home"),
+        ("briefs.html", "Briefs", briefs_index_content, "briefs"),
         ("actors.html", "Who's in the Room", actors_content, "actors"),
-        ("archive.html", "Archive", archive_content, "archive"),
         ("principles.html", "Principles", principles_content, "principles"),
         ("about.html", "Why This Exists", about_content, "about"),
-        ("method.html", "Method", method_content, "method"),
         ("glossary.html", "Glossary", glossary_content, ""),
     ]
 
@@ -1090,7 +1457,6 @@ def export_site_content(conn, out_dirs: Optional[List[Path]] = None) -> Dict[str
             with open(out_base / filename, "w", encoding="utf-8") as f:
                 f.write(page_html)
 
-    # Ensure .nojekyll is present in all target directories
     for out_base in target_dirs:
         nojekyll_file = out_base / ".nojekyll"
         if not nojekyll_file.exists():
@@ -1169,13 +1535,12 @@ def main():
         else:
             stats = export_site_content(conn)
             print("Broadsheet export complete:")
-            print(f"  Matters created: {stats['matters']}")
-            print(f"  Briefs written:  {stats['briefs']}")
-            print(f"  Actors indexed:  {stats['actors']}")
+            print(f"  Brief rows indexed: {stats['matters']}")
+            print(f"  Approved briefs:    {stats['briefs']}")
+            print(f"  Actors indexed:     {stats['actors']}")
     finally:
         conn.close()
 
 
 if __name__ == "__main__":
     main()
-

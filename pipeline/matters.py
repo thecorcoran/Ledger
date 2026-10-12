@@ -73,13 +73,13 @@ def detect_stage_and_next_step(items: List[Any]) -> Tuple[str, Optional[str]]:
     title = (latest["title"] or "").lower()
     body = (latest["body_text"] or "").lower()
 
-    stage = "Deliberation / Scheduled"
+    stage = "Vote"
     if "public hearing" in title:
-        stage = "Public Hearing Scheduled"
+        stage = "Hearing"
     elif "approval of" in title or "adopted" in body or "approved" in body:
-        stage = "Action / Consideration"
-    elif "work session" in title or "study session" in title:
-        stage = "Work Session / Study"
+        stage = "Vote"
+    elif "work session" in title or "study session" in title or "planning commission" in body:
+        stage = "Recommendation stage"
 
     next_step = None
     # Look for explicit stated next steps in body or notes

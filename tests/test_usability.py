@@ -34,7 +34,104 @@ class TestUsabilityPass(unittest.TestCase):
             self.assertLessEqual(grade, 8.0, f"Title '{dt}' exceeded grade 8.0 with {grade}")
             self.assertLessEqual(len(dt), 90, f"Title '{dt}' exceeded 90 chars with {len(dt)}")
             # Must follow [Body] [verb] [object]
-            self.assertTrue(any(dt.startswith(b) for b in ("County", "City Council", "Health Board", "Planners", "Council")), f"Body missing in '{dt}'")
+            self.assertTrue(
+                any(dt.startswith(b) for b in ("County", "City Council", "Health Board", "Planning Commission", "Planners", "Council")),
+                f"Body missing in '{dt}'",
+            )
+
+    def test_plain_title_shares_key_nouns_and_fixes_known_errors(self):
+        from pipeline.titles import shares_key_nouns, determine_exact_body_name
+
+        # 1. Known error fixes
+        quince = {
+            "title": "4.G Approval of a Resolution Authorizing Amendments to the Affordable Housing and Homeless Services Contracts with Thurston County for Funding for Operation of the Quince Street Tiny Home Village",
+            "jurisdiction": "olympia",
+            "body_text": "Body: City Council",
+        }
+        quince_dt = generate_display_title(quince, quince["body_text"])
+        self.assertIn("Quince Street Tiny Home Village", quince_dt)
+        self.assertNotIn("road", quince_dt.lower())
+        self.assertTrue(shares_key_nouns(quince_dt, quince["title"]))
+
+        timberland = {
+            "title": "1.E Consideration of a Resolution Expressing Collective City Council Support for the Timberland Regional Library District Levy Lid Lift Proposition No. 1",
+            "jurisdiction": "olympia",
+            "body_text": "Body: City Council",
+        }
+        timberland_dt = generate_display_title(timberland, timberland["body_text"])
+        self.assertIn("Timberland", timberland_dt)
+        self.assertIn("levy", timberland_dt.lower())
+        self.assertNotIn("land use", timberland_dt.lower())
+        self.assertTrue(shares_key_nouns(timberland_dt, timberland["title"]))
+
+        farm_tour = {
+            "title": "County Commissioner Working Lands Farm Tour",
+            "jurisdiction": "thurston",
+            "body_text": "",
+        }
+        farm_dt = generate_display_title(farm_tour)
+        self.assertIn("Working Lands Farm Tour", farm_dt)
+        self.assertNotIn("land use plan", farm_dt.lower())
+        self.assertTrue(shares_key_nouns(farm_dt, farm_tour["title"]))
+
+        # 2. Body accuracy: never say "City Council" for a committee or commission
+        committee_item = {
+            "title": "6.A Approval of the Recommended 2027 Utility Rates and Impact Fees",
+            "jurisdiction": "olympia",
+            "body_text": "Body: Finance Committee",
+        }
+        self.assertEqual(determine_exact_body_name(committee_item, committee_item["body_text"]), "Finance Committee")
+        comm_dt = generate_display_title(committee_item, committee_item["body_text"])
+        self.assertTrue(comm_dt.startswith("Finance Committee"))
+        self.assertNotIn("City Council", comm_dt)
+
+        # 3. Noun-overlap check across all substantive database items
+        from pipeline.db import get_db_connection
+        from pipeline.titles import classify_item_tier
+        conn = get_db_connection()
+        try:
+            rows = conn.execute("SELECT id, title, jurisdiction, source_id, body_text FROM items").fetchall()
+            for r in rows:
+                d = dict(r)
+                if classify_item_tier(d) < 3:
+                    pt = generate_display_title(d, d.get("body_text") or "")
+                    self.assertTrue(
+                        shares_key_nouns(pt, d["title"]),
+                        f"Plain title '{pt}' shares no key nouns with official title '{d['title']}'",
+                    )
+        finally:
+            conn.close()
+
+    def test_tier_classification_and_no_deliberation_or_generic_stake(self):
+        from pipeline.titles import classify_item_tier
+        from pipeline.export import get_whats_at_stake, determine_plain_status
+
+        # Tier 3 procedural items
+        for proc_title in [
+            "1.A CALL TO ORDER (5:30-5:35 PM)",
+            "3.A Approval of August 17, 2026 Finance Committee Meeting Minutes",
+            "4. PUBLIC COMMENT (5:45-6:00 PM)",
+            "1.C STAFF PRESENT",
+            "PLEASE NOTE: Actual beginning and start times for a specific agenda item may vary.",
+        ]:
+            self.assertEqual(classify_item_tier({"title": proc_title}), 3, f"Expected Tier 3 for '{proc_title}'")
+
+        # Tier 1 items
+        self.assertEqual(classify_item_tier({"title": "Public Hearing: Proposed Ordinance to Adjust Rates"}), 1)
+        self.assertEqual(classify_item_tier({"title": "Some Item"}, has_brief=True), 1)
+        self.assertEqual(classify_item_tier({"title": "Some Item"}, is_test_case=True), 1)
+
+        # Tier 2 items
+        self.assertEqual(classify_item_tier({"title": "4.F Approval of a Lease Agreement for Fire Vehicles Storage"}), 2)
+
+        # Generic stake must never be returned
+        unknown_item = {"title": "6.A Routine Departmental Update"}
+        self.assertIsNone(get_whats_at_stake(unknown_item))
+
+        # Status must never be "Deliberation"
+        st = determine_plain_status(unknown_item, "City Council", has_brief=False, today_str="2026-10-12")
+        self.assertNotIn("deliberation", st.lower())
+        self.assertIn(st, {"Hearing", "Vote", "Recommendation stage", "Brief ready", "Outcome not yet posted"})
 
     def test_for_staff_omission_when_no_findings(self):
         routine_item = {
