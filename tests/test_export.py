@@ -144,10 +144,42 @@ class TestExport(unittest.TestCase):
                 self.headers = {}
                 self.do_GET()
 
-        for test_path in ["/docs", "/docs/", "/public", "/public/", "/docs/index.html"]:
+        for test_path in ["/docs", "/docs/", "/public", "/public/", "/docs/index.html", "/reading/", "/docs/reading/"]:
             h = MockHandler(test_path)
             out = h.wfile.getvalue().decode("utf-8")
             self.assertIn("Loretta's Ledger", out)
+
+    def test_further_reading_page(self):
+        out_dir = Path(self.temp_dir.name)
+        export_site_content(self.conn, out_dirs=[out_dir])
+
+        reading_index = out_dir / "reading" / "index.html"
+        self.assertTrue(reading_index.exists())
+        reading_html = reading_index.read_text(encoding="utf-8")
+
+        # Title in browser tab
+        self.assertIn("<title>Further Reading — Loretta's Ledger</title>", reading_html)
+
+        # Top nav has exactly the 5 items (not Further Reading)
+        nav_block = reading_html.split('<nav class="ledger-nav">')[1].split("</nav>")[0]
+        self.assertNotIn("Further Reading", nav_block)
+        for label in ("Home", "Briefs", "Who's in the Room", "Principles", "About"):
+            self.assertIn(label, nav_block)
+
+        # Footer has Further Reading next to Glossary
+        footer_block = reading_html.split('<footer class="broadsheet-footer">')[1].split("</footer>")[0]
+        self.assertIn("Glossary", footer_block)
+        self.assertIn("Further Reading", footer_block)
+
+        # Principles page has the bottom link to reading/
+        principles_html = (out_dir / "principles.html").read_text(encoding="utf-8")
+        self.assertIn(
+            '<a href="reading/">Further reading: the books and essays behind these questions.</a>',
+            principles_html,
+        )
+
+        # practicaldistributism.com appears only twice (Cooney and McCabe)
+        self.assertEqual(reading_html.count("practicaldistributism.com"), 4)  # 2 hrefs + 2 anchor texts
 
 
 if __name__ == "__main__":

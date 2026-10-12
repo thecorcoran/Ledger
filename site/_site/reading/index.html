@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Further Reading — Loretta's Ledger</title>
+    <style>
+        :root {
+            --bg: #fcfaf5;
+            --surface: #ffffff;
+            --ink: #1c1a17;
+            --ink-muted: #575249;
+            --ink-faint: #807a70;
+            --rule: #ded8cb;
+            --rule-dark: #2c2824;
+            --oxblood: #7b2a26;
+            --oxblood-tint: #f5ebea;
+            --font-serif: "Iowan Old Style", "Palatino Linotype", "URW Palladio L", Palatino, Georgia, serif;
+            --font-mono: "SF Mono", "Consolas", "Liberation Mono", Courier, monospace;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            font-family: var(--font-serif);
+            background-color: var(--bg);
+            color: var(--ink);
+            margin: 0;
+            padding: 0;
+            line-height: 1.55;
+            font-size: 16px;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        header.broadsheet-masthead {
+            background: var(--bg);
+            border-bottom: 2px solid var(--rule-dark);
+            padding: 24px 20px 14px 20px;
+        }
+
+        .masthead-inner {
+            max-width: 1040px;
+            margin: 0 auto;
+        }
+
+        .top-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            border-bottom: 1px solid var(--rule);
+            padding-bottom: 8px;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--ink-muted);
+        }
+
+        .top-row span.meta-date {
+            font-variant-numeric: tabular-nums;
+        }
+
+        .masthead-title {
+            text-align: center;
+            margin: 18px 0 6px 0;
+        }
+
+        .masthead-title a {
+            color: var(--ink);
+            text-decoration: none;
+            font-size: 38px;
+            font-weight: 700;
+            letter-spacing: -0.01em;
+            text-transform: uppercase;
+        }
+
+        .masthead-subtitle {
+            text-align: center;
+            font-size: 14px;
+            font-style: italic;
+            color: var(--ink-muted);
+            margin: 0 0 16px 0;
+        }
+
+        nav.ledger-nav {
+            border-top: 1px solid var(--rule-dark);
+            border-bottom: 1px solid var(--rule-dark);
+            padding: 8px 0;
+            text-align: center;
+        }
+
+        nav.ledger-nav a {
+            color: var(--ink);
+            text-decoration: none;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            margin: 0 16px;
+            padding: 4px 2px;
+            font-weight: 600;
+        }
+
+        nav.ledger-nav a:hover, nav.ledger-nav a.active {
+            color: var(--oxblood);
+            border-bottom: 2px solid var(--oxblood);
+        }
+
+        .container {
+            max-width: 1040px;
+            margin: 0 auto;
+            padding: 32px 20px 70px 20px;
+        }
+
+        h1.headline-title {
+            font-size: 28px;
+            font-weight: 700;
+            line-height: 1.25;
+            margin: 0 0 16px 0;
+            color: var(--ink);
+            border-bottom: 2px solid var(--rule-dark);
+            padding-bottom: 10px;
+        }
+
+        h2.section-label {
+            font-size: 17px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: var(--oxblood);
+            border-bottom: 1px solid var(--rule);
+            padding-bottom: 4px;
+            margin: 32px 0 14px 0;
+        }
+
+        h3.subsection-label {
+            font-size: 16px;
+            font-weight: 700;
+            margin: 20px 0 8px 0;
+            color: var(--ink);
+        }
+
+        p {
+            margin: 0 0 14px 0;
+        }
+
+        a {
+            color: var(--oxblood);
+            text-decoration: underline;
+            text-underline-offset: 2px;
+        }
+
+        .btn-brief {
+            display: inline-block;
+            background: var(--oxblood);
+            color: #ffffff !important;
+            text-decoration: none !important;
+            padding: 6px 14px;
+            font-size: 13px;
+            font-weight: 600;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+            border: 1px solid var(--oxblood);
+            transition: background 0.15s ease;
+        }
+
+        .btn-brief:hover {
+            background: #521a17;
+        }
+
+        .btn-secondary {
+            display: inline-block;
+            background: transparent;
+            color: var(--oxblood) !important;
+            text-decoration: none !important;
+            padding: 5px 12px;
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+            border: 1px solid var(--oxblood);
+        }
+
+        .attention-card {
+            background: var(--surface);
+            border: 1px solid var(--rule);
+            border-left: 4px solid var(--oxblood);
+            padding: 18px 20px;
+            margin-bottom: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 20px;
+        }
+
+        .attention-card-main {
+            flex: 1;
+        }
+
+        .attention-card-action {
+            flex-shrink: 0;
+            padding-top: 4px;
+        }
+
+        details.calendar-group {
+            border-bottom: 1px solid var(--rule);
+            padding: 10px 0;
+        }
+
+        details.calendar-group summary {
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 15px;
+            color: var(--ink);
+            list-style: none;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        details.calendar-group summary::-webkit-details-marker {
+            display: none;
+        }
+
+        details.calendar-group summary::after {
+            content: "+ Show items";
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--oxblood);
+            font-weight: 600;
+        }
+
+        details.calendar-group[open] summary::after {
+            content: "− Hide items";
+        }
+
+        /* Ledger table styles */
+        table.ledger-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+            margin: 20px 0 32px 0;
+            border-top: 2px solid var(--rule-dark);
+            border-bottom: 2px solid var(--rule-dark);
+        }
+
+        table.ledger-table th {
+            text-align: left;
+            padding: 9px 12px;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.07em;
+            background: #f4eee2;
+            border-bottom: 1px solid var(--rule-dark);
+            color: var(--ink);
+        }
+
+        table.ledger-table td {
+            padding: 10px 12px;
+            border-bottom: 1px solid var(--rule);
+            vertical-align: top;
+            font-variant-numeric: tabular-nums;
+        }
+
+        table.ledger-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        /* Ruled boxes and entries */
+        .ledger-entry {
+            border-bottom: 1px solid var(--rule);
+            padding: 16px 0;
+        }
+
+        .ledger-entry:first-child {
+            padding-top: 0;
+        }
+
+        .ledger-meta {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: var(--ink-faint);
+            margin-bottom: 5px;
+        }
+
+        .tag-oxblood {
+            color: var(--oxblood);
+            font-weight: 700;
+        }
+
+        .tag-testcase {
+            background: var(--oxblood-tint);
+            color: var(--oxblood);
+            border: 1px solid var(--oxblood);
+            padding: 2px 6px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-right: 6px;
+            display: inline-block;
+        }
+
+        .status-badge {
+            display: inline-block;
+            font-size: 12px;
+            font-weight: 600;
+            padding: 2px 8px;
+            border: 1px solid var(--rule-dark);
+            background: #f4eee2;
+            color: var(--ink);
+        }
+
+        .status-badge.ready {
+            background: var(--oxblood-tint);
+            border-color: var(--oxblood);
+            color: var(--oxblood);
+        }
+
+        .timeline-block {
+            border-left: 2px solid var(--oxblood);
+            padding-left: 18px;
+            margin: 16px 0;
+        }
+
+        .timeline-item {
+            margin-bottom: 14px;
+        }
+
+        .memo-box {
+            background: #fff;
+            border: 1px solid var(--rule);
+            border-left: 4px solid var(--oxblood);
+            padding: 18px 20px;
+            margin: 20px 0;
+        }
+
+        ul.ledger-list {
+            margin: 8px 0 16px 20px;
+            padding: 0;
+        }
+
+        ul.ledger-list li {
+            margin-bottom: 6px;
+        }
+
+        .spacer { height: 10px; }
+
+        footer.broadsheet-footer {
+            border-top: 2px solid var(--rule-dark);
+            padding: 26px 20px;
+            text-align: center;
+            font-size: 13px;
+            color: var(--ink-muted);
+            background: var(--bg);
+        }
+
+        @media (max-width: 768px) {
+            .top-row { flex-direction: column; gap: 4px; }
+            nav.ledger-nav a { display: inline-block; margin: 4px 8px; font-size: 13px; }
+            .masthead-title a { font-size: 28px; }
+            .attention-card { flex-direction: column; gap: 12px; }
+            table.ledger-table { display: block; overflow-x: auto; }
+        }
+
+        @media print {
+            body { background: #fff; color: #000; font-size: 11pt; }
+            header.broadsheet-masthead, footer.broadsheet-footer, nav.ledger-nav { display: none; }
+            .container { max-width: 100%; padding: 0; }
+            a { text-decoration: none; color: #000; }
+            .memo-box { border: 1px solid #ccc; }
+        }
+    </style>
+</head>
+<body>
+    <header class="broadsheet-masthead">
+        <div class="masthead-inner">
+            <div class="top-row">
+                <span>Independent Public Account &bull; Olympia &amp; Thurston County</span>
+                <span class="meta-date">Vol. I &bull; Record Current to October 2026</span>
+            </div>
+            <div class="masthead-title">
+                <a href="../index.html">Loretta's Ledger</a>
+            </div>
+            <div class="masthead-subtitle">
+                An Account of Local Decisions, Upstream Influences, and Public Trajectory
+            </div>
+            <nav class="ledger-nav">
+                <a href="../index.html" class="">Home</a>
+                <a href="../briefs.html" class="">Briefs</a>
+                <a href="../actors.html" class="">Who's in the Room</a>
+                <a href="../principles.html" class="">Principles</a>
+                <a href="../about.html" class="">About</a>
+            </nav>
+        </div>
+    </header>
+    <div class="container">
+        <h1 class="headline-title">Further Reading</h1>
+<div class="spacer"></div>
+<p>The Ledger asks a few plain questions of local decisions: Is it decided close to home? Does it help ordinary families own and keep a place? Who pays? These are the books and essays behind those questions, plus a few that disagree with us. None of it is required. Start with the first section.</p>
+<div class="spacer"></div>
+<h2 class="section-label">Start here</h2>
+<div class="spacer"></div>
+<p><strong><a href="https://www.chesterton.org/store/product/localism-coming-home-to-catholic-social-teaching/" target="_blank" rel="noopener">Localism: Coming Home to Catholic Social Teaching</a></strong>, Dale Ahlquist and Michael Warren Davis. A recent, readable case for local ownership, local work, and local government.</p>
+<div class="spacer"></div>
+<p><strong><a href="https://centerforneweconomics.org/envision/legacy/ernst-friedrich-schumacher/small-is-beautiful/" target="_blank" rel="noopener">Small Is Beautiful: Economics as if People Mattered</a></strong>, E. F. Schumacher (1973). On scale, and why bigger is not always better for the people it is supposed to serve.</p>
+<div class="spacer"></div>
+<p><strong><a href="https://chattanoogacivics.com/" target="_blank" rel="noopener">Chattanooga Civics.</a></strong> A local project in Chattanooga, Tennessee that helps residents see what their city and county governments are doing and how to respond. It is a good model for learning how your own government works, and it is close to what the Ledger tries to do.</p>
+<div class="spacer"></div>
+<h2 class="section-label">The tradition</h2>
+<div class="spacer"></div>
+<p><strong>The Outline of Sanity</strong>, G. K. Chesterton (1926). The classic case for widely held property and for small, local things.</p>
+<div class="spacer"></div>
+<p><strong><a href="https://www.gutenberg.org/ebooks/1717" target="_blank" rel="noopener">What&#x27;s Wrong with the World</a></strong>, G. K. Chesterton (1910). On the family, the home, and why ordinary people should own a stake in their place.</p>
+<div class="spacer"></div>
+<p><strong><a href="https://www.gutenberg.org/ebooks/64882" target="_blank" rel="noopener">The Servile State</a></strong>, Hilaire Belloc (1912). How concentrated wealth and a large government can grow together, with ordinary people dependent on both.</p>
+<div class="spacer"></div>
+<p><strong>An Essay on the Restoration of Property</strong>, Hilaire Belloc (1936). Belloc&#x27;s proposals for spreading ownership more widely.</p>
+<div class="spacer"></div>
+<p><strong>Distributism Basics: Foundational Principles</strong>, David W. Cooney (2020). A modern, plain-language introduction. His articles are free online at <a href="https://practicaldistributism.com/distributism-basics/" target="_blank" rel="noopener">practicaldistributism.com</a>.</p>
+<div class="spacer"></div>
+<h2 class="section-label">Church teaching on property and subsidiarity</h2>
+<div class="spacer"></div>
+<p><strong><a href="https://www.vatican.va/content/leo-xiii/en/encyclicals/documents/hf_l-xiii_enc_15051891_rerum-novarum.html" target="_blank" rel="noopener">Rerum Novarum</a></strong>, Pope Leo XIII (1891). The foundation of modern Catholic social teaching, on work, property, and the family.</p>
+<div class="spacer"></div>
+<p><strong><a href="https://www.vatican.va/content/pius-xi/en/encyclicals/documents/hf_p-xi_enc_19310515_quadragesimo-anno.html" target="_blank" rel="noopener">Quadragesimo Anno</a></strong>, Pope Pius XI (1931). The classic statement of subsidiarity: higher bodies should help lower ones, not take over their work.</p>
+<div class="spacer"></div>
+<p><strong><a href="https://www.vatican.va/content/john-paul-ii/en/encyclicals/documents/hf_jp-ii_enc_01051991_centesimus-annus.html" target="_blank" rel="noopener">Centesimus Annus</a></strong>, Pope John Paul II (1991). A look at markets, property, and the state after the fall of communism.</p>
+<div class="spacer"></div>
+<p><strong><a href="https://www.vatican.va/content/francesco/en/encyclicals/documents/papa-francesco_20150524_enciclica-laudato-si.html" target="_blank" rel="noopener">Laudato Si&#x27;</a></strong>, Pope Francis (2015). On caring for the natural world. It is a useful reminder that this tradition takes the land and water seriously, which matters for items like wetlands and stream buffers.</p>
+<div class="spacer"></div>
+<h2 class="section-label">Place, land, and local government</h2>
+<div class="spacer"></div>
+<p><strong><a href="https://www.counterpointpress.com/books/the-unsettling-of-america/" target="_blank" rel="noopener">The Unsettling of America</a></strong>, Wendell Berry (1977). On land, farming, and what is lost when a place is managed from far away.</p>
+<div class="spacer"></div>
+<p><strong><a href="https://www.cambridge.org/core/books/governing-the-commons/A8BB63BC4A1433A50A3FB92EDBBB97D5" target="_blank" rel="noopener">Governing the Commons</a></strong>, Elinor Ostrom (1990). How communities have managed shared resources like water and fisheries without waiting for a distant authority.</p>
+<div class="spacer"></div>
+<p><strong><a href="https://www.strongtowns.org/book" target="_blank" rel="noopener">Strong Towns</a></strong>, Charles Marohn (2019). A practical look at how cities pay for themselves and how land-use rules affect ordinary households. It does not come from the distributist tradition, but it asks many of our questions about cost and who pays.</p>
+<div class="spacer"></div>
+<p><strong><a href="https://www.penguinrandomhouse.com/books/86058/the-death-and-life-of-great-american-cities-by-jane-jacobs/" target="_blank" rel="noopener">The Death and Life of Great American Cities</a></strong>, Jane Jacobs (1961). On why small businesses, short blocks, and old buildings matter to a neighborhood.</p>
+<div class="spacer"></div>
+<h2 class="section-label">Where we might be wrong</h2>
+<div class="spacer"></div>
+<p><strong><a href="https://mises.org/mises-daily/whats-wrong-distributism" target="_blank" rel="noopener">&quot;What&#x27;s Wrong with Distributism,&quot;</a></strong> Thomas Woods (2002), on the Mises Institute website. A well-known critique of the whole approach.</p>
+<div class="spacer"></div>
+<p><strong>&quot;Credit Union Economics,&quot;</strong> Michael McCabe. A distributist reply to Woods, available at <a href="https://practicaldistributism.com/2023/02/16/credit-union-economics/" target="_blank" rel="noopener">practicaldistributism.com</a>. Read the two together.</p>
+<div class="spacer"></div>
+<p>If you know a book or essay that should be on this list, especially one that disagrees with us, write to <a href="mailto:thecorcoran@gmail.com">thecorcoran@gmail.com</a>.</p>
+<div class="spacer"></div>
+    </div>
+    <footer class="broadsheet-footer">
+        Loretta's Ledger &bull; Documented Public Record for Thurston County and City of Olympia &bull; Strictly Factual &bull; <a href="../glossary.html">Glossary</a> &bull; <a href="../reading/">Further Reading</a>
+    </footer>
+</body>
+</html>

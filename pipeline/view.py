@@ -841,8 +841,20 @@ class DashboardHandler(http.server.BaseHTTPRequestHandler):
         if path in ("/docs", "/docs/", "/public", "/public/"):
             path = "/docs/index.html"
 
-        # 2. Allow direct access to /briefs/ or /action-pages/
-        if path.startswith("/briefs/") or path.startswith("/action-pages/"):
+        if path in ("/reading", "/docs/reading"):
+            self.send_response(301)
+            self.send_header("Location", path + "/")
+            self.end_headers()
+            return
+
+        # 2. Allow direct access to /reading/, /briefs/, /actors/, or top-level static pages
+        if (
+            path.startswith("/briefs/")
+            or path.startswith("/actors/")
+            or path.startswith("/reading/")
+            or path.startswith("/action-pages/")
+            or path in ("/index.html", "/briefs.html", "/actors.html", "/principles.html", "/about.html", "/glossary.html", "/reading.html")
+        ):
             path = "/docs" + path
 
         # 3. Serve static site files from docs/ if requested

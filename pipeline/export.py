@@ -204,10 +204,13 @@ def ensure_directories():
     for d in (
         SITE_SRC_DIR / "briefs",
         SITE_SRC_DIR / "actors",
+        SITE_SRC_DIR / "reading",
         SITE_OUT_DIR / "briefs",
         SITE_OUT_DIR / "actors",
+        SITE_OUT_DIR / "reading",
         DOCS_DIR / "briefs",
         DOCS_DIR / "actors",
+        DOCS_DIR / "reading",
         BRIEFS_DIR,
     ):
         d.mkdir(parents=True, exist_ok=True)
@@ -328,7 +331,13 @@ def re_italic(text: str) -> str:
 
 
 def re_links(text: str) -> str:
-    return re.sub(r"\[(.*?)\]\((.*?)\)", r'<a href="\2" target="_blank" rel="noopener">\1</a>', text)
+    def _replace_link(match: re.Match) -> str:
+        label, url = match.group(1), match.group(2)
+        if url.startswith(("http://", "https://")):
+            return f'<a href="{url}" target="_blank" rel="noopener">{label}</a>'
+        return f'<a href="{url}">{label}</a>'
+
+    return re.sub(r"\[(.*?)\]\((.*?)\)", _replace_link, text)
 
 
 def get_base_html_page(title: str, content: str, active_nav: str = "home", root_prefix: str = "") -> str:
@@ -483,10 +492,6 @@ def get_base_html_page(title: str, content: str, active_nav: str = "home", root_
             color: var(--oxblood);
             text-decoration: underline;
             text-underline-offset: 2px;
-        }}
-
-        a:hover {{
-            color: #4a1715;
         }}
 
         .btn-brief {{
@@ -739,7 +744,7 @@ def get_base_html_page(title: str, content: str, active_nav: str = "home", root_
         {content}
     </div>
     <footer class="broadsheet-footer">
-        Loretta's Ledger &bull; Documented Public Record for Thurston County and City of Olympia &bull; Strictly Factual &bull; <a href="{root_prefix}glossary.html">Glossary</a>
+        Loretta's Ledger &bull; Documented Public Record for Thurston County and City of Olympia &bull; Strictly Factual &bull; <a href="{root_prefix}glossary.html">Glossary</a> &bull; <a href="{root_prefix}reading/">Further Reading</a>
     </footer>
 </body>
 </html>
@@ -828,7 +833,7 @@ def export_site_content(
             lf = d / legacy_file
             if lf.exists():
                 lf.unlink()
-        for sub in ("briefs", "actors"):
+        for sub in ("briefs", "actors", "reading"):
             sub_dir = d / sub
             sub_dir.mkdir(parents=True, exist_ok=True)
             for old_html in sub_dir.glob("*.html"):
@@ -1372,6 +1377,10 @@ def export_site_content(
         <p><strong>The Question:</strong> Does this respect the physical character, history, and people already here?</p>
         <p>Our towns and rural lands have character built across generations. We keep in mind the lesson of Loretta's Cafe: community improvements should not needlessly sweep away the physical and cultural anchors that make our community feel like home.</p>
     </div>
+
+    <p style="margin-top: 28px; padding-top: 14px; border-top: 1px solid var(--rule);">
+        <a href="reading/">Further reading: the books and essays behind these questions.</a>
+    </p>
     """
 
     glossary_content = """
@@ -1441,7 +1450,11 @@ def export_site_content(
     </div>
     """
 
-    # Write canonical pages only (Home | Briefs | Who's in the Room | Principles | About + Glossary)
+    reading_md_path = ROOT_DIR / "reading.md"
+    reading_md_text = reading_md_path.read_text(encoding="utf-8") if reading_md_path.exists() else "# Further Reading\n"
+    reading_content = markdown_to_html(reading_md_text)
+
+    # Write canonical pages (Home | Briefs | Who's in the Room | Principles | About + Glossary + Further Reading)
     pages_to_write = [
         ("index.html", "Home", home_content, "home"),
         ("briefs.html", "Briefs", briefs_index_content, "briefs"),
@@ -1449,6 +1462,7 @@ def export_site_content(
         ("principles.html", "Principles", principles_content, "principles"),
         ("about.html", "Why This Exists", about_content, "about"),
         ("glossary.html", "Glossary", glossary_content, ""),
+        ("reading.html", "Further Reading", reading_content, ""),
     ]
 
     for filename, title, content, nav_key in pages_to_write:
@@ -1456,6 +1470,14 @@ def export_site_content(
         for out_base in target_dirs:
             with open(out_base / filename, "w", encoding="utf-8") as f:
                 f.write(page_html)
+
+    # Write /reading/index.html for clean /reading/ URL
+    reading_dir_html = get_base_html_page("Further Reading", reading_content, active_nav="", root_prefix="../")
+    for out_base in target_dirs:
+        reading_sub = out_base / "reading"
+        reading_sub.mkdir(parents=True, exist_ok=True)
+        with open(reading_sub / "index.html", "w", encoding="utf-8") as f:
+            f.write(reading_dir_html)
 
     for out_base in target_dirs:
         nojekyll_file = out_base / ".nojekyll"
