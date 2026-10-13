@@ -79,7 +79,9 @@ def show_draft(conn, draft_id: int):
 
 
 def approve_draft(conn, draft_id: int):
-    """Approves a draft, marking it ready for public publication."""
+    """Approves a draft, marking it ready for public publication and clearing matter needs_review."""
+    import hashlib
+    row = conn.execute("SELECT item_id, markdown FROM drafts WHERE id = ?", (draft_id,)).fetchone()
     cursor = conn.execute(
         """
         UPDATE drafts
@@ -88,6 +90,27 @@ def approve_draft(conn, draft_id: int):
         """,
         (draft_id,),
     )
+    if row and row["item_id"]:
+        item_id = row["item_id"]
+        md_hash = hashlib.sha256((row["markdown"] or "").encode("utf-8")).hexdigest()[:16]
+        ev_rows = conn.execute(
+            "SELECT DISTINCT matter_id FROM matter_events WHERE item_id = ? AND confidence = 'confirmed'",
+            (item_id,),
+        ).fetchall()
+        for ev in ev_rows:
+            mid = ev["matter_id"]
+            conn.execute(
+                "UPDATE matters SET needs_review = 0, woke_from_dormant = 0, updated_at = datetime('now') WHERE id = ?",
+                (mid,),
+            )
+            conn.execute(
+                """
+                UPDATE matter_briefs
+                SET reviewed = 1, reviewed_at = datetime('now'), approved_hash = ?
+                WHERE matter_id = ?
+                """,
+                (md_hash, mid),
+            )
     conn.commit()
     if cursor.rowcount > 0:
         print(f"Draft #{draft_id} successfully APPROVED for publication.")
@@ -122,6 +145,16 @@ def edit_draft(conn, draft_id: int, content_file: Path):
         """,
         (new_md, draft_id),
     )
+    row = conn.execute("SELECT item_id FROM drafts WHERE id = ?", (draft_id,)).fetchone()
+    if row and row["item_id"]:
+        ev_rows = conn.execute(
+            "SELECT DISTINCT matter_id FROM matter_events WHERE item_id = ? AND confidence = 'confirmed'",
+            (row["item_id"],),
+        ).fetchall()
+        for ev in ev_rows:
+            mid = ev["matter_id"]
+            conn.execute("UPDATE matters SET needs_review = 1 WHERE id = ?", (mid,))
+            conn.execute("UPDATE matter_briefs SET markdown = ?, reviewed = 0 WHERE matter_id = ?", (new_md, mid))
     conn.commit()
     if cursor.rowcount > 0:
         print(f"Draft #{draft_id} successfully updated with content from {content_file}.")

@@ -147,30 +147,53 @@ CREATE INDEX IF NOT EXISTS idx_drafts_item ON drafts(item_id);
 
 CREATE TABLE IF NOT EXISTS matters (
     id TEXT PRIMARY KEY,
+    stable_id TEXT,
     title TEXT NOT NULL,
+    plain_title TEXT,
+    official_title TEXT,
     jurisdiction TEXT NOT NULL CHECK (jurisdiction IN ('olympia', 'thurston')),
     matter_type TEXT,
     primary_identifier TEXT,
     origin_summary TEXT,
     current_stage TEXT,
+    lifecycle_status TEXT,
+    archive_state TEXT NOT NULL DEFAULT 'active',
+    manual_archive_override TEXT,
+    last_action_date TEXT,
+    last_action_body TEXT,
+    last_action_summary TEXT,
+    last_action_url TEXT,
+    next_action_date TEXT,
+    next_action_body TEXT,
+    next_action_text TEXT NOT NULL DEFAULT 'not yet posted',
     likely_next_step TEXT,
     is_test_case INTEGER NOT NULL DEFAULT 0,
     test_case_reason TEXT,
+    needs_review INTEGER NOT NULL DEFAULT 1,
+    whats_new_summary TEXT,
+    woke_from_dormant INTEGER NOT NULL DEFAULT 0,
     created_at TEXT NOT NULL DEFAULT (datetime('now')),
     updated_at TEXT NOT NULL DEFAULT (datetime('now'))
 );
 
 CREATE INDEX IF NOT EXISTS idx_matters_jurisdiction ON matters(jurisdiction);
 CREATE INDEX IF NOT EXISTS idx_matters_primary_identifier ON matters(primary_identifier);
+CREATE INDEX IF NOT EXISTS idx_matters_archive_state ON matters(archive_state);
 
 CREATE TABLE IF NOT EXISTS matter_events (
     id TEXT PRIMARY KEY,
     matter_id TEXT NOT NULL,
     item_id TEXT NOT NULL,
     action_date TEXT NOT NULL,
+    body_name TEXT,
     action_type TEXT,
+    outcome_text TEXT,
+    motion_text TEXT,
+    vote_tally TEXT,
     record_url TEXT NOT NULL,
-    confidence TEXT NOT NULL DEFAULT 'confirmed' CHECK (confidence IN ('confirmed', 'proposed')),
+    minutes_url TEXT,
+    confidence TEXT NOT NULL DEFAULT 'confirmed' CHECK (confidence IN ('confirmed', 'proposed', 'rejected')),
+    match_reason TEXT,
     notes TEXT,
     created_at TEXT NOT NULL DEFAULT (datetime('now')),
     FOREIGN KEY (matter_id) REFERENCES matters(id) ON DELETE CASCADE,
@@ -180,7 +203,149 @@ CREATE TABLE IF NOT EXISTS matter_events (
 CREATE INDEX IF NOT EXISTS idx_matter_events_matter ON matter_events(matter_id);
 CREATE INDEX IF NOT EXISTS idx_matter_events_item ON matter_events(item_id);
 CREATE INDEX IF NOT EXISTS idx_matter_events_confidence ON matter_events(confidence);
+
+CREATE TABLE IF NOT EXISTS matter_versions (
+    id TEXT PRIMARY KEY,
+    matter_id TEXT NOT NULL,
+    item_id TEXT NOT NULL,
+    version_number INTEGER NOT NULL,
+    version_date TEXT NOT NULL,
+    version_label TEXT NOT NULL,
+    doc_url TEXT NOT NULL,
+    what_changed TEXT NOT NULL,
+    created_at TEXT NOT NULL DEFAULT (datetime('now')),
+    FOREIGN KEY (matter_id) REFERENCES matters(id) ON DELETE CASCADE,
+    FOREIGN KEY (item_id) REFERENCES items(id) ON DELETE CASCADE
+);
+
+CREATE INDEX IF NOT EXISTS idx_matter_versions_matter ON matter_versions(matter_id);
+
+CREATE TABLE IF NOT EXISTS matter_relations (
+    parent_matter_id TEXT NOT NULL,
+    child_matter_id TEXT NOT NULL,
+    relation_type TEXT NOT NULL DEFAULT 'parent_child' CHECK (relation_type IN ('parent_child', 'companion')),
+    notes TEXT,
+    PRIMARY KEY (parent_matter_id, child_matter_id),
+    FOREIGN KEY (parent_matter_id) REFERENCES matters(id) ON DELETE CASCADE,
+    FOREIGN KEY (child_matter_id) REFERENCES matters(id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS matter_briefs (
+    matter_id TEXT PRIMARY KEY,
+    item_id TEXT,
+    markdown TEXT NOT NULL,
+    updated_date TEXT NOT NULL,
+    changelog_json TEXT NOT NULL DEFAULT '[]',
+    reviewed INTEGER NOT NULL DEFAULT 0 CHECK (reviewed IN (0, 1)),
+    reviewed_at TEXT,
+    approved_hash TEXT,
+    published_hash TEXT,
+    FOREIGN KEY (matter_id) REFERENCES matters(id) ON DELETE CASCADE
+);
 """
+
+
+def _ensure_migrations(conn: sqlite3.Connection) -> None:
+    """Ensures all new columns and tables exist on an existing SQLite database."""
+    cursor = conn.cursor()
+
+    existing_tables = {
+        r[0] for r in cursor.execute("SELECT name FROM sqlite_master WHERE type='table'").fetchall()
+    }
+
+    if "items" in existing_tables:
+        cursor.execute("PRAGMA table_info(items)")
+        item_cols = {row[1] for row in cursor.fetchall()}
+        if "display_title" not in item_cols:
+            cursor.execute("ALTER TABLE items ADD COLUMN display_title TEXT")
+
+    if "matters" in existing_tables:
+        cursor.execute("PRAGMA table_info(matters)")
+        matter_cols = {row[1] for row in cursor.fetchall()}
+        new_matter_cols = [
+            ("stable_id", "TEXT"),
+            ("plain_title", "TEXT"),
+            ("official_title", "TEXT"),
+            ("lifecycle_status", "TEXT"),
+            ("archive_state", "TEXT DEFAULT 'active'"),
+            ("manual_archive_override", "TEXT"),
+            ("last_action_date", "TEXT"),
+            ("last_action_body", "TEXT"),
+            ("last_action_summary", "TEXT"),
+            ("last_action_url", "TEXT"),
+            ("next_action_date", "TEXT"),
+            ("next_action_body", "TEXT"),
+            ("next_action_text", "TEXT DEFAULT 'not yet posted'"),
+            ("needs_review", "INTEGER DEFAULT 1"),
+            ("whats_new_summary", "TEXT"),
+            ("woke_from_dormant", "INTEGER DEFAULT 0"),
+        ]
+        for col_name, col_type in new_matter_cols:
+            if col_name not in matter_cols:
+                cursor.execute(f"ALTER TABLE matters ADD COLUMN {col_name} {col_type}")
+
+    if "matter_events" in existing_tables:
+        cursor.execute("PRAGMA table_info(matter_events)")
+        ev_cols = {row[1] for row in cursor.fetchall()}
+        new_ev_cols = [
+            ("body_name", "TEXT"),
+            ("outcome_text", "TEXT"),
+            ("motion_text", "TEXT"),
+            ("vote_tally", "TEXT"),
+            ("minutes_url", "TEXT"),
+            ("match_reason", "TEXT"),
+        ]
+        for col_name, col_type in new_ev_cols:
+            if col_name not in ev_cols:
+                cursor.execute(f"ALTER TABLE matter_events ADD COLUMN {col_name} {col_type}")
+
+    conn.executescript(SCHEMA_SQL)
+
+    # Check if matter_events table has old CHECK constraint disallowing 'rejected'
+    table_sql_row = cursor.execute(
+        "SELECT sql FROM sqlite_master WHERE type='table' AND name='matter_events'"
+    ).fetchone()
+    if table_sql_row and "'rejected'" not in (table_sql_row[0] or ""):
+        cursor.executescript(
+            """
+            PRAGMA foreign_keys = OFF;
+            CREATE TABLE matter_events_new (
+                id TEXT PRIMARY KEY,
+                matter_id TEXT NOT NULL,
+                item_id TEXT NOT NULL,
+                action_date TEXT NOT NULL,
+                body_name TEXT,
+                action_type TEXT,
+                outcome_text TEXT,
+                motion_text TEXT,
+                vote_tally TEXT,
+                record_url TEXT NOT NULL,
+                minutes_url TEXT,
+                confidence TEXT NOT NULL DEFAULT 'confirmed' CHECK (confidence IN ('confirmed', 'proposed', 'rejected')),
+                match_reason TEXT,
+                notes TEXT,
+                created_at TEXT NOT NULL DEFAULT (datetime('now')),
+                FOREIGN KEY (matter_id) REFERENCES matters(id) ON DELETE CASCADE,
+                FOREIGN KEY (item_id) REFERENCES items(id) ON DELETE CASCADE
+            );
+            INSERT INTO matter_events_new (
+                id, matter_id, item_id, action_date, body_name, action_type, outcome_text,
+                motion_text, vote_tally, record_url, minutes_url, confidence, match_reason, notes, created_at
+            )
+            SELECT
+                id, matter_id, item_id, action_date, body_name, action_type, outcome_text,
+                motion_text, vote_tally, record_url, minutes_url, confidence, match_reason, notes, created_at
+            FROM matter_events;
+            DROP TABLE matter_events;
+            ALTER TABLE matter_events_new RENAME TO matter_events;
+            CREATE INDEX IF NOT EXISTS idx_matter_events_matter ON matter_events(matter_id);
+            CREATE INDEX IF NOT EXISTS idx_matter_events_item ON matter_events(item_id);
+            CREATE INDEX IF NOT EXISTS idx_matter_events_confidence ON matter_events(confidence);
+            PRAGMA foreign_keys = ON;
+            """
+        )
+
+    conn.commit()
 
 
 def get_db_connection(db_path: Optional[Path] = None) -> sqlite3.Connection:
@@ -190,6 +355,7 @@ def get_db_connection(db_path: Optional[Path] = None) -> sqlite3.Connection:
     conn = sqlite3.connect(target_path)
     conn.row_factory = sqlite3.Row
     conn.execute("PRAGMA foreign_keys = ON;")
+    _ensure_migrations(conn)
     return conn
 
 
@@ -197,14 +363,7 @@ def init_db(db_path: Optional[Path] = None) -> None:
     """Initializes the database schema."""
     conn = get_db_connection(db_path)
     try:
-        conn.executescript(SCHEMA_SQL)
-        # Migration: ensure display_title exists in items
-        cursor = conn.cursor()
-        cursor.execute("PRAGMA table_info(items)")
-        cols = [row[1] for row in cursor.fetchall()]
-        if "display_title" not in cols:
-            cursor.execute("ALTER TABLE items ADD COLUMN display_title TEXT")
-        conn.commit()
+        _ensure_migrations(conn)
     finally:
         conn.close()
 

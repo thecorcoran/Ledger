@@ -1,0 +1,39 @@
+# Loretta's Ledger — Legislative Tracker & Lifecycle Rules
+# Editable configuration for matter lifecycles and archive/dormancy thresholds.
+
+dormant_months: 6
+
+lifecycles:
+  ordinance:
+    - "Introduced / Work session"
+    - "First reading"
+    - "Public hearing scheduled"
+    - "Public hearing held"
+    - "Adopted / In effect"
+    - "Failed / Withdrawn"
+  code_amendment:
+    - "Gap analysis / scoping"
+    - "Draft code released"
+    - "Advisory commission review"
+    - "Advisory public hearing"
+    - "Recommended to governing body"
+    - "Governing body hearing"
+    - "Adopted / In effect"
+    - "Returned / Withdrawn"
+  budget_rates:
+    - "Department / Committee briefing"
+    - "Draft budget / rates released"
+    - "Public hearing"
+    - "Council review"
+    - "Adopted for fiscal year"
+  contract_grant:
+    - "Committee / Consent docket"
+    - "Council consideration"
+    - "Approved / Executed"
+    - "Rejected / Expired"
+  permit_case:
+    - "Application / Presubmission conference"
+    - "SEPA determination"
+    - "Hearing Examiner / Advisory hearing"
+    - "Decision issued"
+    - "Appeal period / Closed"

@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>City Council reviews 2027 dedicated tax and housing budgets — Loretta's Ledger</title>
+    <style>
+        :root {
+            --bg: #fcfaf5;
+            --surface: #ffffff;
+            --ink: #1c1a17;
+            --ink-muted: #575249;
+            --ink-faint: #807a70;
+            --rule: #ded8cb;
+            --rule-dark: #2c2824;
+            --oxblood: #7b2a26;
+            --oxblood-tint: #f5ebea;
+            --font-serif: "Iowan Old Style", "Palatino Linotype", "URW Palladio L", Palatino, Georgia, serif;
+            --font-mono: "SF Mono", "Consolas", "Liberation Mono", Courier, monospace;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            font-family: var(--font-serif);
+            background-color: var(--bg);
+            color: var(--ink);
+            margin: 0;
+            padding: 0;
+            line-height: 1.55;
+            font-size: 16px;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        header.broadsheet-masthead {
+            background: var(--bg);
+            border-bottom: 2px solid var(--rule-dark);
+            padding: 24px 20px 14px 20px;
+        }
+
+        .masthead-inner {
+            max-width: 1040px;
+            margin: 0 auto;
+        }
+
+        .top-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            border-bottom: 1px solid var(--rule);
+            padding-bottom: 8px;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--ink-muted);
+        }
+
+        .top-row span.meta-date {
+            font-variant-numeric: tabular-nums;
+        }
+
+        .masthead-title {
+            text-align: center;
+            margin: 18px 0 6px 0;
+        }
+
+        .masthead-title a {
+            color: var(--ink);
+            text-decoration: none;
+            font-size: 38px;
+            font-weight: 700;
+            letter-spacing: -0.01em;
+            text-transform: uppercase;
+        }
+
+        .masthead-subtitle {
+            text-align: center;
+            font-size: 14px;
+            font-style: italic;
+            color: var(--ink-muted);
+            margin: 0 0 16px 0;
+        }
+
+        nav.ledger-nav {
+            border-top: 1px solid var(--rule-dark);
+            border-bottom: 1px solid var(--rule-dark);
+            padding: 8px 0;
+            text-align: center;
+        }
+
+        nav.ledger-nav a {
+            color: var(--ink);
+            text-decoration: none;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            margin: 0 16px;
+            padding: 4px 2px;
+            font-weight: 600;
+        }
+
+        nav.ledger-nav a:hover, nav.ledger-nav a.active {
+            color: var(--oxblood);
+            border-bottom: 2px solid var(--oxblood);
+        }
+
+        .container {
+            max-width: 1040px;
+            margin: 0 auto;
+            padding: 32px 20px 70px 20px;
+        }
+
+        h1.headline-title {
+            font-size: 28px;
+            font-weight: 700;
+            line-height: 1.25;
+            margin: 0 0 16px 0;
+            color: var(--ink);
+            border-bottom: 2px solid var(--rule-dark);
+            padding-bottom: 10px;
+        }
+
+        h2.section-label {
+            font-size: 17px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: var(--oxblood);
+            border-bottom: 1px solid var(--rule);
+            padding-bottom: 4px;
+            margin: 32px 0 14px 0;
+        }
+
+        h3.subsection-label {
+            font-size: 16px;
+            font-weight: 700;
+            margin: 20px 0 8px 0;
+            color: var(--ink);
+        }
+
+        p {
+            margin: 0 0 14px 0;
+        }
+
+        a {
+            color: var(--oxblood);
+            text-decoration: underline;
+            text-underline-offset: 2px;
+        }
+
+        .btn-brief {
+            display: inline-block;
+            background: var(--oxblood);
+            color: #ffffff !important;
+            text-decoration: none !important;
+            padding: 6px 14px;
+            font-size: 13px;
+            font-weight: 600;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+            border: 1px solid var(--oxblood);
+            transition: background 0.15s ease;
+        }
+
+        .btn-brief:hover {
+            background: #521a17;
+        }
+
+        .btn-secondary {
+            display: inline-block;
+            background: transparent;
+            color: var(--oxblood) !important;
+            text-decoration: none !important;
+            padding: 5px 12px;
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+            border: 1px solid var(--oxblood);
+        }
+
+        .attention-card {
+            background: var(--surface);
+            border: 1px solid var(--rule);
+            border-left: 4px solid var(--oxblood);
+            padding: 18px 20px;
+            margin-bottom: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 20px;
+        }
+
+        .attention-card-main {
+            flex: 1;
+        }
+
+        .attention-card-action {
+            flex-shrink: 0;
+            padding-top: 4px;
+        }
+
+        details.calendar-group {
+            border-bottom: 1px solid var(--rule);
+            padding: 10px 0;
+        }
+
+        details.calendar-group summary {
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 15px;
+            color: var(--ink);
+            list-style: none;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        details.calendar-group summary::-webkit-details-marker {
+            display: none;
+        }
+
+        details.calendar-group summary::after {
+            content: "+ Show items";
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--oxblood);
+            font-weight: 600;
+        }
+
+        details.calendar-group[open] summary::after {
+            content: "− Hide items";
+        }
+
+        /* Ledger table styles */
+        table.ledger-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+            margin: 20px 0 32px 0;
+            border-top: 2px solid var(--rule-dark);
+            border-bottom: 2px solid var(--rule-dark);
+        }
+
+        table.ledger-table th {
+            text-align: left;
+            padding: 9px 12px;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.07em;
+            background: #f4eee2;
+            border-bottom: 1px solid var(--rule-dark);
+            color: var(--ink);
+        }
+
+        table.ledger-table td {
+            padding: 10px 12px;
+            border-bottom: 1px solid var(--rule);
+            vertical-align: top;
+            font-variant-numeric: tabular-nums;
+        }
+
+        table.ledger-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        /* Ruled boxes and entries */
+        .ledger-entry {
+            border-bottom: 1px solid var(--rule);
+            padding: 16px 0;
+        }
+
+        .ledger-entry:first-child {
+            padding-top: 0;
+        }
+
+        .ledger-meta {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: var(--ink-faint);
+            margin-bottom: 5px;
+        }
+
+        .tag-oxblood {
+            color: var(--oxblood);
+            font-weight: 700;
+        }
+
+        .tag-testcase {
+            background: var(--oxblood-tint);
+            color: var(--oxblood);
+            border: 1px solid var(--oxblood);
+            padding: 2px 6px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-right: 6px;
+            display: inline-block;
+        }
+
+        .status-badge {
+            display: inline-block;
+            font-size: 12px;
+            font-weight: 600;
+            padding: 2px 8px;
+            border: 1px solid var(--rule-dark);
+            background: #f4eee2;
+            color: var(--ink);
+        }
+
+        .status-badge.ready {
+            background: var(--oxblood-tint);
+            border-color: var(--oxblood);
+            color: var(--oxblood);
+        }
+
+        .timeline-block {
+            border-left: 2px solid var(--oxblood);
+            padding-left: 18px;
+            margin: 16px 0;
+        }
+
+        .timeline-item {
+            margin-bottom: 14px;
+        }
+
+        .memo-box {
+            background: #fff;
+            border: 1px solid var(--rule);
+            border-left: 4px solid var(--oxblood);
+            padding: 18px 20px;
+            margin: 20px 0;
+        }
+
+        ul.ledger-list {
+            margin: 8px 0 16px 20px;
+            padding: 0;
+        }
+
+        ul.ledger-list li {
+            margin-bottom: 6px;
+        }
+
+        .spacer { height: 10px; }
+
+        footer.broadsheet-footer {
+            border-top: 2px solid var(--rule-dark);
+            padding: 26px 20px;
+            text-align: center;
+            font-size: 13px;
+            color: var(--ink-muted);
+            background: var(--bg);
+        }
+
+        @media (max-width: 768px) {
+            .top-row { flex-direction: column; gap: 4px; }
+            nav.ledger-nav a { display: inline-block; margin: 4px 8px; font-size: 13px; }
+            .masthead-title a { font-size: 28px; }
+            .attention-card { flex-direction: column; gap: 12px; }
+            table.ledger-table { display: block; overflow-x: auto; }
+        }
+
+        @media print {
+            body { background: #fff; color: #000; font-size: 11pt; }
+            header.broadsheet-masthead, footer.broadsheet-footer, nav.ledger-nav { display: none; }
+            .container { max-width: 100%; padding: 0; }
+            a { text-decoration: none; color: #000; }
+            .memo-box { border: 1px solid #ccc; }
+        }
+    </style>
+</head>
+<body>
+    <header class="broadsheet-masthead">
+        <div class="masthead-inner">
+            <div class="top-row">
+                <span>Independent Public Account &bull; Olympia &amp; Thurston County</span>
+                <span class="meta-date">Vol. I &bull; Record Current to October 2026</span>
+            </div>
+            <div class="masthead-title">
+                <a href="../index.html">Loretta's Ledger</a>
+            </div>
+            <div class="masthead-subtitle">
+                An Account of Local Decisions, Upstream Influences, and Public Trajectory
+            </div>
+            <nav class="ledger-nav">
+                <a href="../index.html" class="">Home</a>
+                <a href="../briefs.html" class="active">Briefs</a>
+                <a href="../actors.html" class="">Who's in the Room</a>
+                <a href="../principles.html" class="">Principles</a>
+                <a href="../about.html" class="">About</a>
+            </nav>
+        </div>
+    </header>
+    <div class="container">
+        
+            <div class="ledger-meta" style="margin-bottom: 12px;">
+                <a href="../briefs.html">&larr; All Briefs</a> &bull; Olympia City Council &bull; Oct 6, 2026
+            </div>
+            <h1 class="headline-title">City Council reviews 2027 dedicated tax and housing budgets</h1>
+<div class="spacer"></div>
+<p><strong>Updated Oct 6, 2026</strong> • <strong>Matter ID:</strong> <strong>File 26-0765</strong></p>
+<p><strong>Official Title</strong>: 6.A Review of the Proposed 2027 Special (Dedicated) Revenues Program Budgets, Including Lodging Tax, Inspire Olympia, Parking &amp; Business Improvement Area, and Housing/Homeless Response | <strong>Docket</strong>: Olympia • 2026-10-06 | <strong>Stage</strong>: Advisory Review</p>
+<div class="spacer"></div>
+<h2 class="section-label">Why This Matters Now</h2>
+<p>The City of Olympia City Council is deliberating on municipal legislation. This decision directly affects private real property owners across Thurston County whose annual tax statements would include the adjusted rates. The proposed ordinance (a local law passed by the council or county) establishes an updated multi-year rate assessment (a fee charged on property tax statements for a dedicated service) schedule for the conservation district under RCW 89.08.400. The Board of County Commissioners holds full local statutory discretion to approve, reduce, or reject the assessment schedule requested by the conservation district supervisors.</p>
+<div class="spacer"></div>
+<h2 class="section-label">What Changes</h2>
+<table class="ledger-table">
+<thead><tr>
+<th>Subject</th>
+<th>Current Code</th>
+<th>Proposed Change</th>
+<th>Authority (State Mandate vs. County Choice)</th>
+</tr></thead><tbody>
+<tr>
+<td><strong>Annual Assessment Rates</strong></td>
+<td>Previous rate schedule (<a href="https://www.thurstoncountywa.gov/meetings-and-agendas" target="_blank" rel="noopener">resolution (a formal policy direction or decision) 2019-1</a>)</td>
+<td>Proposed rate schedule for conservation district operations (<a href="https://www.thurstoncountywa.gov/meetings-and-agendas" target="_blank" rel="noopener">Hearing Notice</a>)</td>
+<td><strong>County Choice</strong> (County commissioners have statutory discretion under RCW 89.08.400 to approve, modify, or reject)</td>
+</tr>
+<tr>
+<td><strong>Assessment Duration</strong></td>
+<td>Prior multi-year term (<a href="https://app.leg.wa.gov/rcw/default.aspx?cite=89.08.400" target="_blank" rel="noopener">RCW 89.08.400</a>)</td>
+<td>Proposed multi-year authorization schedule (<a href="https://www.thurstoncountywa.gov/meetings-and-agendas" target="_blank" rel="noopener">Hearing Notice</a>)</td>
+<td><strong>County Choice</strong> (Length of assessment schedule is determined by county vote)</td>
+</tr>
+</tbody></table>
+<div class="spacer"></div>
+<h2 class="section-label">What&#x27;s Good Here</h2>
+<ul class="ledger-list">
+<li><strong>Voluntary Local Stewardship</strong>: Dedicated conservation district funding supports voluntary landowner assistance, wildfire protection, and farm planning without regulatory enforcement actions (<a href="https://app.leg.wa.gov/rcw/default.aspx?cite=89.08.010" target="_blank" rel="noopener">RCW 89.08.010</a>).</li>
+<li><strong>Non-General Fund Support</strong>: Establishes dedicated program revenue without diverting county general property taxes from sheriff or road services.</li>
+</ul>
+<div class="spacer"></div>
+<h2 class="section-label">Our Reading</h2>
+<ul class="ledger-list">
+<li data-verdict="Cuts against"><strong>Cost and who pays</strong>: Leaves open the exact per-parcel dollar increase, acreage rate tiers, and total revenue levied on private landowners because the preliminary hearing notice omits the rate schedule (<a href="https://www.thurstoncountywa.gov/meetings-and-agendas" target="_blank" rel="noopener">Hearing Notice Table 1</a>). <strong>Our reading</strong>: Publishing a hearing notice before posting the actual fee schedule rests on the assumption that rate structures are technical details for later review, leaving property owners unable to calculate their tax bill before public testimony closes.</li>
+<li data-verdict="Cuts against"><strong>Consent and process</strong>: Narrows meaningful public participation by cutting off written testimony two hours before the hearing while the underlying assessment table remains unposted in the preliminary agenda (<a href="https://www.thurstoncountywa.gov/meetings-and-agendas" target="_blank" rel="noopener">Notice Text</a>). <strong>Our reading</strong>: This sequence assumes formal statutory notice satisfies public consent even when the specific rates under consideration are unavailable to residents preparing comments.</li>
+<li data-verdict="Mixed"><strong>Subsidiarity</strong>: Keeps final approval authority with the locally elected Board of County Commissioners under RCW 89.08.400 to approve, modify, or reject the assessment requested by the conservation district (<a href="https://app.leg.wa.gov/rcw/default.aspx?cite=89.08.400" target="_blank" rel="noopener">RCW 89.08.400</a>). <strong>Our reading</strong>: Placing final rate authority with county commissioners preserves local political accountability, though taxpayers bear the cost if commissioners rubber-stamp an incomplete schedule.</li>
+</ul>
+<div class="spacer"></div>
+<h2 class="section-label">What It&#x27;s Trying to Do, and How Supporters Would Answer</h2>
+<p><strong>The Goal</strong>: The proposed ordinance seeks to provide stable, multi-year local funding for the Thurston Conservation District so it can assist farmers and rural landowners with voluntary soil conservation, wildfire resiliency, and habitat stewardship (<a href="https://app.leg.wa.gov/rcw/default.aspx?cite=89.08.400" target="_blank" rel="noopener">RCW 89.08.400</a>). Supporting non-regulatory, voluntary stewardship is a constructive goal.</p>
+<div class="spacer"></div>
+<p><strong>How Supporters Would Answer Our Concerns</strong>: Supporters note that conservation districts have no taxing authority of their own and rely on county-approved assessments to match state and federal grants; they argue the assessment is a modest per-parcel fee that keeps conservation voluntary rather than regulatory. If no action is taken, the district loses core operating funds and must cut technical assistance to local farms.</p>
+<div class="spacer"></div>
+<p><strong>Goal vs. Means</strong>: Our concern is with the <strong>means and process, not the goal</strong>: funding voluntary conservation is worthwhile, but asking the public to testify before the exact per-parcel rate table is published in the agenda packet undermines informed taxpayer consent.</p>
+<div class="spacer"></div>
+<h2 class="section-label">What Would Make It Better</h2>
+<ul class="ledger-list">
+<li><em>Possible Ask (Clear Public Notice)</em>: Provide plain-language mailed summaries to affected neighbors before final votes.</li>
+<li><em>Possible Ask (Performance Review Sunset)</em>: Include a three-year review date requiring staff to evaluate policy outcomes and public feedback.</li>
+</ul>
+<div class="spacer"></div>
+<h2 class="section-label">What to Do</h2>
+<p><strong>Who Decides Next</strong>: The City of Olympia City Council is the legislative governing body that passes municipal laws and budget appropriations.</p>
+<p><strong>Meeting &amp; Next Step</strong>: The body reviewed this draft at its meeting on 2026-10-06. Next step not yet posted.</p>
+<p><strong>How to Comment</strong>: Submit written testimony online or by email to the staff liaison or clerk prior to the meeting cutoff (Check meeting agenda for registration cutoff), or sign up to testify at scheduled public hearings.</p>
+<div class="spacer"></div>
+<p><strong>Verified Contacts</strong>:</p>
+<ul class="ledger-list">
+<li><strong>City of Olympia City Council (Deciding Body)</strong>:</li>
+<li><strong>Office</strong>: City Clerk (Sean Krier)</li>
+<li><strong>Phone</strong>: (360) 753-8325</li>
+<li><strong>Portal / Email</strong>: <a href="https://www.olympiawa.gov/government/city_council/contact_the_city_council.php" target="_blank" rel="noopener">City of Olympia City Council</a> • `citycouncil@olympiawa.gov` <em>(Verified Oct 2026)</em></li>
+<li><strong>Official Agenda Packet</strong>: <a href="https://olympia.legistar.com/MeetingDetail.aspx?LEGID=7131&amp;GID=218&amp;G=19510D34-31FB-48B8-9C02-4D026953451C" target="_blank" rel="noopener">Olympia Agenda Record</a></li>
+</ul>
+<div class="spacer"></div>
+<h2 class="section-label">Questions</h2>
+<p>1. What is the exact dollar amount increase per parcel proposed under the ordinance, and how does it vary between working agricultural land and residential lots?</p>
+<p>2. What percentage of the newly generated revenue will fund direct, on-the-ground technical services for landowners versus district administrative overhead?</p>
+    
+                <div class="memo-box" style="margin-top: 24px;">
+                    <div class="ledger-meta" style="margin-bottom: 6px;">Living Brief Revision Record</div>
+                    <h3 style="margin: 0 0 8px 0; font-size: 16px;">Brief Change Log</h3>
+                    <ul class="ledger-list" style="margin: 0;">
+                        <li><strong>Oct 6, 2026:</strong> Olympia City Council considered 2027 Special (Dedicated) Revenues Program Budgets, Including Lodging Tax, Inspire Olympia, Parking &amp; Business Improvement Area, and Housing/Homeless Response; outcome not yet posted.</li>
+                    </ul>
+                </div>
+                
+    
+        <h2 class="section-label">Matter Status &amp; Lifecycle</h2>
+        <table class="ledger-table">
+            <tbody>
+                <tr>
+                    <th style="width: 180px;">Matter ID &amp; Type</th>
+                    <td><strong>File 26-0765</strong> &bull; Budget Rates &bull; <span class="status-badge">Active</span></td>
+                </tr>
+                <tr>
+                    <th>Lifecycle Status</th>
+                    <td><strong>Council review — Olympia City Council considered on Oct 6, 2026; outcome not yet posted</strong></td>
+                </tr>
+                <tr>
+                    <th>Last Action</th>
+                    <td><strong>Oct 6, 2026</strong> (Olympia City Council): Olympia City Council considered 2027 Special (Dedicated) Revenues Program Budgets, Including Lodging Tax, Inspire Olympia, Parking &amp; Business Improvement Area, and Housing/Homeless Response; outcome not yet posted. &bull; <a href="https://olympia.legistar.com/MeetingDetail.aspx?LEGID=7131&amp;GID=218&amp;G=19510D34-31FB-48B8-9C02-4D026953451C" target="_blank" rel="noopener">Source record &rarr;</a></td>
+                </tr>
+                <tr>
+                    <th>Next Action</th>
+                    <td>not yet posted</td>
+                </tr>
+            </tbody>
+        </table>
+        
+    
+            <h2 class="section-label">Key Document Versions</h2>
+            <table class="ledger-table">
+                <thead>
+                    <tr>
+                        <th style="width: 150px;">Version &amp; Date</th>
+                        <th style="width: 280px;">Document</th>
+                        <th>What Changed</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    
+                <tr>
+                    <td style="white-space: nowrap;"><strong>v1</strong> (Oct 6, 2026)</td>
+                    <td><a href="https://olympia.legistar.com/MeetingDetail.aspx?LEGID=7131&amp;GID=218&amp;G=19510D34-31FB-48B8-9C02-4D026953451C" target="_blank" rel="noopener"><strong>v1 — 2027 Special (Dedicated) Revenues Program Budgets, Including Lodging Tax, Inspire Olympia, Parking &amp; Business Improvement Area, and Housing/Homeless Response (Oct 6, 2026)</strong> &rarr;</a></td>
+                    <td>Initial packet / document filed for 2027 Special (Dedicated) Revenues Program Budgets, Including Lodging Tax, Inspire Olympia, Parking &amp; Business Improvement Area, and Housing/Homeless Response.</td>
+                </tr>
+                
+                </tbody>
+            </table>
+            
+    <h2 class="section-label">Matter History &amp; Documented Record</h2>
+    <div class="timeline-block">
+        
+            <div class="timeline-item">
+                <div class="ledger-meta">Oct 6, 2026 &bull; Olympia City Council &bull; Work session / Briefing</div>
+                <div><strong>Olympia City Council considered 2027 Special (Dedicated) Revenues Program Budgets, Including Lodging Tax, Inspire Olympia, Parking &amp; Business Improvement Area, and Housing/Homeless Response; outcome not yet posted.</strong></div>
+                
+                
+                <div style="font-size: 13px; color: var(--ink-muted); margin-top: 2px;">
+                    <a href="https://olympia.legistar.com/MeetingDetail.aspx?LEGID=7131&amp;GID=218&amp;G=19510D34-31FB-48B8-9C02-4D026953451C" target="_blank" rel="noopener">Official Packet / Record &rarr;</a>
+                </div>
+            </div>
+            
+    </div>
+    
+            <h2 class="section-label">Related Matters</h2>
+            <ul class="ledger-list">
+                <li><strong><a href="brief-olympia-event-7127-item-102054.html">City Council reviews 2027 budget Update</a></strong> (<code>File 26-0689</code>) &mdash; Council review — Olympia City Council considered on Sep 15, 2026; outcome not yet posted <span style="font-size: 12px; color: var(--ink-muted);">[Related 2027 City of Olympia budget, rate, fee, or capital facilities item]</span></li>
+            </ul>
+            
+    
+    </div>
+    <footer class="broadsheet-footer">
+        Loretta's Ledger &bull; Documented Public Record for Thurston County and City of Olympia &bull; Strictly Factual &bull; <a href="../glossary.html">Glossary</a> &bull; <a href="../reading/">Further Reading</a>
+    </footer>
+</body>
+</html>

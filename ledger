@@ -28,6 +28,7 @@ case "$1" in
     fi
     echo "Pushing to public website repository..."
     git push origin main
+    python3 -c "from pipeline.db import get_db_connection; from pipeline.matters import mark_all_approved_as_published; c=get_db_connection(); mark_all_approved_as_published(c); c.close()"
     ;;
   test)
     python3 -m unittest discover tests

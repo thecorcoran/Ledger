@@ -397,16 +397,16 @@
     <div class="container">
         
     <p style="font-size: 16px; color: var(--ink-muted); margin-bottom: 20px;">
-        Every major local ordinance, public hearing, and policy brief tracked by Loretta's Ledger, with its full timeline on one page.
+        Living legislative tracker for Olympia and Thurston County ordinances, code amendments, budgets, contracts, and land-use cases. Sorted by next scheduled action.
     </p>
 
-    <div style="display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 10px; margin-bottom: 12px;">
-        <h1 class="headline-title" style="margin: 0; border: none; padding: 0;">Policy Briefs</h1>
-        <div style="font-size: 13px; text-transform: uppercase; letter-spacing: 0.05em; display: flex; gap: 14px; align-items: center; flex-wrap: wrap;">
-            <label style="cursor: pointer;"><input type="radio" name="brief-filter" value="all" checked onchange="filterBriefs(this.value)"> <strong>All (33)</strong></label>
-            <label style="cursor: pointer;"><input type="radio" name="brief-filter" value="upcoming" onchange="filterBriefs(this.value)"> <strong>Upcoming</strong></label>
-            <label style="cursor: pointer;"><input type="radio" name="brief-filter" value="past" onchange="filterBriefs(this.value)"> <strong>Past</strong></label>
-            <label style="cursor: pointer;"><input type="radio" name="brief-filter" value="testcase" onchange="filterBriefs(this.value)"> <strong>Test cases</strong></label>
+    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 14px;">
+        <h1 class="headline-title" style="margin: 0; border: none; padding: 0;">Policy Briefs &amp; Matter Tracker</h1>
+        <div style="display: flex; gap: 14px; align-items: center; flex-wrap: wrap; font-size: 13px; text-transform: uppercase; letter-spacing: 0.05em;">
+            <label style="cursor: pointer;"><input type="radio" name="brief-filter" value="active" checked onchange="filterBriefs()"> <strong>Active</strong></label>
+            <label style="cursor: pointer;"><input type="radio" name="brief-filter" value="closed" onchange="filterBriefs()"> <strong>Closed</strong></label>
+            <label style="cursor: pointer;"><input type="radio" name="brief-filter" value="testcase" onchange="filterBriefs()"> <strong>Test cases</strong></label>
+            <input type="search" id="brief-search" placeholder="Search all matters..." oninput="filterBriefs()" style="font-family: var(--font-serif); font-size: 13px; padding: 4px 8px; border: 1px solid var(--rule-dark); background: var(--surface);">
         </div>
     </div>
 
@@ -414,397 +414,626 @@
         <thead>
             <tr>
                 <th>Matter</th>
-                <th style="width: 210px;">Body</th>
-                <th style="width: 130px;">Date</th>
-                <th style="width: 175px;">Status</th>
+                <th style="width: 170px;">Jurisdiction</th>
+                <th style="width: 240px;">Status</th>
+                <th style="width: 120px;">Last Action</th>
+                <th style="width: 130px;">Next Action</th>
             </tr>
         </thead>
         <tbody>
             
-        <tr data-upcoming="1" data-past="0" data-testcase="1">
-            <td>
-                <span class="tag-testcase">Test Case</span> <a href="briefs/brief-thurston-bocc-2026-10-20-6123bedc0c.html"><strong>County weighs new rates to fund Thurston Conservation District</strong></a>
-                <div style="font-size: 12px; color: var(--ink-faint); margin-top: 2px;">Official: Proposed Ordinance to Adjust Thurston Conservation District&#x27;s Rates</div>
-                <div style="font-size: 13px; color: var(--ink-muted); margin-top: 3px;">Proposed multi-year assessment adjustment on real property parcels under RCW 89.08.400 to fund conservation district operations.</div>
-            </td>
-            <td>Thurston County Commissioners</td>
-            <td>Oct 20, 2026</td>
-            <td><span class="status-badge ready">Hearing</span></td>
-        </tr>
-        
-        <tr data-upcoming="1" data-past="0" data-testcase="0">
-            <td>
-                <a href="briefs/brief-thurston-bocc-2026-10-20-bac13684ae.html"><strong>County holds hearing on transferring part of Yelm-Rainier Tenino Trail</strong></a>
-                <div style="font-size: 12px; color: var(--ink-faint); margin-top: 2px;">Official: Consider the Transfer of Portions of the Yelm-Rainier Tenino Trail to the City of Yelm</div>
-                <div style="font-size: 13px; color: var(--ink-muted); margin-top: 3px;">Proposed intergovernmental transfer of county-owned portions of the Yelm-Rainier-Tenino Trail to the City of Yelm.</div>
-            </td>
-            <td>Thurston County Commissioners</td>
-            <td>Oct 20, 2026</td>
-            <td><span class="status-badge ready">Hearing</span></td>
-        </tr>
-        
-        <tr data-upcoming="1" data-past="0" data-testcase="1">
+        <tr data-active="1" data-closed="0" data-archive="active" data-upcoming="1" data-past="0" data-testcase="1">
             <td>
                 <span class="tag-testcase">Test Case</span> <a href="briefs/brief-thurston-bocc-2026-10-13-9809f687c7.html"><strong>Health Board weighs updates to county drinking water code</strong></a>
-                <div style="font-size: 12px; color: var(--ink-faint); margin-top: 2px;">Official: Revisions to Drinking Water Code for Thurston County Article III</div>
+                <div style="font-size: 12px; color: var(--ink-faint); margin-top: 2px;">Official: Revisions to Drinking Water Code for Thurston County Article III &bull; <code>Sanitary Code Article III</code></div>
                 <div style="font-size: 13px; color: var(--ink-muted); margin-top: 3px;">Revisions to Sanitary Code Article III governing Group B private and shared residential drinking water wells.</div>
             </td>
-            <td>Thurston County Board of Health</td>
-            <td>Oct 13, 2026</td>
-            <td><span class="status-badge ready">Hearing</span></td>
+            <td>
+                <strong>Thurston County</strong>
+                <div style="font-size: 12px; color: var(--ink-muted);">Thurston County Board of Health</div>
+            </td>
+            <td><span class="status-badge">Advisory commission review — Thurston County Board of Health will consider on Oct 13, 2026</span></td>
+            <td style="white-space: nowrap;">Oct 13, 2026</td>
+            <td style="white-space: nowrap;"><strong>Oct 13, 2026</strong></td>
         </tr>
         
-        <tr data-upcoming="0" data-past="1" data-testcase="0">
+        <tr data-active="1" data-closed="0" data-archive="active" data-upcoming="1" data-past="0" data-testcase="0">
             <td>
-                <a href="briefs/brief-olympia-event-7293-item-102342.html"><strong>Cultural Access Board weighs Inspire Olympia 2027 Budget</strong></a>
-                <div style="font-size: 12px; color: var(--ink-faint); margin-top: 2px;">Official: Inspire Olympia 2027 Budget</div>
+                <a href="briefs/brief-olympia-event-7269-item-102516.html"><strong>Lodging Tax Committee reviews 2027 lodging tax tourism grant proposals</strong></a>
+                <div style="font-size: 12px; color: var(--ink-faint); margin-top: 2px;">Official: 2027 Lodging Tax Funding Tourism Service Proposals &bull; <code>File 26-0800</code></div>
                 
             </td>
-            <td>Olympia Cultural Access Program Advisory Board</td>
-            <td>Oct 8, 2026</td>
-            <td><span class="status-badge">Outcome not yet posted</span></td>
-        </tr>
-        
-        <tr data-upcoming="0" data-past="1" data-testcase="1">
             <td>
-                <span class="tag-testcase">Test Case</span> <a href="briefs/brief-thurston-pc-2026-10-07-media-35329.html"><strong>Planning Commission weighs draft rules for local wetlands</strong></a>
-                <div style="font-size: 12px; color: var(--ink-faint); margin-top: 2px;">Official: CAO Chapter 24.30: Wetlands</div>
-                <div style="font-size: 13px; color: var(--ink-muted); margin-top: 3px;">Updates to Critical Areas Ordinance Chapter 24.30 wetland buffer widths, rating manuals, and reasonable-use rules.</div>
+                <strong>City of Olympia</strong>
+                <div style="font-size: 12px; color: var(--ink-muted);">Olympia Lodging Tax Advisory Committee</div>
             </td>
-            <td>Thurston County Planning Commission</td>
-            <td>Oct 7, 2026</td>
-            <td><span class="status-badge ready">Brief ready</span></td>
+            <td><span class="status-badge">Department / Committee briefing — Olympia Lodging Tax Advisory Committee will consider on Oct 15, 2026</span></td>
+            <td style="white-space: nowrap;">Oct 15, 2026</td>
+            <td style="white-space: nowrap;"><strong>Oct 15, 2026</strong></td>
         </tr>
         
-        <tr data-upcoming="0" data-past="1" data-testcase="1">
+        <tr data-active="1" data-closed="0" data-archive="active" data-upcoming="1" data-past="0" data-testcase="0">
             <td>
-                <span class="tag-testcase">Test Case</span> <a href="briefs/brief-thurston-pc-2026-10-07-media-35330.html"><strong>Planning Commission weighs draft rules for fish and wildlife habitat</strong></a>
-                <div style="font-size: 12px; color: var(--ink-faint); margin-top: 2px;">Official: CAO Chapter 24.25: FWHCAs</div>
-                <div style="font-size: 13px; color: var(--ink-muted); margin-top: 3px;">Updates to Chapter 24.25 stream riparian management zones, prairie soil rules, and residential yard allowances.</div>
-            </td>
-            <td>Thurston County Planning Commission</td>
-            <td>Oct 7, 2026</td>
-            <td><span class="status-badge ready">Brief ready</span></td>
-        </tr>
-        
-        <tr data-upcoming="0" data-past="1" data-testcase="0">
-            <td>
-                <a href="briefs/brief-olympia-event-7218-item-102313.html"><strong>Park District Committee weighs 2027 draft Budget Preview</strong></a>
-                <div style="font-size: 12px; color: var(--ink-faint); margin-top: 2px;">Official: 2027 Preliminary Budget Preview</div>
+                <a href="briefs/brief-olympia-event-7067-item-102543.html"><strong>Planning Commission weighs Discuss the Urban Forest Management Plan</strong></a>
+                <div style="font-size: 12px; color: var(--ink-faint); margin-top: 2px;">Official: Discuss the Urban Forest Management Plan &bull; <code>File 26-0801</code></div>
                 
             </td>
-            <td>Olympia Metropolitan Park District Advisory Committee</td>
-            <td>Oct 7, 2026</td>
-            <td><span class="status-badge">Outcome not yet posted</span></td>
-        </tr>
-        
-        <tr data-upcoming="0" data-past="1" data-testcase="0">
             <td>
-                <a href="briefs/brief-olympia-event-7131-item-102417.html"><strong>City Council approves contract changes for Quince Street Tiny Home Village</strong></a>
-                <div style="font-size: 12px; color: var(--ink-faint); margin-top: 2px;">Official: Amendments to the Affordable Housing and Homeless Services Contracts with Thurston County for Funding for Operation of the Quince Street Tiny Home Village</div>
-                <div style="font-size: 13px; color: var(--ink-muted); margin-top: 3px;">Intergovernmental contract amendments with Thurston County funding operations at Quince Street Tiny Home Village.</div>
+                <strong>City of Olympia</strong>
+                <div style="font-size: 12px; color: var(--ink-muted);">Olympia Planning Commission</div>
             </td>
-            <td>Olympia City Council</td>
-            <td>Oct 6, 2026</td>
-            <td><span class="status-badge ready">Brief ready</span></td>
+            <td><span class="status-badge">Introduced / Work session — Olympia Planning Commission will consider on Oct 19, 2026</span></td>
+            <td style="white-space: nowrap;">Oct 19, 2026</td>
+            <td style="white-space: nowrap;"><strong>Oct 19, 2026</strong></td>
         </tr>
         
-        <tr data-upcoming="0" data-past="1" data-testcase="0">
+        <tr data-active="1" data-closed="0" data-archive="active" data-upcoming="1" data-past="0" data-testcase="0">
             <td>
-                <a href="briefs/brief-olympia-event-7131-item-102421.html"><strong>City Council approves grant for local housing and homes</strong></a>
-                <div style="font-size: 12px; color: var(--ink-faint); margin-top: 2px;">Official: a Grant Agreement with the U.S. Department of Housing and Urban Development for the Program Year 2026 Community Development Block Grant Award</div>
-                <div style="font-size: 13px; color: var(--ink-muted); margin-top: 3px;">Acceptance of $376,415.00 in federal Community Development Block Grant funds with federal compliance conditions.</div>
-            </td>
-            <td>Olympia City Council</td>
-            <td>Oct 6, 2026</td>
-            <td><span class="status-badge ready">Brief ready</span></td>
-        </tr>
-        
-        <tr data-upcoming="0" data-past="1" data-testcase="0">
-            <td>
-                <a href="briefs/brief-olympia-event-7131-item-102423.html"><strong>City Council reviews 2027 dedicated tax and housing budgets</strong></a>
-                <div style="font-size: 12px; color: var(--ink-faint); margin-top: 2px;">Official: 2027 Special (Dedicated) Revenues Program Budgets, Including Lodging Tax, Inspire Olympia, Parking &amp; Business Improvement Area, and Housing/Homeless Response</div>
-                <div style="font-size: 13px; color: var(--ink-muted); margin-top: 3px;">Proposed 2027 allocations for Lodging Tax, Inspire Olympia, PBIA, and housing/homeless response funds.</div>
-            </td>
-            <td>Olympia City Council</td>
-            <td>Oct 6, 2026</td>
-            <td><span class="status-badge">Outcome not yet posted</span></td>
-        </tr>
-        
-        <tr data-upcoming="0" data-past="1" data-testcase="0">
-            <td>
-                <a href="briefs/brief-olympia-event-7131-item-102424.html"><strong>City Council weighs 2027 water and sewer rates and fees</strong></a>
-                <div style="font-size: 12px; color: var(--ink-faint); margin-top: 2px;">Official: 2027 Development Fees, Impact Fees, Parking Rates, Utility Rates, and General Facility Charges</div>
-                <div style="font-size: 13px; color: var(--ink-muted); margin-top: 3px;">Proposed 2027 rate and fee adjustments for municipal water, sewer, stormwater, and development impact charges.</div>
-            </td>
-            <td>Olympia City Council</td>
-            <td>Oct 6, 2026</td>
-            <td><span class="status-badge">Outcome not yet posted</span></td>
-        </tr>
-        
-        <tr data-upcoming="0" data-past="1" data-testcase="0">
-            <td>
-                <a href="briefs/brief-olympia-event-7131-item-102436.html"><strong>City Council backs Timberland library levy lid lift</strong></a>
-                <div style="font-size: 12px; color: var(--ink-faint); margin-top: 2px;">Official: the Timberland Regional Library District Levy Lid Lift Proposition No. 1</div>
-                <div style="font-size: 13px; color: var(--ink-muted); margin-top: 3px;">Council endorsement of Timberland Regional Library District Proposition No. 1 property tax levy lid lift.</div>
-            </td>
-            <td>Olympia City Council</td>
-            <td>Oct 6, 2026</td>
-            <td><span class="status-badge">Outcome not yet posted</span></td>
-        </tr>
-        
-        <tr data-upcoming="0" data-past="1" data-testcase="0">
-            <td>
-                <a href="briefs/brief-thurston-bocc-2026-10-06-1d812203e0.html"><strong>County holds hearing on county road speed limits</strong></a>
-                <div style="font-size: 12px; color: var(--ink-faint); margin-top: 2px;">Official: Proposed Ordinance Revising the Speed Limit Schedule for Various County Roads</div>
-                <div style="font-size: 13px; color: var(--ink-muted); margin-top: 3px;">Proposed ordinance revising maximum vehicle speed limits across designated unincorporated county roads.</div>
-            </td>
-            <td>Thurston County Commissioners</td>
-            <td>Oct 6, 2026</td>
-            <td><span class="status-badge">Outcome not yet posted</span></td>
-        </tr>
-        
-        <tr data-upcoming="0" data-past="1" data-testcase="0">
-            <td>
-                <a href="briefs/brief-thurston-bocc-2026-10-06-a0a7e4f88d.html"><strong>County holds hearing on six-year road and transit plan</strong></a>
-                <div style="font-size: 12px; color: var(--ink-faint); margin-top: 2px;">Official: Six-Year Transportation Improvement Program for 2027-2032</div>
-                <div style="font-size: 13px; color: var(--ink-muted); margin-top: 3px;">Six-year county road, bridge, and trail capital improvement priority list for 2027–2032.</div>
-            </td>
-            <td>Thurston County Commissioners</td>
-            <td>Oct 6, 2026</td>
-            <td><span class="status-badge">Outcome not yet posted</span></td>
-        </tr>
-        
-        <tr data-upcoming="0" data-past="1" data-testcase="0">
-            <td>
-                <a href="briefs/brief-thurston-bocc-2026-10-06-f644d79284.html"><strong>County holds hearing on Title 2 conduct rules for county buildings</strong></a>
-                <div style="font-size: 12px; color: var(--ink-faint); margin-top: 2px;">Official: Proposed Ordinance Amending Thurston County Code Title 2 - Administration and Personnel by adding Chapter 2.03 - County Facilities - Conduct and Solicitation</div>
-                <div style="font-size: 13px; color: var(--ink-muted); margin-top: 3px;">New county code chapter regulating public conduct and solicitation inside Thurston County facilities.</div>
-            </td>
-            <td>Thurston County Commissioners</td>
-            <td>Oct 6, 2026</td>
-            <td><span class="status-badge">Outcome not yet posted</span></td>
-        </tr>
-        
-        <tr data-upcoming="0" data-past="1" data-testcase="0">
-            <td>
-                <a href="briefs/brief-olympia-event-7066-item-102325.html"><strong>Planning Commission weighs changes to minimum parking rules</strong></a>
-                <div style="font-size: 12px; color: var(--ink-faint); margin-top: 2px;">Official: Minimum Parking Requirements Code Amendments</div>
+                <a href="briefs/brief-olympia-event-7067-item-102544.html"><strong>Planning Commission weighs changes to minimum parking rules</strong></a>
+                <div style="font-size: 12px; color: var(--ink-faint); margin-top: 2px;">Official: Minimum Parking Requirements Code Amendments - Public Hearing &bull; <code>OMC Chapter 18.38</code></div>
                 <div style="font-size: 13px; color: var(--ink-muted); margin-top: 3px;">Proposed municipal zoning code amendments reducing or removing minimum off-street parking mandates.</div>
             </td>
-            <td>Olympia Planning Commission</td>
-            <td>Oct 5, 2026</td>
-            <td><span class="status-badge">Outcome not yet posted</span></td>
-        </tr>
-        
-        <tr data-upcoming="0" data-past="1" data-testcase="0">
             <td>
-                <a href="briefs/brief-olympia-event-7066-item-102326.html"><strong>Planning Commission holds hearing on critical area land rules</strong></a>
-                <div style="font-size: 12px; color: var(--ink-faint); margin-top: 2px;">Official: Critical Area Ordinance Update - Public Hearing</div>
-                <div style="font-size: 13px; color: var(--ink-muted); margin-top: 3px;">City of Olympia updates to critical area buffer regulations and environmental review rules.</div>
+                <strong>City of Olympia</strong>
+                <div style="font-size: 12px; color: var(--ink-muted);">Olympia Planning Commission</div>
             </td>
-            <td>Olympia Planning Commission</td>
-            <td>Oct 5, 2026</td>
-            <td><span class="status-badge">Outcome not yet posted</span></td>
+            <td><span class="status-badge">Advisory public hearing — Olympia Planning Commission will consider on Oct 19, 2026</span></td>
+            <td style="white-space: nowrap;">Oct 5, 2026</td>
+            <td style="white-space: nowrap;"><strong>Oct 19, 2026</strong></td>
         </tr>
         
-        <tr data-upcoming="0" data-past="1" data-testcase="0">
+        <tr data-active="1" data-closed="0" data-archive="active" data-upcoming="1" data-past="0" data-testcase="1">
             <td>
-                <a href="briefs/brief-olympia-event-7191-item-102277.html"><strong>Utility Committee reviews draft 2027 utility budget and rates</strong></a>
-                <div style="font-size: 12px; color: var(--ink-faint); margin-top: 2px;">Official: Preliminary 2027 Utility Operating Budget, Rates, Capital Facilities Plan, and General Facility Charges</div>
-                <div style="font-size: 13px; color: var(--ink-muted); margin-top: 3px;">Draft 2027 utility operating budget, capital facilities plan, and general facility connection charges.</div>
+                <span class="tag-testcase">Test Case</span> <a href="briefs/brief-thurston-bocc-2026-10-20-6123bedc0c.html"><strong>County weighs new rates to fund Thurston Conservation District</strong></a>
+                <div style="font-size: 12px; color: var(--ink-faint); margin-top: 2px;">Official: Proposed Ordinance to Adjust Thurston Conservation District&#x27;s Rates &bull; <code>TCD Rate Adjustment Ordinance</code></div>
+                <div style="font-size: 13px; color: var(--ink-muted); margin-top: 3px;">Proposed multi-year assessment adjustment on real property parcels under RCW 89.08.400 to fund conservation district operations.</div>
             </td>
-            <td>Olympia Utility Advisory Committee</td>
-            <td>Oct 1, 2026</td>
-            <td><span class="status-badge">Outcome not yet posted</span></td>
-        </tr>
-        
-        <tr data-upcoming="0" data-past="1" data-testcase="1">
             <td>
-                <span class="tag-testcase">Test Case</span> <a href="briefs/brief-olympia-event-6984-item-102121.html"><strong>Hearing Examiner holds hearing on West Bay Marina replacement</strong></a>
-                <div style="font-size: 12px; color: var(--ink-faint); margin-top: 2px;">Official: Case:  25-1692, West Bay Marina Replacement Project</div>
-                <div style="font-size: 13px; color: var(--ink-muted); margin-top: 3px;">Shoreline substantial development permit and environmental mitigation conditions for replacing West Bay Marina.</div>
+                <strong>Thurston County</strong>
+                <div style="font-size: 12px; color: var(--ink-muted);">Thurston County Commissioners</div>
             </td>
-            <td>Olympia Hearing Examiner</td>
-            <td>Sep 28, 2026</td>
-            <td><span class="status-badge ready">Brief ready</span></td>
+            <td><span class="status-badge">Introduced / Work session — Thurston County County Commissioners will consider on Oct 20, 2026</span></td>
+            <td style="white-space: nowrap;">Oct 20, 2026</td>
+            <td style="white-space: nowrap;"><strong>Oct 20, 2026</strong></td>
         </tr>
         
-        <tr data-upcoming="0" data-past="1" data-testcase="1">
+        <tr data-active="1" data-closed="0" data-archive="active" data-upcoming="1" data-past="0" data-testcase="0">
             <td>
-                <span class="tag-testcase">Test Case</span> <a href="briefs/brief-olympia-event-6984-item-102122.html"><strong>Hearing Examiner holds hearing on Springwood Garden subdivision</strong></a>
-                <div style="font-size: 12px; color: var(--ink-faint); margin-top: 2px;">Official: Case:  25-0980, Springwood Garden plat</div>
-                <div style="font-size: 13px; color: var(--ink-muted); margin-top: 3px;">Preliminary plat approval for a 37-lot single-family subdivision on 7.2 acres with dedicated wetland buffers.</div>
+                <a href="briefs/brief-thurston-bocc-2026-10-20-bac13684ae.html"><strong>County holds hearing on transferring part of Yelm-Rainier Tenino Trail</strong></a>
+                <div style="font-size: 12px; color: var(--ink-faint); margin-top: 2px;">Official: Consider the Transfer of Portions of the Yelm-Rainier Tenino Trail to the City of Yelm &bull; <code>Yelm-Rainier-Tenino Trail Transfer</code></div>
+                <div style="font-size: 13px; color: var(--ink-muted); margin-top: 3px;">Proposed intergovernmental transfer of county-owned portions of the Yelm-Rainier-Tenino Trail to the City of Yelm.</div>
             </td>
-            <td>Olympia Hearing Examiner</td>
-            <td>Sep 28, 2026</td>
-            <td><span class="status-badge ready">Brief ready</span></td>
+            <td>
+                <strong>Thurston County</strong>
+                <div style="font-size: 12px; color: var(--ink-muted);">Thurston County Commissioners</div>
+            </td>
+            <td><span class="status-badge">Council consideration — Thurston County County Commissioners will consider on Oct 20, 2026</span></td>
+            <td style="white-space: nowrap;">Oct 20, 2026</td>
+            <td style="white-space: nowrap;"><strong>Oct 20, 2026</strong></td>
         </tr>
         
-        <tr data-upcoming="0" data-past="1" data-testcase="0">
+        <tr data-active="1" data-closed="0" data-archive="active" data-upcoming="1" data-past="0" data-testcase="0">
             <td>
-                <a href="briefs/brief-olympia-event-7288-item-102255.html"><strong>Capital Facilities Plan 2027-2032 Financial Plan Comment Letter Discussion</strong></a>
-                <div style="font-size: 12px; color: var(--ink-faint); margin-top: 2px;">Official: Capital Facilities Plan 2027-2032 Financial Plan Comment Letter Discussion</div>
+                <a href="briefs/brief-olympia-event-6957-item-102505.html"><strong>Site Plan Committee reviews Cooper Point Pharmacy drive-through plan</strong></a>
+                <div style="font-size: 12px; color: var(--ink-faint); margin-top: 2px;">Official: Cooper Point Pharmacy Drive-Through, 1217 Cooper Point Rd SW #1, 26-5942 &bull; <code>Case 26-5942</code></div>
                 
             </td>
-            <td>Olympia Planning Commission</td>
-            <td>Sep 22, 2026</td>
-            <td><span class="status-badge">Outcome not yet posted</span></td>
+            <td>
+                <strong>City of Olympia</strong>
+                <div style="font-size: 12px; color: var(--ink-muted);">Olympia Site Plan Review Committee</div>
+            </td>
+            <td><span class="status-badge">Introduced / Work session — Olympia Site Plan Review Committee will consider on Oct 21, 2026</span></td>
+            <td style="white-space: nowrap;">Oct 21, 2026</td>
+            <td style="white-space: nowrap;"><strong>Oct 21, 2026</strong></td>
         </tr>
         
-        <tr data-upcoming="0" data-past="1" data-testcase="0">
+        <tr data-active="1" data-closed="0" data-archive="active" data-upcoming="0" data-past="1" data-testcase="0">
             <td>
-                <a href="briefs/brief-olympia-event-7167-item-102216.html"><strong>Finance Committee weighs 2027 water and sewer rates and fees</strong></a>
-                <div style="font-size: 12px; color: var(--ink-faint); margin-top: 2px;">Official: 2027 Utility Rates, General Facility Charges, Impact Fees, and Special (Dedicated) Revenues Including Inspire Olympia, Lodging Tax, Parking &amp; Business Improvement Area, and Housing/Homeless Response Program Budgets</div>
+                <a href="briefs/brief-olympia-event-7283-item-102361.html"><strong>Equity Commission approves Equity Commission work plan update</strong></a>
+                <div style="font-size: 12px; color: var(--ink-faint); margin-top: 2px;">Official: Social Justice &amp; Equity Commission Work Plan Update for City Council &bull; <code>File 26-0784</code></div>
+                
+            </td>
+            <td>
+                <strong>City of Olympia</strong>
+                <div style="font-size: 12px; color: var(--ink-muted);">Olympia Social Justice &amp; Equity Commission</div>
+            </td>
+            <td><span class="status-badge">Committee / Consent docket — Olympia Social Justice &amp; Equity Commission considered on Oct 10, 2026; outcome not yet posted</span></td>
+            <td style="white-space: nowrap;">Oct 10, 2026</td>
+            <td style="white-space: nowrap;"><strong>Not yet posted</strong></td>
+        </tr>
+        
+        <tr data-active="1" data-closed="0" data-archive="active" data-upcoming="0" data-past="1" data-testcase="0">
+            <td>
+                <a href="briefs/brief-olympia-event-7293-item-102342.html"><strong>Cultural Access Board weighs Inspire Olympia 2027 Budget</strong></a>
+                <div style="font-size: 12px; color: var(--ink-faint); margin-top: 2px;">Official: Inspire Olympia 2027 Budget &bull; <code>File 26-0783</code></div>
+                
+            </td>
+            <td>
+                <strong>City of Olympia</strong>
+                <div style="font-size: 12px; color: var(--ink-muted);">Olympia Cultural Access Program Advisory Board</div>
+            </td>
+            <td><span class="status-badge">Department / Committee briefing — Olympia Cultural Access Program Advisory Board considered on Oct 8, 2026; outcome not yet posted</span></td>
+            <td style="white-space: nowrap;">Oct 8, 2026</td>
+            <td style="white-space: nowrap;"><strong>Not yet posted</strong></td>
+        </tr>
+        
+        <tr data-active="1" data-closed="0" data-archive="active" data-upcoming="0" data-past="1" data-testcase="1">
+            <td>
+                <span class="tag-testcase">Test Case</span> <a href="briefs/brief-thurston-pc-2026-10-07-media-35329.html"><strong>Planning Commission weighs draft rules for local wetlands</strong></a>
+                <div style="font-size: 12px; color: var(--ink-faint); margin-top: 2px;">Official: CAO Chapter 24.30: Wetlands &bull; <code>TCC Chapter 24.30</code></div>
+                <div style="font-size: 13px; color: var(--ink-muted); margin-top: 3px;">Updates to Critical Areas Ordinance Chapter 24.30 wetland buffer widths, rating manuals, and reasonable-use rules.</div>
+            </td>
+            <td>
+                <strong>Thurston County</strong>
+                <div style="font-size: 12px; color: var(--ink-muted);">Thurston County Planning Commission</div>
+            </td>
+            <td><span class="status-badge">Advisory commission review — Thurston County Planning Commission considered on Oct 7, 2026; outcome not yet posted</span></td>
+            <td style="white-space: nowrap;">Oct 7, 2026</td>
+            <td style="white-space: nowrap;"><strong>Not yet posted</strong></td>
+        </tr>
+        
+        <tr data-active="1" data-closed="0" data-archive="active" data-upcoming="0" data-past="1" data-testcase="1">
+            <td>
+                <span class="tag-testcase">Test Case</span> <a href="briefs/brief-thurston-pc-2026-10-07-media-35330.html"><strong>Planning Commission weighs draft rules for fish and wildlife habitat</strong></a>
+                <div style="font-size: 12px; color: var(--ink-faint); margin-top: 2px;">Official: CAO Chapter 24.25: FWHCAs &bull; <code>TCC Chapter 24.25</code></div>
+                <div style="font-size: 13px; color: var(--ink-muted); margin-top: 3px;">Updates to Chapter 24.25 stream riparian management zones, prairie soil rules, and residential yard allowances.</div>
+            </td>
+            <td>
+                <strong>Thurston County</strong>
+                <div style="font-size: 12px; color: var(--ink-muted);">Thurston County Planning Commission</div>
+            </td>
+            <td><span class="status-badge">Advisory commission review — Thurston County Planning Commission considered on Oct 7, 2026; outcome not yet posted</span></td>
+            <td style="white-space: nowrap;">Oct 7, 2026</td>
+            <td style="white-space: nowrap;"><strong>Not yet posted</strong></td>
+        </tr>
+        
+        <tr data-active="1" data-closed="0" data-archive="active" data-upcoming="0" data-past="1" data-testcase="0">
+            <td>
+                <a href="briefs/brief-olympia-event-7218-item-102313.html"><strong>Park District Committee weighs 2027 draft Budget Preview</strong></a>
+                <div style="font-size: 12px; color: var(--ink-faint); margin-top: 2px;">Official: 2027 Preliminary Budget Preview &bull; <code>File 26-0758</code></div>
+                
+            </td>
+            <td>
+                <strong>City of Olympia</strong>
+                <div style="font-size: 12px; color: var(--ink-muted);">Olympia Metropolitan Park District Advisory Committee</div>
+            </td>
+            <td><span class="status-badge">Department / Committee briefing — Olympia Metropolitan Park District Advisory Committee considered on Oct 7, 2026; outcome not yet posted</span></td>
+            <td style="white-space: nowrap;">Oct 7, 2026</td>
+            <td style="white-space: nowrap;"><strong>Not yet posted</strong></td>
+        </tr>
+        
+        <tr data-active="1" data-closed="0" data-archive="active" data-upcoming="0" data-past="1" data-testcase="0">
+            <td>
+                <a href="briefs/brief-olympia-event-7131-item-102417.html"><strong>City Council approves contract changes for Quince Street Tiny Home Village</strong></a>
+                <div style="font-size: 12px; color: var(--ink-faint); margin-top: 2px;">Official: Amendments to the Affordable Housing and Homeless Services Contracts with Thurston County for Funding for Operation of the Quince Street Tiny Home Village &bull; <code>File 26-0693</code></div>
+                <div style="font-size: 13px; color: var(--ink-muted); margin-top: 3px;">Intergovernmental contract amendments with Thurston County funding operations at Quince Street Tiny Home Village.</div>
+            </td>
+            <td>
+                <strong>City of Olympia</strong>
+                <div style="font-size: 12px; color: var(--ink-muted);">Olympia City Council</div>
+            </td>
+            <td><span class="status-badge">Council consideration — Olympia City Council considered on Oct 6, 2026; outcome not yet posted</span></td>
+            <td style="white-space: nowrap;">Oct 6, 2026</td>
+            <td style="white-space: nowrap;"><strong>Not yet posted</strong></td>
+        </tr>
+        
+        <tr data-active="1" data-closed="0" data-archive="active" data-upcoming="0" data-past="1" data-testcase="0">
+            <td>
+                <a href="briefs/brief-olympia-event-7131-item-102421.html"><strong>City Council approves federal grant for local housing and community aid</strong></a>
+                <div style="font-size: 12px; color: var(--ink-faint); margin-top: 2px;">Official: a Grant Agreement with the U.S. Department of Housing and Urban Development for the Program Year 2026 Community Development Block Grant Award &bull; <code>File 26-0762</code></div>
+                <div style="font-size: 13px; color: var(--ink-muted); margin-top: 3px;">Acceptance of $376,415.00 in federal Community Development Block Grant funds with federal compliance conditions.</div>
+            </td>
+            <td>
+                <strong>City of Olympia</strong>
+                <div style="font-size: 12px; color: var(--ink-muted);">Olympia City Council</div>
+            </td>
+            <td><span class="status-badge">Council consideration — Olympia City Council considered on Oct 6, 2026; outcome not yet posted</span></td>
+            <td style="white-space: nowrap;">Oct 6, 2026</td>
+            <td style="white-space: nowrap;"><strong>Not yet posted</strong></td>
+        </tr>
+        
+        <tr data-active="1" data-closed="0" data-archive="active" data-upcoming="0" data-past="1" data-testcase="0">
+            <td>
+                <a href="briefs/brief-olympia-event-7131-item-102423.html"><strong>City Council reviews 2027 dedicated tax and housing budgets</strong></a>
+                <div style="font-size: 12px; color: var(--ink-faint); margin-top: 2px;">Official: 2027 Special (Dedicated) Revenues Program Budgets, Including Lodging Tax, Inspire Olympia, Parking &amp; Business Improvement Area, and Housing/Homeless Response &bull; <code>File 26-0765</code></div>
+                <div style="font-size: 13px; color: var(--ink-muted); margin-top: 3px;">Proposed 2027 allocations for Lodging Tax, Inspire Olympia, PBIA, and housing/homeless response funds.</div>
+            </td>
+            <td>
+                <strong>City of Olympia</strong>
+                <div style="font-size: 12px; color: var(--ink-muted);">Olympia City Council</div>
+            </td>
+            <td><span class="status-badge">Council review — Olympia City Council considered on Oct 6, 2026; outcome not yet posted</span></td>
+            <td style="white-space: nowrap;">Oct 6, 2026</td>
+            <td style="white-space: nowrap;"><strong>Not yet posted</strong></td>
+        </tr>
+        
+        <tr data-active="1" data-closed="0" data-archive="active" data-upcoming="0" data-past="1" data-testcase="0">
+            <td>
+                <a href="briefs/brief-olympia-event-7131-item-102424.html"><strong>City Council weighs 2027 utility rates and building fees</strong></a>
+                <div style="font-size: 12px; color: var(--ink-faint); margin-top: 2px;">Official: 2027 Development Fees, Impact Fees, Parking Rates, Utility Rates, and General Facility Charges &bull; <code>File 26-0766</code></div>
                 <div style="font-size: 13px; color: var(--ink-muted); margin-top: 3px;">Proposed 2027 rate and fee adjustments for municipal water, sewer, stormwater, and development impact charges.</div>
             </td>
-            <td>Olympia Finance Committee</td>
-            <td>Sep 21, 2026</td>
-            <td><span class="status-badge">Outcome not yet posted</span></td>
+            <td>
+                <strong>City of Olympia</strong>
+                <div style="font-size: 12px; color: var(--ink-muted);">Olympia City Council</div>
+            </td>
+            <td><span class="status-badge">Council review — Olympia City Council considered on Oct 6, 2026; outcome not yet posted</span></td>
+            <td style="white-space: nowrap;">Oct 6, 2026</td>
+            <td style="white-space: nowrap;"><strong>Not yet posted</strong></td>
         </tr>
         
-        <tr data-upcoming="0" data-past="1" data-testcase="0">
+        <tr data-active="1" data-closed="0" data-archive="active" data-upcoming="0" data-past="1" data-testcase="0">
+            <td>
+                <a href="briefs/brief-olympia-event-7131-item-102436.html"><strong>City Council backs Timberland library levy lid lift</strong></a>
+                <div style="font-size: 12px; color: var(--ink-faint); margin-top: 2px;">Official: the Timberland Regional Library District Levy Lid Lift Proposition No. 1 &bull; <code>File 26-0781</code></div>
+                <div style="font-size: 13px; color: var(--ink-muted); margin-top: 3px;">Council endorsement of Timberland Regional Library District Proposition No. 1 property tax levy lid lift.</div>
+            </td>
+            <td>
+                <strong>City of Olympia</strong>
+                <div style="font-size: 12px; color: var(--ink-muted);">Olympia City Council</div>
+            </td>
+            <td><span class="status-badge">Council consideration — Olympia City Council considered on Oct 6, 2026; outcome not yet posted</span></td>
+            <td style="white-space: nowrap;">Oct 6, 2026</td>
+            <td style="white-space: nowrap;"><strong>Not yet posted</strong></td>
+        </tr>
+        
+        <tr data-active="1" data-closed="0" data-archive="active" data-upcoming="0" data-past="1" data-testcase="0">
+            <td>
+                <a href="briefs/brief-thurston-bocc-2026-10-06-1d812203e0.html"><strong>County holds hearing on county road speed limits</strong></a>
+                <div style="font-size: 12px; color: var(--ink-faint); margin-top: 2px;">Official: Proposed Ordinance Revising the Speed Limit Schedule for Various County Roads &bull; <code>County Road Speed Limit Ordinance</code></div>
+                <div style="font-size: 13px; color: var(--ink-muted); margin-top: 3px;">Proposed ordinance revising maximum vehicle speed limits across designated unincorporated county roads.</div>
+            </td>
+            <td>
+                <strong>Thurston County</strong>
+                <div style="font-size: 12px; color: var(--ink-muted);">Thurston County Commissioners</div>
+            </td>
+            <td><span class="status-badge">Introduced / Work session — Thurston County County Commissioners considered on Oct 6, 2026; outcome not yet posted</span></td>
+            <td style="white-space: nowrap;">Oct 6, 2026</td>
+            <td style="white-space: nowrap;"><strong>Not yet posted</strong></td>
+        </tr>
+        
+        <tr data-active="1" data-closed="0" data-archive="active" data-upcoming="0" data-past="1" data-testcase="0">
+            <td>
+                <a href="briefs/brief-thurston-bocc-2026-10-06-a0a7e4f88d.html"><strong>County holds hearing on six-year road and transit plan</strong></a>
+                <div style="font-size: 12px; color: var(--ink-faint); margin-top: 2px;">Official: Six-Year Transportation Improvement Program for 2027-2032 &bull; <code>2027-2032 County TIP</code></div>
+                <div style="font-size: 13px; color: var(--ink-muted); margin-top: 3px;">Six-year county road, bridge, and trail capital improvement priority list for 2027–2032.</div>
+            </td>
+            <td>
+                <strong>Thurston County</strong>
+                <div style="font-size: 12px; color: var(--ink-muted);">Thurston County Commissioners</div>
+            </td>
+            <td><span class="status-badge">Department / Committee briefing — Thurston County County Commissioners considered on Oct 6, 2026; outcome not yet posted</span></td>
+            <td style="white-space: nowrap;">Oct 6, 2026</td>
+            <td style="white-space: nowrap;"><strong>Not yet posted</strong></td>
+        </tr>
+        
+        <tr data-active="1" data-closed="0" data-archive="active" data-upcoming="0" data-past="1" data-testcase="0">
+            <td>
+                <a href="briefs/brief-thurston-bocc-2026-10-06-f644d79284.html"><strong>County holds hearing on Title 2 conduct rules for county buildings</strong></a>
+                <div style="font-size: 12px; color: var(--ink-faint); margin-top: 2px;">Official: Proposed Ordinance Amending Thurston County Code Title 2 - Administration and Personnel by adding Chapter 2.03 - County Facilities - Conduct and Solicitation &bull; <code>TCC Chapter 2.03</code></div>
+                <div style="font-size: 13px; color: var(--ink-muted); margin-top: 3px;">New county code chapter regulating public conduct and solicitation inside Thurston County facilities.</div>
+            </td>
+            <td>
+                <strong>Thurston County</strong>
+                <div style="font-size: 12px; color: var(--ink-muted);">Thurston County Commissioners</div>
+            </td>
+            <td><span class="status-badge">Advisory commission review — Thurston County County Commissioners considered on Oct 6, 2026; outcome not yet posted</span></td>
+            <td style="white-space: nowrap;">Oct 6, 2026</td>
+            <td style="white-space: nowrap;"><strong>Not yet posted</strong></td>
+        </tr>
+        
+        <tr data-active="1" data-closed="0" data-archive="active" data-upcoming="0" data-past="1" data-testcase="0">
+            <td>
+                <a href="briefs/brief-olympia-event-7066-item-102326.html"><strong>Planning Commission holds hearing on critical area land rules</strong></a>
+                <div style="font-size: 12px; color: var(--ink-faint); margin-top: 2px;">Official: Critical Area Ordinance Update - Public Hearing &bull; <code>OMC Title 18 (CAO)</code></div>
+                <div style="font-size: 13px; color: var(--ink-muted); margin-top: 3px;">City of Olympia updates to critical area buffer regulations and environmental review rules.</div>
+            </td>
+            <td>
+                <strong>City of Olympia</strong>
+                <div style="font-size: 12px; color: var(--ink-muted);">Olympia Planning Commission</div>
+            </td>
+            <td><span class="status-badge">Advisory public hearing — Olympia Planning Commission considered on Oct 5, 2026; outcome not yet posted</span></td>
+            <td style="white-space: nowrap;">Oct 5, 2026</td>
+            <td style="white-space: nowrap;"><strong>Not yet posted</strong></td>
+        </tr>
+        
+        <tr data-active="1" data-closed="0" data-archive="active" data-upcoming="0" data-past="1" data-testcase="0">
+            <td>
+                <a href="briefs/brief-olympia-event-7191-item-102277.html"><strong>Utility Committee reviews draft 2027 utility budget and rates</strong></a>
+                <div style="font-size: 12px; color: var(--ink-faint); margin-top: 2px;">Official: Preliminary 2027 Utility Operating Budget, Rates, Capital Facilities Plan, and General Facility Charges &bull; <code>File 26-0753</code></div>
+                <div style="font-size: 13px; color: var(--ink-muted); margin-top: 3px;">Draft 2027 utility operating budget, capital facilities plan, and general facility connection charges.</div>
+            </td>
+            <td>
+                <strong>City of Olympia</strong>
+                <div style="font-size: 12px; color: var(--ink-muted);">Olympia Utility Advisory Committee</div>
+            </td>
+            <td><span class="status-badge">Department / Committee briefing — Olympia Utility Advisory Committee considered on Oct 1, 2026; outcome not yet posted</span></td>
+            <td style="white-space: nowrap;">Oct 1, 2026</td>
+            <td style="white-space: nowrap;"><strong>Not yet posted</strong></td>
+        </tr>
+        
+        <tr data-active="1" data-closed="0" data-archive="active" data-upcoming="0" data-past="1" data-testcase="1">
+            <td>
+                <span class="tag-testcase">Test Case</span> <a href="briefs/brief-olympia-event-6984-item-102121.html"><strong>Hearing Examiner holds hearing on West Bay Marina replacement</strong></a>
+                <div style="font-size: 12px; color: var(--ink-faint); margin-top: 2px;">Official: Case:  25-1692, West Bay Marina Replacement Project &bull; <code>Case 25-1692</code></div>
+                <div style="font-size: 13px; color: var(--ink-muted); margin-top: 3px;">Shoreline substantial development permit and environmental mitigation conditions for replacing West Bay Marina.</div>
+            </td>
+            <td>
+                <strong>City of Olympia</strong>
+                <div style="font-size: 12px; color: var(--ink-muted);">Olympia Hearing Examiner</div>
+            </td>
+            <td><span class="status-badge">Application / Presubmission conference — Olympia Hearing Examiner considered on Sep 28, 2026; outcome not yet posted</span></td>
+            <td style="white-space: nowrap;">Sep 28, 2026</td>
+            <td style="white-space: nowrap;"><strong>Not yet posted</strong></td>
+        </tr>
+        
+        <tr data-active="1" data-closed="0" data-archive="active" data-upcoming="0" data-past="1" data-testcase="1">
+            <td>
+                <span class="tag-testcase">Test Case</span> <a href="briefs/brief-olympia-event-6984-item-102122.html"><strong>Hearing Examiner holds hearing on Springwood Garden subdivision</strong></a>
+                <div style="font-size: 12px; color: var(--ink-faint); margin-top: 2px;">Official: Case:  25-0980, Springwood Garden plat &bull; <code>Case 25-0980</code></div>
+                <div style="font-size: 13px; color: var(--ink-muted); margin-top: 3px;">Preliminary plat approval for a 37-lot single-family subdivision on 7.2 acres with dedicated wetland buffers.</div>
+            </td>
+            <td>
+                <strong>City of Olympia</strong>
+                <div style="font-size: 12px; color: var(--ink-muted);">Olympia Hearing Examiner</div>
+            </td>
+            <td><span class="status-badge">Application / Presubmission conference — Olympia Hearing Examiner considered on Sep 28, 2026; outcome not yet posted</span></td>
+            <td style="white-space: nowrap;">Sep 28, 2026</td>
+            <td style="white-space: nowrap;"><strong>Not yet posted</strong></td>
+        </tr>
+        
+        <tr data-active="1" data-closed="0" data-archive="active" data-upcoming="0" data-past="1" data-testcase="0">
+            <td>
+                <a href="briefs/brief-olympia-event-7288-item-102255.html"><strong>Capital Facilities Plan 2027-2032 Financial Plan Comment Letter Discussion</strong></a>
+                <div style="font-size: 12px; color: var(--ink-faint); margin-top: 2px;">Official: Capital Facilities Plan 2027-2032 Financial Plan Comment Letter Discussion &bull; <code>File 26-0736</code></div>
+                
+            </td>
+            <td>
+                <strong>City of Olympia</strong>
+                <div style="font-size: 12px; color: var(--ink-muted);">Olympia Planning Commission</div>
+            </td>
+            <td><span class="status-badge">Department / Committee briefing — Olympia Planning Commission considered on Sep 22, 2026; outcome not yet posted</span></td>
+            <td style="white-space: nowrap;">Sep 22, 2026</td>
+            <td style="white-space: nowrap;"><strong>Not yet posted</strong></td>
+        </tr>
+        
+        <tr data-active="1" data-closed="0" data-archive="active" data-upcoming="0" data-past="1" data-testcase="0">
+            <td>
+                <a href="briefs/brief-olympia-event-7065-item-102109.html"><strong>Planning Commission holds hearing on 2027-2032 capital facilities plan</strong></a>
+                <div style="font-size: 12px; color: var(--ink-faint); margin-top: 2px;">Official: Preliminary 2027-2032 Capital Facilities Plan - Public Hearing &bull; <code>File 26-0727</code></div>
+                
+            </td>
+            <td>
+                <strong>City of Olympia</strong>
+                <div style="font-size: 12px; color: var(--ink-muted);">Olympia Planning Commission</div>
+            </td>
+            <td><span class="status-badge">Department / Committee briefing — Olympia Planning Commission considered on Sep 21, 2026; outcome not yet posted</span></td>
+            <td style="white-space: nowrap;">Sep 21, 2026</td>
+            <td style="white-space: nowrap;"><strong>Not yet posted</strong></td>
+        </tr>
+        
+        <tr data-active="1" data-closed="0" data-archive="active" data-upcoming="0" data-past="1" data-testcase="0">
+            <td>
+                <a href="briefs/brief-olympia-event-7167-item-102216.html"><strong>Finance Committee weighs 2027 utility rates and building fees</strong></a>
+                <div style="font-size: 12px; color: var(--ink-faint); margin-top: 2px;">Official: 2027 Utility Rates, General Facility Charges, Impact Fees, and Special (Dedicated) Revenues Including Inspire Olympia, Lodging Tax, Parking &amp; Business Improvement Area, and Housing/Homeless Response Program Budgets &bull; <code>File 26-0707</code></div>
+                <div style="font-size: 13px; color: var(--ink-muted); margin-top: 3px;">Proposed 2027 rate and fee adjustments for municipal water, sewer, stormwater, and development impact charges.</div>
+            </td>
+            <td>
+                <strong>City of Olympia</strong>
+                <div style="font-size: 12px; color: var(--ink-muted);">Olympia Finance Committee</div>
+            </td>
+            <td><span class="status-badge">Department / Committee briefing — Olympia Finance Committee considered on Sep 21, 2026; outcome not yet posted</span></td>
+            <td style="white-space: nowrap;">Sep 21, 2026</td>
+            <td style="white-space: nowrap;"><strong>Not yet posted</strong></td>
+        </tr>
+        
+        <tr data-active="1" data-closed="0" data-archive="active" data-upcoming="0" data-past="1" data-testcase="0">
             <td>
                 <a href="briefs/brief-olympia-event-7167-item-102217.html"><strong>Finance Committee reviews 2027 Proposed Budget Update</strong></a>
-                <div style="font-size: 12px; color: var(--ink-faint); margin-top: 2px;">Official: 2027 Proposed Budget Update</div>
+                <div style="font-size: 12px; color: var(--ink-faint); margin-top: 2px;">Official: 2027 Proposed Budget Update &bull; <code>File 26-0729</code></div>
                 
             </td>
-            <td>Olympia Finance Committee</td>
-            <td>Sep 21, 2026</td>
-            <td><span class="status-badge">Outcome not yet posted</span></td>
+            <td>
+                <strong>City of Olympia</strong>
+                <div style="font-size: 12px; color: var(--ink-muted);">Olympia Finance Committee</div>
+            </td>
+            <td><span class="status-badge">Department / Committee briefing — Olympia Finance Committee considered on Sep 21, 2026; outcome not yet posted</span></td>
+            <td style="white-space: nowrap;">Sep 21, 2026</td>
+            <td style="white-space: nowrap;"><strong>Not yet posted</strong></td>
         </tr>
         
-        <tr data-upcoming="0" data-past="1" data-testcase="0">
+        <tr data-active="1" data-closed="0" data-archive="active" data-upcoming="0" data-past="1" data-testcase="0">
             <td>
                 <a href="briefs/brief-olympia-event-7281-item-102080.html"><strong>Land Use Committee reviews development code updates for climate plan</strong></a>
-                <div style="font-size: 12px; color: var(--ink-faint); margin-top: 2px;">Official: Proposed Scope of Development Code Updates to Implement the Olympia 2045 Comprehensive Plan Climate Element Review</div>
+                <div style="font-size: 12px; color: var(--ink-faint); margin-top: 2px;">Official: Proposed Scope of Development Code Updates to Implement the Olympia 2045 Comprehensive Plan Climate Element Review &bull; <code>File 26-0698</code></div>
                 
             </td>
-            <td>Olympia Land Use &amp; Environment Committee</td>
-            <td>Sep 18, 2026</td>
-            <td><span class="status-badge">Outcome not yet posted</span></td>
+            <td>
+                <strong>City of Olympia</strong>
+                <div style="font-size: 12px; color: var(--ink-muted);">Olympia Land Use &amp; Environment Committee</div>
+            </td>
+            <td><span class="status-badge">Introduced / Work session — Olympia Land Use &amp; Environment Committee considered on Sep 18, 2026; outcome not yet posted</span></td>
+            <td style="white-space: nowrap;">Sep 18, 2026</td>
+            <td style="white-space: nowrap;"><strong>Not yet posted</strong></td>
         </tr>
         
-        <tr data-upcoming="0" data-past="1" data-testcase="0">
+        <tr data-active="1" data-closed="0" data-archive="active" data-upcoming="0" data-past="1" data-testcase="0">
             <td>
                 <a href="briefs/brief-olympia-event-7281-item-102082.html"><strong>Land Use Committee weighs rule changes for home-based businesses</strong></a>
-                <div style="font-size: 12px; color: var(--ink-faint); margin-top: 2px;">Official: Home Based Businesses Code Amendments Recommendation</div>
+                <div style="font-size: 12px; color: var(--ink-faint); margin-top: 2px;">Official: Home Based Businesses Code Amendments Recommendation &bull; <code>OMC Chapter 18.04</code></div>
                 <div style="font-size: 13px; color: var(--ink-muted); margin-top: 3px;">Proposed municipal code revisions governing residential home-based business permits and neighborhood limits.</div>
             </td>
-            <td>Olympia Land Use &amp; Environment Committee</td>
-            <td>Sep 18, 2026</td>
-            <td><span class="status-badge">Outcome not yet posted</span></td>
+            <td>
+                <strong>City of Olympia</strong>
+                <div style="font-size: 12px; color: var(--ink-muted);">Olympia Land Use &amp; Environment Committee</div>
+            </td>
+            <td><span class="status-badge">Advisory commission review — Olympia Land Use &amp; Environment Committee considered on Sep 18, 2026; outcome not yet posted</span></td>
+            <td style="white-space: nowrap;">Sep 18, 2026</td>
+            <td style="white-space: nowrap;"><strong>Not yet posted</strong></td>
         </tr>
         
-        <tr data-upcoming="0" data-past="1" data-testcase="0">
+        <tr data-active="1" data-closed="0" data-archive="active" data-upcoming="0" data-past="1" data-testcase="0">
             <td>
                 <a href="briefs/brief-olympia-event-7243-item-102001.html"><strong>Parks Committee weighs Parks Capital Facilities Plan recommendation</strong></a>
-                <div style="font-size: 12px; color: var(--ink-faint); margin-top: 2px;">Official: Parks Capital Facilities Plan (CFP) and Capital Asset Management Program (CAMP) Recommendation</div>
+                <div style="font-size: 12px; color: var(--ink-faint); margin-top: 2px;">Official: Parks Capital Facilities Plan (CFP) and Capital Asset Management Program (CAMP) Recommendation &bull; <code>File 26-0679</code></div>
                 
             </td>
-            <td>Olympia Parks and Recreation Advisory Committee</td>
-            <td>Sep 17, 2026</td>
-            <td><span class="status-badge">Outcome not yet posted</span></td>
+            <td>
+                <strong>City of Olympia</strong>
+                <div style="font-size: 12px; color: var(--ink-muted);">Olympia Parks and Recreation Advisory Committee</div>
+            </td>
+            <td><span class="status-badge">Department / Committee briefing — Olympia Parks and Recreation Advisory Committee considered on Sep 17, 2026; outcome not yet posted</span></td>
+            <td style="white-space: nowrap;">Sep 17, 2026</td>
+            <td style="white-space: nowrap;"><strong>Not yet posted</strong></td>
         </tr>
         
-        <tr data-upcoming="0" data-past="1" data-testcase="0">
+        <tr data-active="1" data-closed="0" data-archive="active" data-upcoming="0" data-past="1" data-testcase="0">
             <td>
                 <a href="briefs/brief-olympia-event-6899-item-102015.html"><strong>Bike &amp; Walk Committee reviews draft 2027-2032 Capital Facilities Plan</strong></a>
-                <div style="font-size: 12px; color: var(--ink-faint); margin-top: 2px;">Official: Discuss and Comment on the 2027-2032 Preliminary Capital Facilities Plan</div>
+                <div style="font-size: 12px; color: var(--ink-faint); margin-top: 2px;">Official: Discuss and Comment on the 2027-2032 Preliminary Capital Facilities Plan &bull; <code>File 26-0714</code></div>
                 
             </td>
-            <td>Olympia Bicycle and Pedestrian Advisory Committee</td>
-            <td>Sep 16, 2026</td>
-            <td><span class="status-badge">Outcome not yet posted</span></td>
+            <td>
+                <strong>City of Olympia</strong>
+                <div style="font-size: 12px; color: var(--ink-muted);">Olympia Bicycle and Pedestrian Advisory Committee</div>
+            </td>
+            <td><span class="status-badge">Department / Committee briefing — Olympia Bicycle and Pedestrian Advisory Committee considered on Sep 16, 2026; outcome not yet posted</span></td>
+            <td style="white-space: nowrap;">Sep 16, 2026</td>
+            <td style="white-space: nowrap;"><strong>Not yet posted</strong></td>
         </tr>
         
-        <tr data-upcoming="0" data-past="1" data-testcase="0">
+        <tr data-active="1" data-closed="0" data-archive="active" data-upcoming="0" data-past="1" data-testcase="0">
             <td>
                 <a href="briefs/brief-thurston-pc-2026-09-16-media-34942.html"><strong>Planning Commission reviews Grand Mound 193rd land use and zone change</strong></a>
-                <div style="font-size: 12px; color: var(--ink-faint); margin-top: 2px;">Official: Grand Mound 193rd Land Use Amendment &amp; Rezone</div>
+                <div style="font-size: 12px; color: var(--ink-faint); margin-top: 2px;">Official: Grand Mound 193rd Land Use Amendment &amp; Rezone &bull; <code>Grand Mound 193rd Rezone</code></div>
                 
             </td>
-            <td>Thurston County Planning Commission</td>
-            <td>Sep 16, 2026</td>
-            <td><span class="status-badge">Outcome not yet posted</span></td>
+            <td>
+                <strong>Thurston County</strong>
+                <div style="font-size: 12px; color: var(--ink-muted);">Thurston County Planning Commission</div>
+            </td>
+            <td><span class="status-badge">Application / Presubmission conference — Thurston County Planning Commission considered on Sep 16, 2026; outcome not yet posted</span></td>
+            <td style="white-space: nowrap;">Sep 16, 2026</td>
+            <td style="white-space: nowrap;"><strong>Not yet posted</strong></td>
         </tr>
         
-        <tr data-upcoming="0" data-past="1" data-testcase="0">
+        <tr data-active="1" data-closed="0" data-archive="active" data-upcoming="0" data-past="1" data-testcase="0">
             <td>
                 <a href="briefs/brief-olympia-event-7127-item-102054.html"><strong>City Council reviews 2027 budget Update</strong></a>
-                <div style="font-size: 12px; color: var(--ink-faint); margin-top: 2px;">Official: 2027 Operating Budget Update</div>
+                <div style="font-size: 12px; color: var(--ink-faint); margin-top: 2px;">Official: 2027 Operating Budget Update &bull; <code>File 26-0689</code></div>
                 
             </td>
-            <td>Olympia City Council</td>
-            <td>Sep 15, 2026</td>
-            <td><span class="status-badge">Outcome not yet posted</span></td>
+            <td>
+                <strong>City of Olympia</strong>
+                <div style="font-size: 12px; color: var(--ink-muted);">Olympia City Council</div>
+            </td>
+            <td><span class="status-badge">Council review — Olympia City Council considered on Sep 15, 2026; outcome not yet posted</span></td>
+            <td style="white-space: nowrap;">Sep 15, 2026</td>
+            <td style="white-space: nowrap;"><strong>Not yet posted</strong></td>
         </tr>
         
-        <tr data-upcoming="0" data-past="1" data-testcase="0">
+        <tr data-active="1" data-closed="0" data-archive="active" data-upcoming="0" data-past="1" data-testcase="0">
+            <td>
+                <a href="briefs/brief-olympia-event-7127-item-102065.html"><strong>City Council reviews draft 2027-2032 Capital Facilities Plan Briefing</strong></a>
+                <div style="font-size: 12px; color: var(--ink-faint); margin-top: 2px;">Official: Preliminary 2027-2032 Capital Facilities Plan Briefing &bull; <code>File 26-0686</code></div>
+                
+            </td>
+            <td>
+                <strong>City of Olympia</strong>
+                <div style="font-size: 12px; color: var(--ink-muted);">Olympia City Council</div>
+            </td>
+            <td><span class="status-badge">Council review — Olympia City Council considered on Sep 15, 2026; outcome not yet posted</span></td>
+            <td style="white-space: nowrap;">Sep 15, 2026</td>
+            <td style="white-space: nowrap;"><strong>Not yet posted</strong></td>
+        </tr>
+        
+        <tr data-active="1" data-closed="0" data-archive="active" data-upcoming="0" data-past="1" data-testcase="0">
             <td>
                 <a href="briefs/brief-olympia-event-7127-item-102099.html"><strong>City Council opposes Puget Sound Energy 30% rate increase</strong></a>
-                <div style="font-size: 12px; color: var(--ink-faint); margin-top: 2px;">Official: Opposing Puget Sound Energy’s Proposed 30% Electrical Rate Increase Over Three Years</div>
+                <div style="font-size: 12px; color: var(--ink-faint); margin-top: 2px;">Official: Opposing Puget Sound Energy’s Proposed 30% Electrical Rate Increase Over Three Years &bull; <code>File 26-0724</code></div>
                 
             </td>
-            <td>Olympia City Council</td>
-            <td>Sep 15, 2026</td>
-            <td><span class="status-badge">Outcome not yet posted</span></td>
+            <td>
+                <strong>City of Olympia</strong>
+                <div style="font-size: 12px; color: var(--ink-muted);">Olympia City Council</div>
+            </td>
+            <td><span class="status-badge">Council consideration — Olympia City Council considered on Sep 15, 2026; outcome not yet posted</span></td>
+            <td style="white-space: nowrap;">Sep 15, 2026</td>
+            <td style="white-space: nowrap;"><strong>Not yet posted</strong></td>
         </tr>
         
-        <tr data-upcoming="0" data-past="1" data-testcase="0">
+        <tr data-active="1" data-closed="0" data-archive="active" data-upcoming="0" data-past="1" data-testcase="0">
             <td>
                 <a href="briefs/brief-thurston-bocc-2026-09-15-b207016ba4.html"><strong>County holds hearing on 2026 county road standards</strong></a>
-                <div style="font-size: 12px; color: var(--ink-faint); margin-top: 2px;">Official: Proposed Resolution to Adopt the 2026 Thurston County Road Standards</div>
+                <div style="font-size: 12px; color: var(--ink-faint); margin-top: 2px;">Official: Proposed Resolution to Adopt the 2026 Thurston County Road Standards &bull; <code>2026 County Road Standards</code></div>
                 
             </td>
-            <td>Thurston County Commissioners</td>
-            <td>Sep 15, 2026</td>
-            <td><span class="status-badge">Outcome not yet posted</span></td>
+            <td>
+                <strong>Thurston County</strong>
+                <div style="font-size: 12px; color: var(--ink-muted);">Thurston County Commissioners</div>
+            </td>
+            <td><span class="status-badge">Council consideration — Thurston County County Commissioners considered on Sep 15, 2026; outcome not yet posted</span></td>
+            <td style="white-space: nowrap;">Sep 15, 2026</td>
+            <td style="white-space: nowrap;"><strong>Not yet posted</strong></td>
         </tr>
         
-        <tr data-upcoming="0" data-past="1" data-testcase="0">
+        <tr data-active="1" data-closed="0" data-archive="active" data-upcoming="0" data-past="1" data-testcase="0">
             <td>
                 <a href="briefs/brief-thurston-bocc-2026-08-05-18f44d5240.html"><strong>County holds hearing on pause for detention facilities</strong></a>
-                <div style="font-size: 12px; color: var(--ink-faint); margin-top: 2px;">Official: Moratorium on Detention Facilities</div>
+                <div style="font-size: 12px; color: var(--ink-faint); margin-top: 2px;">Official: Moratorium on Detention Facilities &bull; <code>Detention Facilities Moratorium</code></div>
                 
             </td>
-            <td>Thurston County Commissioners</td>
-            <td>Aug 5, 2026</td>
-            <td><span class="status-badge">Outcome not yet posted</span></td>
+            <td>
+                <strong>Thurston County</strong>
+                <div style="font-size: 12px; color: var(--ink-muted);">Thurston County Commissioners</div>
+            </td>
+            <td><span class="status-badge">Introduced / Work session — Thurston County County Commissioners considered on Aug 5, 2026; outcome not yet posted</span></td>
+            <td style="white-space: nowrap;">Aug 5, 2026</td>
+            <td style="white-space: nowrap;"><strong>Not yet posted</strong></td>
         </tr>
         
-        <tr data-upcoming="0" data-past="1" data-testcase="0">
+        <tr data-active="1" data-closed="0" data-archive="active" data-upcoming="0" data-past="1" data-testcase="0">
             <td>
                 <a href="briefs/brief-thurston-pc-2026-07-15-media-33952.html"><strong>Planning Commission reviews rules for flood areas</strong></a>
-                <div style="font-size: 12px; color: var(--ink-faint); margin-top: 2px;">Official: Chapter 24.20 Frequently Flooded Areas</div>
+                <div style="font-size: 12px; color: var(--ink-faint); margin-top: 2px;">Official: Chapter 24.20 Frequently Flooded Areas &bull; <code>TCC Chapter 24.20</code></div>
                 
             </td>
-            <td>Thurston County Planning Commission</td>
-            <td>Jul 15, 2026</td>
-            <td><span class="status-badge">Outcome not yet posted</span></td>
+            <td>
+                <strong>Thurston County</strong>
+                <div style="font-size: 12px; color: var(--ink-muted);">Thurston County Planning Commission</div>
+            </td>
+            <td><span class="status-badge">Advisory commission review — Thurston County Planning Commission considered on Jul 15, 2026; minutes posted</span></td>
+            <td style="white-space: nowrap;">Jul 15, 2026</td>
+            <td style="white-space: nowrap;"><strong>Not yet posted</strong></td>
         </tr>
         
         </tbody>
     </table>
 
     <script>
-        function filterBriefs(val) {
+        function filterBriefs() {
+            var sel = document.querySelector('input[name="brief-filter"]:checked');
+            var val = sel ? sel.value : 'active';
+            var q = (document.getElementById('brief-search').value || '').toLowerCase().trim();
             var rows = document.querySelectorAll('#briefs-table tbody tr');
             rows.forEach(function(r) {
-                var isUp = r.getAttribute('data-upcoming') === '1';
-                var isPast = r.getAttribute('data-past') === '1';
+                var isAct = r.getAttribute('data-active') === '1';
+                var isCl = r.getAttribute('data-closed') === '1';
                 var isTc = r.getAttribute('data-testcase') === '1';
-                if (val === 'all') {
-                    r.style.display = '';
-                } else if (val === 'upcoming') {
-                    r.style.display = isUp ? '' : 'none';
-                } else if (val === 'past') {
-                    r.style.display = isPast ? '' : 'none';
-                } else if (val === 'testcase') {
-                    r.style.display = isTc ? '' : 'none';
+                var textMatch = !q || r.textContent.toLowerCase().indexOf(q) !== -1;
+                var tabMatch = true;
+                if (!q) {
+                    if (val === 'active') tabMatch = isAct;
+                    else if (val === 'closed') tabMatch = isCl;
+                    else if (val === 'testcase') tabMatch = isTc;
+                } else {
+                    if (val === 'closed') tabMatch = isCl;
+                    else if (val === 'testcase') tabMatch = isTc;
                 }
+                r.style.display = (tabMatch && textMatch) ? '' : 'none';
             });
         }
+        filterBriefs();
     </script>
     
     </div>

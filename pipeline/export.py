@@ -16,6 +16,7 @@ Information architecture:
 
 import argparse
 import html
+import json
 import logging
 import re
 import shutil
@@ -751,68 +752,211 @@ def get_base_html_page(title: str, content: str, active_nav: str = "home", root_
 """
 
 
-def build_item_timeline_html(conn, item: Dict[str, Any], dedupe_key: str) -> str:
-    """Builds the unified Documented Timeline & Record section to embed directly at the bottom of a Brief page."""
-    # Find all items that share the same matter or same dedupe_key
-    all_items = conn.execute(
-        "SELECT id, title, display_title, jurisdiction, source_id, meeting_date, url, body_text FROM items ORDER BY meeting_date DESC"
-    ).fetchall()
+def build_item_timeline_html(conn, item: Dict[str, Any], dedupe_key: str, matter: Optional[Dict[str, Any]] = None) -> str:
+    """Builds the Status, History, Key Document Versions, and Related Matters sections at the bottom of a Matter/Brief page."""
+    matter_id = matter["id"] if matter else None
+    if not matter_id:
+        m_row = conn.execute(
+            "SELECT m.* FROM matters m JOIN matter_events me ON m.id = me.matter_id WHERE me.item_id = ? AND me.confidence = 'confirmed' LIMIT 1",
+            (item["id"],),
+        ).fetchone()
+        if m_row:
+            matter = dict(m_row)
+            matter_id = matter["id"]
 
-    related_events: List[Dict[str, Any]] = []
-    seen_event_keys = set()
+    # 1. Brief Change Log (from matter_briefs)
+    changelog_html = ""
+    if matter_id:
+        mb_row = conn.execute("SELECT changelog_json, updated_date FROM matter_briefs WHERE matter_id = ?", (matter_id,)).fetchone()
+        if mb_row and mb_row["changelog_json"]:
+            try:
+                cl_list = json.loads(mb_row["changelog_json"])
+            except Exception:
+                cl_list = []
+            if cl_list:
+                cl_items = "".join(
+                    f'<li><strong>{html.escape(entry.get("date", ""))}:</strong> {html.escape(entry.get("summary", ""))}</li>'
+                    for entry in cl_list
+                )
+                changelog_html = f"""
+                <div class="memo-box" style="margin-top: 24px;">
+                    <div class="ledger-meta" style="margin-bottom: 6px;">Living Brief Revision Record</div>
+                    <h3 style="margin: 0 0 8px 0; font-size: 16px;">Brief Change Log</h3>
+                    <ul class="ledger-list" style="margin: 0;">
+                        {cl_items}
+                    </ul>
+                </div>
+                """
 
-    # Also check matter_events linked to the same matter_id
-    matter_rows = conn.execute(
-        "SELECT DISTINCT matter_id FROM matter_events WHERE item_id = ? AND confidence = 'confirmed'",
-        (item["id"],),
-    ).fetchall()
-    matter_ids = [r["matter_id"] for r in matter_rows]
-    matter_item_ids = set()
-    if matter_ids:
-        placeholders = ",".join("?" * len(matter_ids))
-        me_rows = conn.execute(
-            f"SELECT item_id FROM matter_events WHERE matter_id IN ({placeholders}) AND confidence = 'confirmed'",
-            matter_ids,
+    # 2. Matter Status Summary Box
+    status_box_html = ""
+    if matter:
+        m_type_label = (matter.get("matter_type") or "ordinance").replace("_", " ").title()
+        stable_id = matter.get("stable_id") or matter.get("primary_identifier") or matter["id"]
+        lifecycle_st = matter.get("lifecycle_status") or matter.get("current_stage") or "Active"
+        archive_st = (matter.get("archive_state") or "active").capitalize()
+        last_dt = format_short_date(matter.get("last_action_date") or "")
+        last_body = matter.get("last_action_body") or ""
+        last_sum = matter.get("last_action_summary") or ""
+        last_url = matter.get("last_action_url") or item.get("url") or ""
+        next_txt = matter.get("next_action_text") or "not yet posted"
+
+        status_box_html = f"""
+        <h2 class="section-label">Matter Status &amp; Lifecycle</h2>
+        <table class="ledger-table">
+            <tbody>
+                <tr>
+                    <th style="width: 180px;">Matter ID &amp; Type</th>
+                    <td><strong>{html.escape(stable_id)}</strong> &bull; {html.escape(m_type_label)} &bull; <span class="status-badge">{html.escape(archive_st)}</span></td>
+                </tr>
+                <tr>
+                    <th>Lifecycle Status</th>
+                    <td><strong>{html.escape(lifecycle_st)}</strong></td>
+                </tr>
+                <tr>
+                    <th>Last Action</th>
+                    <td><strong>{html.escape(last_dt)}</strong> ({html.escape(last_body)}): {html.escape(last_sum)} &bull; <a href="{html.escape(last_url)}" target="_blank" rel="noopener">Source record &rarr;</a></td>
+                </tr>
+                <tr>
+                    <th>Next Action</th>
+                    <td>{html.escape(next_txt)}</td>
+                </tr>
+            </tbody>
+        </table>
+        """
+
+    # 3. Key Document Versions (`matter_versions`)
+    versions_html = ""
+    if matter_id:
+        ver_rows = conn.execute(
+            "SELECT * FROM matter_versions WHERE matter_id = ? ORDER BY version_number ASC",
+            (matter_id,),
         ).fetchall()
-        matter_item_ids = {r["item_id"] for r in me_rows}
+        if ver_rows:
+            ver_tr = []
+            for vr in ver_rows:
+                v_date_fmt = format_short_date(vr["version_date"])
+                ver_tr.append(f"""
+                <tr>
+                    <td style="white-space: nowrap;"><strong>v{vr['version_number']}</strong> ({html.escape(v_date_fmt)})</td>
+                    <td><a href="{html.escape(vr['doc_url'])}" target="_blank" rel="noopener"><strong>{html.escape(vr['version_label'])}</strong> &rarr;</a></td>
+                    <td>{html.escape(vr['what_changed'])}</td>
+                </tr>
+                """)
+            versions_html = f"""
+            <h2 class="section-label">Key Document Versions</h2>
+            <table class="ledger-table">
+                <thead>
+                    <tr>
+                        <th style="width: 150px;">Version &amp; Date</th>
+                        <th style="width: 280px;">Document</th>
+                        <th>What Changed</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {''.join(ver_tr)}
+                </tbody>
+            </table>
+            """
 
-    for r in all_items:
-        d = dict(r)
-        tier = classify_item_tier(d)
-        if tier == 3 and d["id"] != item["id"]:
-            continue
-        disp = d.get("display_title") or generate_display_title(d, d.get("body_text") or "")
-        r_key = normalize_dedupe_key(d, disp)
-        if d["id"] == item["id"] or d["id"] in matter_item_ids or r_key == dedupe_key:
-            ev_sig = (d.get("meeting_date") or "", clean_agenda_title(d.get("title") or "").lower())
-            if ev_sig in seen_event_keys:
+    # 4. Matter History (`matter_events`, including parsed minutes outcomes/votes)
+    history_rows_html = []
+    if matter_id:
+        ev_rows = conn.execute(
+            """
+            SELECT me.*, i.title as item_title
+            FROM matter_events me
+            LEFT JOIN items i ON me.item_id = i.id
+            WHERE me.matter_id = ? AND me.confidence = 'confirmed'
+            ORDER BY me.action_date DESC, me.id DESC
+            """,
+            (matter_id,),
+        ).fetchall()
+        seen_hist_keys = set()
+        for ev in ev_rows:
+            d_ev = dict(ev)
+            sig = (d_ev.get("action_date") or "", (d_ev.get("outcome_text") or "").lower(), d_ev.get("record_url") or "")
+            if sig in seen_hist_keys:
                 continue
-            seen_event_keys.add(ev_sig)
-            related_events.append(d)
+            seen_hist_keys.add(sig)
+            date_label = format_short_date(d_ev.get("action_date") or "")
+            body_name = d_ev.get("body_name") or determine_exact_body_name(item, item.get("body_text") or "")
+            outcome = d_ev.get("outcome_text") or clean_agenda_title(d_ev.get("item_title") or "")
+            motion_bit = f'<div style="font-size: 13px; color: var(--ink-muted); margin-top: 2px;"><strong>Motion:</strong> {html.escape(d_ev["motion_text"])}</div>' if d_ev.get("motion_text") else ""
+            vote_bit = f'<div style="font-size: 13px; color: var(--ink-muted); margin-top: 2px;"><strong>Vote / Result:</strong> {html.escape(d_ev["vote_tally"])}</div>' if d_ev.get("vote_tally") else ""
+            min_link = (
+                f' &bull; <a href="{html.escape(d_ev["minutes_url"])}" target="_blank" rel="noopener">Verified in Approved Minutes &rarr;</a>'
+                if d_ev.get("minutes_url")
+                else ""
+            )
+            history_rows_html.append(f"""
+            <div class="timeline-item">
+                <div class="ledger-meta">{html.escape(date_label)} &bull; {html.escape(body_name)} &bull; {html.escape(d_ev.get('action_type') or 'Action')}</div>
+                <div><strong>{html.escape(outcome)}</strong></div>
+                {motion_bit}
+                {vote_bit}
+                <div style="font-size: 13px; color: var(--ink-muted); margin-top: 2px;">
+                    <a href="{html.escape(d_ev.get('record_url') or '')}" target="_blank" rel="noopener">Official Packet / Record &rarr;</a>{min_link}
+                </div>
+            </div>
+            """)
 
-    if not related_events:
-        related_events.append(item)
-
-    timeline_items_html = []
-    for ev in related_events:
-        body_name = determine_exact_body_name(ev, ev.get("body_text") or "")
-        date_label = format_short_date(ev.get("meeting_date") or "")
-        cleaned_t = clean_agenda_title(ev.get("title") or "")
-        timeline_items_html.append(f"""
+    if not history_rows_html:
+        body_name = determine_exact_body_name(item, item.get("body_text") or "")
+        date_label = format_short_date(item.get("meeting_date") or "")
+        cleaned_t = clean_agenda_title(item.get("title") or "")
+        history_rows_html.append(f"""
         <div class="timeline-item">
             <div class="ledger-meta">{html.escape(date_label)} &bull; {html.escape(body_name)}</div>
             <div><strong>{html.escape(cleaned_t)}</strong></div>
             <div style="font-size: 13px; color: var(--ink-muted); margin-top: 2px;">
-                <a href="{html.escape(ev.get('url') or '')}" target="_blank" rel="noopener">Official Meeting Packet &amp; Record &rarr;</a>
+                <a href="{html.escape(item.get('url') or '')}" target="_blank" rel="noopener">Official Meeting Packet &amp; Record &rarr;</a>
             </div>
         </div>
         """)
 
+    # 5. Related Matters (`matter_relations`)
+    related_html = ""
+    if matter_id:
+        rel_rows = conn.execute(
+            """
+            SELECT r.relation_type, r.notes,
+                   m.id as rel_id, m.stable_id as rel_stable_id, m.plain_title as rel_plain, m.official_title as rel_official, m.lifecycle_status as rel_status,
+                   mb.item_id as rel_item_id
+            FROM matter_relations r
+            JOIN matters m ON (CASE WHEN r.parent_matter_id = ? THEN r.child_matter_id ELSE r.parent_matter_id END) = m.id
+            LEFT JOIN matter_briefs mb ON mb.matter_id = m.id
+            WHERE r.parent_matter_id = ? OR r.child_matter_id = ?
+            """,
+            (matter_id, matter_id, matter_id),
+        ).fetchall()
+        if rel_rows:
+            rel_li = []
+            for rr in rel_rows:
+                rel_href = f"brief-{rr['rel_item_id']}.html" if rr["rel_item_id"] else f"{rr['rel_id']}.html"
+                rel_title = rr["rel_plain"] or rr["rel_official"]
+                rel_sid = rr["rel_stable_id"] or rr["rel_id"]
+                rel_li.append(
+                    f'<li><strong><a href="{html.escape(rel_href)}">{html.escape(rel_title)}</a></strong> '
+                    f'(<code>{html.escape(rel_sid)}</code>) &mdash; {html.escape(rr["rel_status"] or "")} '
+                    f'<span style="font-size: 12px; color: var(--ink-muted);">[{html.escape(rr["notes"] or rr["relation_type"])}]</span></li>'
+                )
+            related_html = f"""
+            <h2 class="section-label">Related Matters</h2>
+            <ul class="ledger-list">
+                {''.join(rel_li)}
+            </ul>
+            """
+
     return f"""
-    <h2 class="section-label">Timeline &amp; Documented Record</h2>
+    {changelog_html}
+    {status_box_html}
+    {versions_html}
+    <h2 class="section-label">Matter History &amp; Documented Record</h2>
     <div class="timeline-block">
-        {''.join(timeline_items_html)}
+        {''.join(history_rows_html)}
     </div>
+    {related_html}
     """
 
 
@@ -821,8 +965,13 @@ def export_site_content(
     out_dirs: Optional[List[Path]] = None,
     today_str: str = DEFAULT_TODAY_STR,
 ) -> Dict[str, int]:
-    """Exports the simplified broadsheet site structure to docs/ and site/_site/."""
+    """Exports the broadsheet site structure to docs/ and site/_site/."""
+    import json as _json
+    from pipeline.matters import link_matters
+
     ensure_directories()
+    link_matters(conn, today_str=today_str)
+
     target_dirs = out_dirs if out_dirs is not None else [DOCS_DIR, SITE_OUT_DIR]
     for d in target_dirs:
         for legacy_sub in ("matters", "archive", "test-cases", "influences", "action-pages"):
@@ -858,7 +1007,20 @@ def export_site_content(
         """
     ).fetchall()
 
-    # Process and classify all items, merging duplicates
+    # Map item_id -> matter record
+    item_to_matter: Dict[str, Dict[str, Any]] = {}
+    matter_rows = conn.execute("SELECT * FROM matters").fetchall()
+    matters_by_id = {r["id"]: dict(r) for r in matter_rows}
+    for me in conn.execute("SELECT matter_id, item_id FROM matter_events WHERE confidence = 'confirmed'").fetchall():
+        if me["matter_id"] in matters_by_id:
+            item_to_matter[me["item_id"]] = matters_by_id[me["matter_id"]]
+
+    mb_by_matter_id = {
+        r["matter_id"]: dict(r)
+        for r in conn.execute("SELECT * FROM matter_briefs").fetchall()
+    }
+
+    # Process and classify all items, merging duplicates by matter_id / dedupe_key
     processed_items: List[Dict[str, Any]] = []
     for r in all_rows:
         d = dict(r)
@@ -880,18 +1042,20 @@ def export_site_content(
             full_body_label = f"{jur_label} {body_name}"
         stake = get_whats_at_stake(d)
         status_label = determine_plain_status(d, body_name, has_brief=has_brief, today_str=today_str)
-        dedupe_key = normalize_dedupe_key(d, disp_title)
+        linked_matter = item_to_matter.get(d["id"])
+        dedupe_key = linked_matter["id"] if linked_matter else normalize_dedupe_key(d, disp_title)
 
         d.update({
-            "display_title": disp_title,
+            "display_title": linked_matter["plain_title"] if (linked_matter and linked_matter.get("plain_title")) else disp_title,
             "body_name": body_name,
             "full_body_label": full_body_label,
             "has_brief": has_brief,
-            "is_test_case": is_tc,
+            "is_test_case": is_tc or bool(linked_matter and linked_matter.get("is_test_case")),
             "tier": tier,
             "stake": stake,
             "status_label": status_label,
             "dedupe_key": dedupe_key,
+            "matter": linked_matter,
         })
         processed_items.append(d)
 
@@ -900,7 +1064,6 @@ def export_site_content(
         it for it in processed_items
         if it["tier"] == 1 or it["has_brief"] or it["is_test_case"]
     ]
-    # Sort so items with an approved brief or latest meeting date come first when merging duplicates
     briefs_page_candidates.sort(
         key=lambda x: (1 if x["has_brief"] else 0, 1 if x["is_test_case"] else 0, x.get("meeting_date") or ""),
         reverse=True,
@@ -908,28 +1071,32 @@ def export_site_content(
 
     merged_matters: List[Dict[str, Any]] = []
     seen_matter_keys = set()
-    canonical_by_key: Dict[str, Dict[str, Any]] = {}
+    all_item_ids_by_key: Dict[str, List[str]] = {}
     for it in briefs_page_candidates:
+        all_item_ids_by_key.setdefault(it["dedupe_key"], []).append(it["id"])
         if it["dedupe_key"] in seen_matter_keys:
             continue
         seen_matter_keys.add(it["dedupe_key"])
         merged_matters.append(it)
-        canonical_by_key[it["dedupe_key"]] = it
 
-    # Sort merged_matters by meeting_date DESC
-    merged_matters.sort(key=lambda x: x.get("meeting_date") or "", reverse=True)
-
-    # 1. Export Unified Brief + Timeline pages (`briefs/brief-<item_id>.html`) for canonical deduplicated matters
+    # 1. Export Unified Living Matter + Brief pages (`briefs/brief-<item_id>.html` and `briefs/<matter_id>.html`)
     exported_brief_ids = set()
     for it in merged_matters:
-        md_source = it.get("brief_markdown") or it.get("any_brief_markdown")
+        m_rec = it.get("matter")
+        mb_rec = mb_by_matter_id.get(m_rec["id"]) if m_rec else None
+
+        md_source = (
+            (mb_rec["markdown"] if mb_rec and mb_rec.get("markdown") else None)
+            or it.get("brief_markdown")
+            or it.get("any_brief_markdown")
+        )
         if not md_source and it["tier"] == 1:
             from pipeline.analyze import generate_brief_markdown
             md_source = generate_brief_markdown(it, [], "", today_str=today_str)
 
         if md_source:
             html_body = markdown_to_html(md_source)
-            timeline_html = build_item_timeline_html(conn, it, it["dedupe_key"])
+            timeline_html = build_item_timeline_html(conn, it, it["dedupe_key"], matter=m_rec)
             back_bar = f"""
             <div class="ledger-meta" style="margin-bottom: 12px;">
                 <a href="../briefs.html">&larr; All Briefs</a> &bull; {html.escape(it['full_body_label'])} &bull; {html.escape(format_short_date(it.get('meeting_date') or ''))}
@@ -938,24 +1105,28 @@ def export_site_content(
             full_brief_html = back_bar + html_body + timeline_html
             page_html = get_base_html_page(it["display_title"], full_brief_html, active_nav="briefs", root_prefix="../")
 
-            file_slug = f"brief-{it['id']}.html"
+            # Write canonical brief-<item_id>.html plus aliases for all merged item IDs and matter_id so permanent links never break
+            slugs_to_write = {f"brief-{it['id']}.html"}
+            for alias_item_id in all_item_ids_by_key.get(it["dedupe_key"], []):
+                slugs_to_write.add(f"brief-{alias_item_id}.html")
+                exported_brief_ids.add(alias_item_id)
+            if m_rec:
+                slugs_to_write.add(f"{m_rec['id']}.html")
+
             for out_base in target_dirs:
-                with open(out_base / "briefs" / file_slug, "w", encoding="utf-8") as f:
-                    f.write(page_html)
+                for file_slug in slugs_to_write:
+                    with open(out_base / "briefs" / file_slug, "w", encoding="utf-8") as f:
+                        f.write(page_html)
             exported_brief_ids.add(it["id"])
             if it["has_brief"]:
                 stats["briefs"] += 1
 
     # 2. Build Home Page (`index.html`)
-    # (a) One sentence on what the Ledger is.
-    # (b) "Worth your attention": up to 6 Tier 1 upcoming items (meeting_date >= today_str), deduplicated.
-    # (c) "Just happened": last 7 days (seven_days_ago_str <= meeting_date < today_str), deduplicated.
-    # (d) "Also on the calendar": collapsed and grouped by meeting (e.g. "Olympia City Council, Oct 13: 2 items"), Tier 2 only.
-
-    # Upcoming Tier 1 items (meeting_date >= today_str), ordered soonest first
     upcoming_t1_raw = [
         it for it in merged_matters
-        if it["tier"] == 1 and (it.get("meeting_date") or "") >= today_str
+        if it["tier"] == 1
+        and (it.get("meeting_date") or "") >= today_str
+        and ((it.get("matter") or {}).get("archive_state", "active") == "active")
     ]
     upcoming_t1_raw.sort(key=lambda x: (x.get("meeting_date") or "9999-99-99", 0 if x["has_brief"] else 1))
     upcoming_t1 = upcoming_t1_raw[:6]
@@ -986,7 +1157,6 @@ def export_site_content(
         </div>
         """)
 
-    # (c) "Just happened" for the last 7 days (seven_days_ago_str <= meeting_date < today_str)
     just_happened_list = [
         it for it in merged_matters
         if it["tier"] == 1 and seven_days_ago_str <= (it.get("meeting_date") or "") < today_str
@@ -1019,13 +1189,10 @@ def export_site_content(
         </div>
         """)
 
-    # (d) "Also on the calendar": collapsed and grouped by meeting (e.g. "Olympia City Council, Oct 6: 9 items"), Tier 2 only.
-    # Include upcoming and recent (last 7 days) Tier 2 items grouped by (full_body_label, meeting_date)
     tier2_calendar_items = [
         it for it in processed_items
         if it["tier"] == 2 and (it.get("meeting_date") or "") >= seven_days_ago_str
     ]
-    # Group by (full_body_label, meeting_date)
     meeting_groups: Dict[Tuple[str, str], List[Dict[str, Any]]] = {}
     seen_t2_per_group: Dict[Tuple[str, str], set] = {}
     for it in tier2_calendar_items:
@@ -1036,7 +1203,6 @@ def export_site_content(
         seen_set.add(it["dedupe_key"])
         meeting_groups.setdefault(g_key, []).append(it)
 
-    # Sort descending by date for clean reading
     sorted_group_keys = sorted(meeting_groups.keys(), key=lambda k: k[1], reverse=True)
 
     calendar_groups_html = []
@@ -1086,47 +1252,78 @@ def export_site_content(
     </div>
     """
 
-    # 3. Build Briefs Page (`briefs.html`)
+    # 3. Build Public Briefs Page (`briefs.html`) as a Legislative Bill Tracker:
+    # Columns: plain title, jurisdiction, status, last action date, next action date.
+    # Filters: Active, Closed, Test cases (+ Search).
+    # Sort by next action (soonest upcoming next_action_date first, then most recent last_action_date descending).
+    def _tracker_sort_key(it: Dict[str, Any]) -> Tuple[int, str, str]:
+        m = it.get("matter") or {}
+        next_dt = m.get("next_action_date") or (it.get("meeting_date") if (it.get("meeting_date") or "") >= today_str else None)
+        last_dt = m.get("last_action_date") or it.get("meeting_date") or ""
+        # Negate last_dt for descending tie-breaker by converting YYYY-MM-DD digits
+        inv_last = "".join(chr(ord("9") - ord(c) + ord("0")) if c.isdigit() else c for c in last_dt[:10])
+        if next_dt:
+            return (0, next_dt[:10], inv_last)
+        return (1, "9999-99-99", inv_last)
+
+    merged_matters.sort(key=_tracker_sort_key)
+
     briefs_table_rows = []
     for it in merged_matters:
+        m = it.get("matter") or {}
         m_date = (it.get("meeting_date") or "")[:10]
-        is_upcoming = 1 if m_date >= today_str else 0
-        is_past = 1 if m_date < today_str else 0
+        last_dt = (m.get("last_action_date") or m_date)[:10]
+        next_dt = m.get("next_action_date") or (m_date if m_date >= today_str else None)
+        next_label = format_short_date(next_dt) if next_dt else "Not yet posted"
+        last_label = format_short_date(last_dt) if last_dt else "—"
+
+        archive_state = (m.get("archive_state") or "active").lower()
+        is_active = 1 if archive_state == "active" else 0
+        is_closed = 1 if archive_state in ("closed", "dormant") else 0
+        is_upcoming = 1 if next_dt else 0
+        is_past = 1 if not next_dt else 0
         is_tc = 1 if (it["is_test_case"] and it["has_brief"]) else 0
         if is_tc:
             stats["test_cases"] += 1
 
-        tc_pill = '<span class="tag-testcase">Test Case</span> ' if is_tc else ""
+        tc_pill = '<span class="tag-testcase">Test Case</span> ' if it["is_test_case"] else ""
         stake_sub = f'<div style="font-size: 13px; color: var(--ink-muted); margin-top: 3px;">{html.escape(it["stake"])}</div>' if it["stake"] else ""
         href = f"briefs/brief-{it['id']}.html" if it["id"] in exported_brief_ids else html.escape(it["url"])
-        status_cls = "status-badge ready" if it["status_label"] in ("Brief ready", "Hearing") else "status-badge"
+        lifecycle_display = m.get("lifecycle_status") or it["status_label"]
+        jur_display = "City of Olympia" if (it.get("jurisdiction") or "").lower() == "olympia" else "Thurston County"
+        stable_id_label = m.get("stable_id") or ""
+        id_badge = f' &bull; <code>{html.escape(stable_id_label)}</code>' if stable_id_label and not stable_id_label.startswith(("OLYMPIA-", "THURSTON-")) else ""
 
         briefs_table_rows.append(f"""
-        <tr data-upcoming="{is_upcoming}" data-past="{is_past}" data-testcase="{is_tc}">
+        <tr data-active="{is_active}" data-closed="{is_closed}" data-archive="{html.escape(archive_state)}" data-upcoming="{is_upcoming}" data-past="{is_past}" data-testcase="{1 if it['is_test_case'] else 0}">
             <td>
                 {tc_pill}<a href="{href}"><strong>{html.escape(it['display_title'])}</strong></a>
-                <div style="font-size: 12px; color: var(--ink-faint); margin-top: 2px;">Official: {html.escape(clean_agenda_title(it['title']))}</div>
+                <div style="font-size: 12px; color: var(--ink-faint); margin-top: 2px;">Official: {html.escape(clean_agenda_title(it['title']))}{id_badge}</div>
                 {stake_sub}
             </td>
-            <td>{html.escape(it['full_body_label'])}</td>
-            <td>{html.escape(format_short_date(m_date))}</td>
-            <td><span class="{status_cls}">{html.escape(it['status_label'])}</span></td>
+            <td>
+                <strong>{html.escape(jur_display)}</strong>
+                <div style="font-size: 12px; color: var(--ink-muted);">{html.escape(it['full_body_label'])}</div>
+            </td>
+            <td><span class="status-badge">{html.escape(lifecycle_display)}</span></td>
+            <td style="white-space: nowrap;">{html.escape(last_label)}</td>
+            <td style="white-space: nowrap;"><strong>{html.escape(next_label)}</strong></td>
         </tr>
         """)
         stats["matters"] += 1
 
     briefs_index_content = f"""
     <p style="font-size: 16px; color: var(--ink-muted); margin-bottom: 20px;">
-        Every major local ordinance, public hearing, and policy brief tracked by Loretta's Ledger, with its full timeline on one page.
+        Living legislative tracker for Olympia and Thurston County ordinances, code amendments, budgets, contracts, and land-use cases. Sorted by next scheduled action.
     </p>
 
-    <div style="display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 10px; margin-bottom: 12px;">
-        <h1 class="headline-title" style="margin: 0; border: none; padding: 0;">Policy Briefs</h1>
-        <div style="font-size: 13px; text-transform: uppercase; letter-spacing: 0.05em; display: flex; gap: 14px; align-items: center; flex-wrap: wrap;">
-            <label style="cursor: pointer;"><input type="radio" name="brief-filter" value="all" checked onchange="filterBriefs(this.value)"> <strong>All ({len(merged_matters)})</strong></label>
-            <label style="cursor: pointer;"><input type="radio" name="brief-filter" value="upcoming" onchange="filterBriefs(this.value)"> <strong>Upcoming</strong></label>
-            <label style="cursor: pointer;"><input type="radio" name="brief-filter" value="past" onchange="filterBriefs(this.value)"> <strong>Past</strong></label>
-            <label style="cursor: pointer;"><input type="radio" name="brief-filter" value="testcase" onchange="filterBriefs(this.value)"> <strong>Test cases</strong></label>
+    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 14px;">
+        <h1 class="headline-title" style="margin: 0; border: none; padding: 0;">Policy Briefs &amp; Matter Tracker</h1>
+        <div style="display: flex; gap: 14px; align-items: center; flex-wrap: wrap; font-size: 13px; text-transform: uppercase; letter-spacing: 0.05em;">
+            <label style="cursor: pointer;"><input type="radio" name="brief-filter" value="active" checked onchange="filterBriefs()"> <strong>Active</strong></label>
+            <label style="cursor: pointer;"><input type="radio" name="brief-filter" value="closed" onchange="filterBriefs()"> <strong>Closed</strong></label>
+            <label style="cursor: pointer;"><input type="radio" name="brief-filter" value="testcase" onchange="filterBriefs()"> <strong>Test cases</strong></label>
+            <input type="search" id="brief-search" placeholder="Search all matters..." oninput="filterBriefs()" style="font-family: var(--font-serif); font-size: 13px; padding: 4px 8px; border: 1px solid var(--rule-dark); background: var(--surface);">
         </div>
     </div>
 
@@ -1134,9 +1331,10 @@ def export_site_content(
         <thead>
             <tr>
                 <th>Matter</th>
-                <th style="width: 210px;">Body</th>
-                <th style="width: 130px;">Date</th>
-                <th style="width: 175px;">Status</th>
+                <th style="width: 170px;">Jurisdiction</th>
+                <th style="width: 240px;">Status</th>
+                <th style="width: 120px;">Last Action</th>
+                <th style="width: 130px;">Next Action</th>
             </tr>
         </thead>
         <tbody>
@@ -1145,23 +1343,29 @@ def export_site_content(
     </table>
 
     <script>
-        function filterBriefs(val) {{
+        function filterBriefs() {{
+            var sel = document.querySelector('input[name="brief-filter"]:checked');
+            var val = sel ? sel.value : 'active';
+            var q = (document.getElementById('brief-search').value || '').toLowerCase().trim();
             var rows = document.querySelectorAll('#briefs-table tbody tr');
             rows.forEach(function(r) {{
-                var isUp = r.getAttribute('data-upcoming') === '1';
-                var isPast = r.getAttribute('data-past') === '1';
+                var isAct = r.getAttribute('data-active') === '1';
+                var isCl = r.getAttribute('data-closed') === '1';
                 var isTc = r.getAttribute('data-testcase') === '1';
-                if (val === 'all') {{
-                    r.style.display = '';
-                }} else if (val === 'upcoming') {{
-                    r.style.display = isUp ? '' : 'none';
-                }} else if (val === 'past') {{
-                    r.style.display = isPast ? '' : 'none';
-                }} else if (val === 'testcase') {{
-                    r.style.display = isTc ? '' : 'none';
+                var textMatch = !q || r.textContent.toLowerCase().indexOf(q) !== -1;
+                var tabMatch = true;
+                if (!q) {{
+                    if (val === 'active') tabMatch = isAct;
+                    else if (val === 'closed') tabMatch = isCl;
+                    else if (val === 'testcase') tabMatch = isTc;
+                }} else {{
+                    if (val === 'closed') tabMatch = isCl;
+                    else if (val === 'testcase') tabMatch = isTc;
                 }}
+                r.style.display = (tabMatch && textMatch) ? '' : 'none';
             }});
         }}
+        filterBriefs();
     </script>
     """
 
@@ -1203,16 +1407,15 @@ def export_site_content(
             if r_key in seen_actor_keys:
                 continue
             seen_actor_keys.add(r_key)
-            canon_it = canonical_by_key.get(r_key)
-            target_id = canon_it["id"] if canon_it else r["item_id"]
-            target_disp = canon_it["display_title"] if canon_it else disp_t
-            target_date = canon_it["meeting_date"] if canon_it else r["meeting_date"]
-            body_nm = canon_it["full_body_label"] if canon_it else determine_exact_body_name(r_dict, r_dict.get("body_text") or "")
+            rel_brief_url = f"briefs/brief-{r['item_id']}.html"
+            target_disp = disp_t
+            target_date = r["meeting_date"]
+            body_nm = determine_exact_body_name(r_dict, r_dict.get("body_text") or "")
             actor_touch_rows.append(f"""
             <tr>
                 <td>{html.escape(format_short_date(target_date))}</td>
                 <td>{html.escape(body_nm)}</td>
-                <td><a href="../briefs/brief-{target_id}.html"><strong>{html.escape(target_disp)}</strong></a></td>
+                <td><a href="../{html.escape(rel_brief_url)}"><strong>{html.escape(target_disp)}</strong></a></td>
                 <td>{html.escape(r['mechanism'].replace('_', ' '))}</td>
                 <td><a href="{html.escape(r['evidence_url'] or r['item_url'])}" target="_blank" rel="noopener">Official Source Record &rarr;</a></td>
             </tr>
