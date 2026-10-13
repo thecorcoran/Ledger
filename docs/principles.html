@@ -4,6 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Principles — Loretta's Ledger</title>
+    <meta property="og:site_name" content="Loretta's Ledger">
+    <meta property="og:title" content="Principles — Loretta's Ledger">
+    <meta property="og:description" content="Independent public account of local decisions, upstream influences, and policy trajectories in Olympia and Thurston County.">
+    <meta property="og:type" content="website">
+    <meta name="description" content="Independent public account of local decisions, upstream influences, and policy trajectories in Olympia and Thurston County.">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="Principles — Loretta's Ledger">
+    <meta name="twitter:description" content="Independent public account of local decisions, upstream influences, and policy trajectories in Olympia and Thurston County.">
     <style>
         :root {
             --bg: #fcfaf5;
@@ -177,6 +185,49 @@
             letter-spacing: 0.04em;
             text-transform: uppercase;
             border: 1px solid var(--oxblood);
+            font-family: inherit;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+
+        .btn-secondary:hover {
+            background: var(--oxblood-tint);
+        }
+
+        button.btn-brief, button.btn-secondary {
+            font-family: inherit;
+            cursor: pointer;
+        }
+
+        .share-box {
+            background: #ffffff;
+            border: 1px solid var(--rule);
+            border-left: 4px solid var(--oxblood);
+        }
+
+        .share-actions {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .share-post-preview summary {
+            outline: none;
+            user-select: none;
+        }
+
+        .share-post-preview summary:hover {
+            color: var(--oxblood);
+        }
+
+        .share-bottom-box {
+            background: #fdfbf7;
+            border: 1px solid var(--rule);
+            border-left: 4px solid var(--oxblood);
+            padding: 16px 20px;
+            margin-top: 28px;
+            margin-bottom: 24px;
         }
 
         .attention-card {
@@ -366,6 +417,7 @@
         @media print {
             body { background: #fff; color: #000; font-size: 11pt; }
             header.broadsheet-masthead, footer.broadsheet-footer, nav.ledger-nav { display: none; }
+            .share-box, .share-bottom-box { display: none !important; }
             .container { max-width: 100%; padding: 0; }
             a { text-decoration: none; color: #000; }
             .memo-box { border: 1px solid #ccc; }
@@ -457,5 +509,64 @@
     <footer class="broadsheet-footer">
         Loretta's Ledger &bull; Documented Public Record for Thurston County and City of Olympia &bull; Strictly Factual &bull; <a href="glossary.html">Glossary</a> &bull; <a href="reading/">Further Reading</a>
     </footer>
+    <script>
+    function getBriefShareUrl(btn) {
+        if (btn && btn.getAttribute("data-url")) {
+            var u = btn.getAttribute("data-url");
+            if (window.location.protocol === "http:" || window.location.protocol === "https:") {
+                if (window.location.hostname !== "localhost" && window.location.hostname !== "127.0.0.1") {
+                    return window.location.href.split("#")[0].split("?")[0];
+                }
+            }
+            return u;
+        }
+        return window.location.href.split("#")[0].split("?")[0];
+    }
+
+    function copyBriefLink(btn) {
+        var url = getBriefShareUrl(btn);
+        navigator.clipboard.writeText(url).then(function() {
+            var old = btn.innerHTML;
+            btn.innerHTML = "✓ Copied Link!";
+            setTimeout(function() { btn.innerHTML = old; }, 2200);
+        }).catch(function() {
+            prompt("Copy brief link:", url);
+        });
+    }
+
+    function copyBriefPost(btn) {
+        var pre = document.getElementById("share-post-content");
+        var txt = pre ? pre.innerText : "";
+        if (!txt && btn && btn.getAttribute("data-url")) {
+            txt = getBriefShareUrl(btn);
+        }
+        navigator.clipboard.writeText(txt).then(function() {
+            var old = btn.innerHTML;
+            btn.innerHTML = "✓ Copied Post!";
+            setTimeout(function() { btn.innerHTML = old; }, 2200);
+        }).catch(function() {
+            prompt("Copy post text:", txt);
+        });
+    }
+
+    function nativeShareBrief(btn) {
+        if (navigator.share) {
+            var url = getBriefShareUrl(btn);
+            var title = document.title ? document.title.replace(" — Loretta's Ledger", "") : "Policy Brief";
+            navigator.share({
+                title: title,
+                text: title + " — Loretta's Ledger",
+                url: url
+            }).catch(function(e) {});
+        }
+    }
+
+    document.addEventListener("DOMContentLoaded", function() {
+        if (navigator.share) {
+            var nativeBtns = document.querySelectorAll(".btn-share-native");
+            nativeBtns.forEach(function(b) { b.style.display = "inline-block"; });
+        }
+    });
+    </script>
 </body>
 </html>

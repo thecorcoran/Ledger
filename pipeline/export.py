@@ -20,6 +20,7 @@ import json
 import logging
 import re
 import shutil
+import urllib.parse
 from datetime import datetime, timedelta
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
@@ -341,16 +342,33 @@ def re_links(text: str) -> str:
     return re.sub(r"\[(.*?)\]\((.*?)\)", _replace_link, text)
 
 
-def get_base_html_page(title: str, content: str, active_nav: str = "home", root_prefix: str = "") -> str:
+def get_base_html_page(
+    title: str,
+    content: str,
+    active_nav: str = "home",
+    root_prefix: str = "",
+    og_description: Optional[str] = None,
+    og_url: Optional[str] = None,
+) -> str:
     """Account-book and broadsheet layout template with unified 5-item nav:
     Home | Briefs | Who's in the Room | Principles | About
     """
+    desc = og_description or "Independent public account of local decisions, upstream influences, and policy trajectories in Olympia and Thurston County."
+    og_url_tag = f'\n    <meta property="og:url" content="{html.escape(og_url)}">' if og_url else ""
     return f"""<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{html.escape(title)} — Loretta's Ledger</title>
+    <meta property="og:site_name" content="Loretta's Ledger">
+    <meta property="og:title" content="{html.escape(title)} — Loretta's Ledger">
+    <meta property="og:description" content="{html.escape(desc)}">
+    <meta property="og:type" content="{'article' if active_nav in ('briefs', 'matters') else 'website'}">{og_url_tag}
+    <meta name="description" content="{html.escape(desc)}">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="{html.escape(title)} — Loretta's Ledger">
+    <meta name="twitter:description" content="{html.escape(desc)}">
     <style>
         :root {{
             --bg: #fcfaf5;
@@ -524,6 +542,49 @@ def get_base_html_page(title: str, content: str, active_nav: str = "home", root_
             letter-spacing: 0.04em;
             text-transform: uppercase;
             border: 1px solid var(--oxblood);
+            font-family: inherit;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }}
+
+        .btn-secondary:hover {{
+            background: var(--oxblood-tint);
+        }}
+
+        button.btn-brief, button.btn-secondary {{
+            font-family: inherit;
+            cursor: pointer;
+        }}
+
+        .share-box {{
+            background: #ffffff;
+            border: 1px solid var(--rule);
+            border-left: 4px solid var(--oxblood);
+        }}
+
+        .share-actions {{
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            align-items: center;
+        }}
+
+        .share-post-preview summary {{
+            outline: none;
+            user-select: none;
+        }}
+
+        .share-post-preview summary:hover {{
+            color: var(--oxblood);
+        }}
+
+        .share-bottom-box {{
+            background: #fdfbf7;
+            border: 1px solid var(--rule);
+            border-left: 4px solid var(--oxblood);
+            padding: 16px 20px;
+            margin-top: 28px;
+            margin-bottom: 24px;
         }}
 
         .attention-card {{
@@ -713,6 +774,7 @@ def get_base_html_page(title: str, content: str, active_nav: str = "home", root_
         @media print {{
             body {{ background: #fff; color: #000; font-size: 11pt; }}
             header.broadsheet-masthead, footer.broadsheet-footer, nav.ledger-nav {{ display: none; }}
+            .share-box, .share-bottom-box {{ display: none !important; }}
             .container {{ max-width: 100%; padding: 0; }}
             a {{ text-decoration: none; color: #000; }}
             .memo-box {{ border: 1px solid #ccc; }}
@@ -747,6 +809,65 @@ def get_base_html_page(title: str, content: str, active_nav: str = "home", root_
     <footer class="broadsheet-footer">
         Loretta's Ledger &bull; Documented Public Record for Thurston County and City of Olympia &bull; Strictly Factual &bull; <a href="{root_prefix}glossary.html">Glossary</a> &bull; <a href="{root_prefix}reading/">Further Reading</a>
     </footer>
+    <script>
+    function getBriefShareUrl(btn) {{
+        if (btn && btn.getAttribute("data-url")) {{
+            var u = btn.getAttribute("data-url");
+            if (window.location.protocol === "http:" || window.location.protocol === "https:") {{
+                if (window.location.hostname !== "localhost" && window.location.hostname !== "127.0.0.1") {{
+                    return window.location.href.split("#")[0].split("?")[0];
+                }}
+            }}
+            return u;
+        }}
+        return window.location.href.split("#")[0].split("?")[0];
+    }}
+
+    function copyBriefLink(btn) {{
+        var url = getBriefShareUrl(btn);
+        navigator.clipboard.writeText(url).then(function() {{
+            var old = btn.innerHTML;
+            btn.innerHTML = "✓ Copied Link!";
+            setTimeout(function() {{ btn.innerHTML = old; }}, 2200);
+        }}).catch(function() {{
+            prompt("Copy brief link:", url);
+        }});
+    }}
+
+    function copyBriefPost(btn) {{
+        var pre = document.getElementById("share-post-content");
+        var txt = pre ? pre.innerText : "";
+        if (!txt && btn && btn.getAttribute("data-url")) {{
+            txt = getBriefShareUrl(btn);
+        }}
+        navigator.clipboard.writeText(txt).then(function() {{
+            var old = btn.innerHTML;
+            btn.innerHTML = "✓ Copied Post!";
+            setTimeout(function() {{ btn.innerHTML = old; }}, 2200);
+        }}).catch(function() {{
+            prompt("Copy post text:", txt);
+        }});
+    }}
+
+    function nativeShareBrief(btn) {{
+        if (navigator.share) {{
+            var url = getBriefShareUrl(btn);
+            var title = document.title ? document.title.replace(" — Loretta's Ledger", "") : "Policy Brief";
+            navigator.share({{
+                title: title,
+                text: title + " — Loretta's Ledger",
+                url: url
+            }}).catch(function(e) {{}});
+        }}
+    }}
+
+    document.addEventListener("DOMContentLoaded", function() {{
+        if (navigator.share) {{
+            var nativeBtns = document.querySelectorAll(".btn-share-native");
+            nativeBtns.forEach(function(b) {{ b.style.display = "inline-block"; }});
+        }}
+    }});
+    </script>
 </body>
 </html>
 """
@@ -960,6 +1081,109 @@ def build_item_timeline_html(conn, item: Dict[str, Any], dedupe_key: str, matter
     """
 
 
+def build_brief_share_html(it: Dict[str, Any], canonical_url: str) -> Tuple[str, str]:
+    """Generates the top Share bar and bottom Community Share box for a brief page.
+
+    Provides:
+    - Quick Copy Link button with live visual feedback
+    - Copy Post Text button with pre-formatted social media / newsletter snippet
+    - Direct share to X (Twitter)
+    - Direct share to Facebook
+    - Pre-filled mailto: for neighbors / email lists
+    - Mobile native share sheet (navigator.share)
+    - Expandable preview of the pre-written social post
+    """
+    title = it.get("display_title") or "Policy Brief"
+    body_label = it.get("full_body_label") or "Local Government"
+    date_str = format_short_date(it.get("meeting_date") or "")
+    stake = it.get("stake") or ""
+
+    post_lines = [title]
+    if stake:
+        post_lines.append("")
+        post_lines.append(f"What's at stake: {stake}")
+    if date_str:
+        post_lines.append("")
+        post_lines.append(f"{body_label} • Meeting {date_str}")
+    post_lines.append("")
+    post_lines.append(f"Read the full policy brief on Loretta's Ledger:\n{canonical_url}")
+    social_post_text = "\n".join(post_lines).strip()
+
+    escaped_post_text = html.escape(social_post_text)
+    encoded_url = urllib.parse.quote(canonical_url, safe="")
+
+    x_tweet_text = urllib.parse.quote(f"{title}\n\nRead the documented brief on Loretta's Ledger:", safe="")
+    twitter_share_url = f"https://twitter.com/intent/tweet?text={x_tweet_text}&url={encoded_url}"
+    facebook_share_url = f"https://www.facebook.com/sharer/sharer.php?u={encoded_url}"
+
+    email_subject = urllib.parse.quote(f"Policy Brief: {title}", safe="")
+    email_body = urllib.parse.quote(f"{social_post_text}\n", safe="")
+    email_share_url = f"mailto:?subject={email_subject}&body={email_body}"
+
+    top_share_html = f"""
+    <div class="share-box memo-box" style="margin: 16px 0 24px 0; padding: 14px 18px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+            <div style="font-weight: 700; font-size: 13px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--oxblood);">
+                Share this Brief
+            </div>
+            <div class="share-actions" style="display: flex; gap: 8px; flex-wrap: wrap; align-items: center;">
+                <button type="button" class="btn-secondary btn-share-link" onclick="copyBriefLink(this)" data-url="{html.escape(canonical_url)}" style="cursor: pointer;">
+                    🔗 Copy Link
+                </button>
+                <button type="button" class="btn-secondary btn-share-post" onclick="copyBriefPost(this)" style="cursor: pointer;">
+                    📋 Copy Post Text
+                </button>
+                <a href="{twitter_share_url}" target="_blank" rel="noopener" class="btn-secondary" style="text-decoration: none;">
+                    Share on X
+                </a>
+                <a href="{facebook_share_url}" target="_blank" rel="noopener" class="btn-secondary" style="text-decoration: none;">
+                    Facebook
+                </a>
+                <a href="{email_share_url}" class="btn-secondary" style="text-decoration: none;">
+                    Email
+                </a>
+                <button type="button" class="btn-secondary btn-share-native" onclick="nativeShareBrief(this)" data-url="{html.escape(canonical_url)}" style="display: none; cursor: pointer;">
+                    Share...
+                </button>
+            </div>
+        </div>
+        <details class="share-post-preview" style="margin-top: 10px; font-size: 13px;">
+            <summary style="cursor: pointer; color: var(--ink-muted); font-size: 12px; text-transform: uppercase; letter-spacing: 0.04em;">
+                + View pre-written social post / newsletter blurb
+            </summary>
+            <div style="margin-top: 8px; background: #faf7f0; border: 1px solid var(--rule); padding: 10px 14px; border-radius: 2px;">
+                <pre id="share-post-content" style="margin: 0; white-space: pre-wrap; font-family: var(--font-serif); font-size: 13px; color: var(--ink); line-height: 1.45;">{escaped_post_text}</pre>
+            </div>
+        </details>
+    </div>
+    """
+
+    bottom_share_html = f"""
+    <div class="share-bottom-box memo-box" style="margin-top: 28px; margin-bottom: 24px; background: #fffcf9; border-left: 4px solid var(--oxblood);">
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 14px;">
+            <div>
+                <div class="ledger-meta" style="margin-bottom: 4px; color: var(--oxblood); font-weight: 700;">Community Share</div>
+                <h4 style="margin: 0 0 4px 0; font-size: 16px; color: var(--ink);">Share this brief with neighbors</h4>
+                <div style="font-size: 13px; color: var(--ink-muted);">Help residents stay informed before local votes and public comment deadlines.</div>
+            </div>
+            <div style="display: flex; gap: 8px; flex-wrap: wrap; align-items: center;">
+                <button type="button" class="btn-brief" onclick="copyBriefLink(this)" data-url="{html.escape(canonical_url)}" style="cursor: pointer; font-size: 12px;">
+                    🔗 Copy Link
+                </button>
+                <button type="button" class="btn-secondary" onclick="copyBriefPost(this)" style="cursor: pointer; font-size: 12px;">
+                    📋 Copy Post Text
+                </button>
+                <a href="{email_share_url}" class="btn-secondary" style="text-decoration: none; font-size: 12px;">
+                    Email
+                </a>
+            </div>
+        </div>
+    </div>
+    """
+
+    return top_share_html, bottom_share_html
+
+
 def export_site_content(
     conn,
     out_dirs: Optional[List[Path]] = None,
@@ -1096,14 +1320,31 @@ def export_site_content(
 
         if md_source:
             html_body = markdown_to_html(md_source)
+            canonical_url = f"https://thecorcoran.github.io/Ledger/briefs/brief-{it['id']}.html"
+            top_share_html, bottom_share_html = build_brief_share_html(it, canonical_url)
+
+            # Insert top_share_html right below the docket metadata header and before the first section
+            if '<h2 class="section-label">' in html_body:
+                parts = html_body.split('<h2 class="section-label">', 1)
+                html_body_with_share = parts[0] + top_share_html + '<h2 class="section-label">' + parts[1]
+            else:
+                html_body_with_share = top_share_html + html_body
+
             timeline_html = build_item_timeline_html(conn, it, it["dedupe_key"], matter=m_rec)
             back_bar = f"""
             <div class="ledger-meta" style="margin-bottom: 12px;">
                 <a href="../briefs.html">&larr; All Briefs</a> &bull; {html.escape(it['full_body_label'])} &bull; {html.escape(format_short_date(it.get('meeting_date') or ''))}
             </div>
             """
-            full_brief_html = back_bar + html_body + timeline_html
-            page_html = get_base_html_page(it["display_title"], full_brief_html, active_nav="briefs", root_prefix="../")
+            full_brief_html = back_bar + html_body_with_share + bottom_share_html + timeline_html
+            page_html = get_base_html_page(
+                it["display_title"],
+                full_brief_html,
+                active_nav="briefs",
+                root_prefix="../",
+                og_description=it.get("stake") or f"Documented policy brief for {it['full_body_label']} on {format_short_date(it.get('meeting_date') or '')}.",
+                og_url=canonical_url,
+            )
 
             # Write canonical brief-<item_id>.html plus aliases for all merged item IDs and matter_id so permanent links never break
             slugs_to_write = {f"brief-{it['id']}.html"}

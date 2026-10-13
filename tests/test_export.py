@@ -129,6 +129,48 @@ class TestExport(unittest.TestCase):
         self.assertIn('<a href="../index.html">Loretta\'s Ledger</a>', html)
         self.assertIn('<a href="../briefs.html" class="active">Briefs</a>', html)
 
+    def test_brief_share_and_social_post_features(self):
+        draft_item(self.conn, self.item_id)
+        draft_rows = self.conn.execute("SELECT * FROM drafts WHERE item_id = ?", (self.item_id,)).fetchall()
+        brief_draft_id = [d["id"] for d in draft_rows if d["kind"] == "brief"][0]
+        approve_draft(self.conn, brief_draft_id)
+
+        export_site_content(self.conn, out_dirs=[Path(self.temp_dir.name)])
+        brief_file = Path(self.temp_dir.name) / "briefs" / f"brief-{self.item_id}.html"
+        self.assertTrue(brief_file.exists())
+
+        with open(brief_file, "r", encoding="utf-8") as f:
+            html = f.read()
+
+        # 1. Open Graph and Twitter Card metadata for social link previews
+        self.assertIn('<meta property="og:site_name" content="Loretta\'s Ledger">', html)
+        self.assertIn('property="og:title"', html)
+        self.assertIn('property="og:description"', html)
+        self.assertIn(f'property="og:url" content="https://thecorcoran.github.io/Ledger/briefs/brief-{self.item_id}.html"', html)
+        self.assertIn('<meta name="twitter:card" content="summary">', html)
+
+        # 2. Top Share & Social Post memo box
+        self.assertIn("Share this Brief", html)
+        self.assertIn("🔗 Copy Link", html)
+        self.assertIn("📋 Copy Post Text", html)
+        self.assertIn("Share on X", html)
+        self.assertIn("Facebook", html)
+        self.assertIn("Email", html)
+        self.assertIn("twitter.com/intent/tweet", html)
+        self.assertIn("facebook.com/sharer/sharer.php", html)
+
+        # 3. Pre-formatted social post block
+        self.assertIn('id="share-post-content"', html)
+        self.assertIn("Read the full policy brief on Loretta&#x27;s Ledger", html)
+
+        # 4. Bottom Community Share box
+        self.assertIn("Share this brief with neighbors", html)
+
+        # 5. Interactive clipboard copy script
+        self.assertIn("function copyBriefLink(", html)
+        self.assertIn("function copyBriefPost(", html)
+        self.assertIn("function getBriefShareUrl(", html)
+
     def test_dashboard_handler_routes(self):
         import io
         from pipeline.view import DashboardHandler

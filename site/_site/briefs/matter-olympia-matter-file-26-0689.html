@@ -4,6 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>City Council reviews 2027 budget Update — Loretta's Ledger</title>
+    <meta property="og:site_name" content="Loretta's Ledger">
+    <meta property="og:title" content="City Council reviews 2027 budget Update — Loretta's Ledger">
+    <meta property="og:description" content="Documented policy brief for Olympia City Council on Sep 15, 2026.">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://thecorcoran.github.io/Ledger/briefs/brief-olympia-event-7127-item-102054.html">
+    <meta name="description" content="Documented policy brief for Olympia City Council on Sep 15, 2026.">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="City Council reviews 2027 budget Update — Loretta's Ledger">
+    <meta name="twitter:description" content="Documented policy brief for Olympia City Council on Sep 15, 2026.">
     <style>
         :root {
             --bg: #fcfaf5;
@@ -177,6 +186,49 @@
             letter-spacing: 0.04em;
             text-transform: uppercase;
             border: 1px solid var(--oxblood);
+            font-family: inherit;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+
+        .btn-secondary:hover {
+            background: var(--oxblood-tint);
+        }
+
+        button.btn-brief, button.btn-secondary {
+            font-family: inherit;
+            cursor: pointer;
+        }
+
+        .share-box {
+            background: #ffffff;
+            border: 1px solid var(--rule);
+            border-left: 4px solid var(--oxblood);
+        }
+
+        .share-actions {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .share-post-preview summary {
+            outline: none;
+            user-select: none;
+        }
+
+        .share-post-preview summary:hover {
+            color: var(--oxblood);
+        }
+
+        .share-bottom-box {
+            background: #fdfbf7;
+            border: 1px solid var(--rule);
+            border-left: 4px solid var(--oxblood);
+            padding: 16px 20px;
+            margin-top: 28px;
+            margin-bottom: 24px;
         }
 
         .attention-card {
@@ -366,6 +418,7 @@
         @media print {
             body { background: #fff; color: #000; font-size: 11pt; }
             header.broadsheet-masthead, footer.broadsheet-footer, nav.ledger-nav { display: none; }
+            .share-box, .share-bottom-box { display: none !important; }
             .container { max-width: 100%; padding: 0; }
             a { text-decoration: none; color: #000; }
             .memo-box { border: 1px solid #ccc; }
@@ -404,7 +457,48 @@
 <p><strong>Updated Sep 15, 2026</strong> • <strong>Matter ID:</strong> <strong>File 26-0689</strong></p>
 <p><strong>Official Title</strong>: 6.D 2027 Operating Budget Update | <strong>Docket</strong>: Olympia • 2026-09-15 | <strong>Stage</strong>: Advisory Review</p>
 <div class="spacer"></div>
-<h2 class="section-label">Why This Matters Now</h2>
+
+    <div class="share-box memo-box" style="margin: 16px 0 24px 0; padding: 14px 18px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+            <div style="font-weight: 700; font-size: 13px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--oxblood);">
+                Share this Brief
+            </div>
+            <div class="share-actions" style="display: flex; gap: 8px; flex-wrap: wrap; align-items: center;">
+                <button type="button" class="btn-secondary btn-share-link" onclick="copyBriefLink(this)" data-url="https://thecorcoran.github.io/Ledger/briefs/brief-olympia-event-7127-item-102054.html" style="cursor: pointer;">
+                    🔗 Copy Link
+                </button>
+                <button type="button" class="btn-secondary btn-share-post" onclick="copyBriefPost(this)" style="cursor: pointer;">
+                    📋 Copy Post Text
+                </button>
+                <a href="https://twitter.com/intent/tweet?text=City%20Council%20reviews%202027%20budget%20Update%0A%0ARead%20the%20documented%20brief%20on%20Loretta%27s%20Ledger%3A&url=https%3A%2F%2Fthecorcoran.github.io%2FLedger%2Fbriefs%2Fbrief-olympia-event-7127-item-102054.html" target="_blank" rel="noopener" class="btn-secondary" style="text-decoration: none;">
+                    Share on X
+                </a>
+                <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fthecorcoran.github.io%2FLedger%2Fbriefs%2Fbrief-olympia-event-7127-item-102054.html" target="_blank" rel="noopener" class="btn-secondary" style="text-decoration: none;">
+                    Facebook
+                </a>
+                <a href="mailto:?subject=Policy%20Brief%3A%20City%20Council%20reviews%202027%20budget%20Update&body=City%20Council%20reviews%202027%20budget%20Update%0A%0AOlympia%20City%20Council%20%E2%80%A2%20Meeting%20Sep%2015%2C%202026%0A%0ARead%20the%20full%20policy%20brief%20on%20Loretta%27s%20Ledger%3A%0Ahttps%3A%2F%2Fthecorcoran.github.io%2FLedger%2Fbriefs%2Fbrief-olympia-event-7127-item-102054.html%0A" class="btn-secondary" style="text-decoration: none;">
+                    Email
+                </a>
+                <button type="button" class="btn-secondary btn-share-native" onclick="nativeShareBrief(this)" data-url="https://thecorcoran.github.io/Ledger/briefs/brief-olympia-event-7127-item-102054.html" style="display: none; cursor: pointer;">
+                    Share...
+                </button>
+            </div>
+        </div>
+        <details class="share-post-preview" style="margin-top: 10px; font-size: 13px;">
+            <summary style="cursor: pointer; color: var(--ink-muted); font-size: 12px; text-transform: uppercase; letter-spacing: 0.04em;">
+                + View pre-written social post / newsletter blurb
+            </summary>
+            <div style="margin-top: 8px; background: #faf7f0; border: 1px solid var(--rule); padding: 10px 14px; border-radius: 2px;">
+                <pre id="share-post-content" style="margin: 0; white-space: pre-wrap; font-family: var(--font-serif); font-size: 13px; color: var(--ink); line-height: 1.45;">City Council reviews 2027 budget Update
+
+Olympia City Council • Meeting Sep 15, 2026
+
+Read the full policy brief on Loretta&#x27;s Ledger:
+https://thecorcoran.github.io/Ledger/briefs/brief-olympia-event-7127-item-102054.html</pre>
+            </div>
+        </details>
+    </div>
+    <h2 class="section-label">Why This Matters Now</h2>
 <p>The City of Olympia City Council is deliberating on municipal legislation. This decision directly affects private real property owners across Thurston County whose annual tax statements would include the adjusted rates. The proposed ordinance (a local law passed by the council or county) establishes an updated multi-year rate assessment (a fee charged on property tax statements for a dedicated service) schedule for the conservation district under RCW 89.08.400. The Board of County Commissioners holds full local statutory discretion to approve, reduce, or reject the assessment schedule requested by the conservation district supervisors.</p>
 <div class="spacer"></div>
 <h2 class="section-label">What Changes</h2>
@@ -472,6 +566,27 @@
 <h2 class="section-label">Questions</h2>
 <p>1. What is the exact dollar amount increase per parcel proposed under the ordinance, and how does it vary between working agricultural land and residential lots?</p>
 <p>2. What percentage of the newly generated revenue will fund direct, on-the-ground technical services for landowners versus district administrative overhead?</p>
+    <div class="share-bottom-box memo-box" style="margin-top: 28px; margin-bottom: 24px; background: #fffcf9; border-left: 4px solid var(--oxblood);">
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 14px;">
+            <div>
+                <div class="ledger-meta" style="margin-bottom: 4px; color: var(--oxblood); font-weight: 700;">Community Share</div>
+                <h4 style="margin: 0 0 4px 0; font-size: 16px; color: var(--ink);">Share this brief with neighbors</h4>
+                <div style="font-size: 13px; color: var(--ink-muted);">Help residents stay informed before local votes and public comment deadlines.</div>
+            </div>
+            <div style="display: flex; gap: 8px; flex-wrap: wrap; align-items: center;">
+                <button type="button" class="btn-brief" onclick="copyBriefLink(this)" data-url="https://thecorcoran.github.io/Ledger/briefs/brief-olympia-event-7127-item-102054.html" style="cursor: pointer; font-size: 12px;">
+                    🔗 Copy Link
+                </button>
+                <button type="button" class="btn-secondary" onclick="copyBriefPost(this)" style="cursor: pointer; font-size: 12px;">
+                    📋 Copy Post Text
+                </button>
+                <a href="mailto:?subject=Policy%20Brief%3A%20City%20Council%20reviews%202027%20budget%20Update&body=City%20Council%20reviews%202027%20budget%20Update%0A%0AOlympia%20City%20Council%20%E2%80%A2%20Meeting%20Sep%2015%2C%202026%0A%0ARead%20the%20full%20policy%20brief%20on%20Loretta%27s%20Ledger%3A%0Ahttps%3A%2F%2Fthecorcoran.github.io%2FLedger%2Fbriefs%2Fbrief-olympia-event-7127-item-102054.html%0A" class="btn-secondary" style="text-decoration: none; font-size: 12px;">
+                    Email
+                </a>
+            </div>
+        </div>
+    </div>
+    
     
                 <div class="memo-box" style="margin-top: 24px;">
                     <div class="ledger-meta" style="margin-bottom: 6px;">Living Brief Revision Record</div>
@@ -550,5 +665,64 @@
     <footer class="broadsheet-footer">
         Loretta's Ledger &bull; Documented Public Record for Thurston County and City of Olympia &bull; Strictly Factual &bull; <a href="../glossary.html">Glossary</a> &bull; <a href="../reading/">Further Reading</a>
     </footer>
+    <script>
+    function getBriefShareUrl(btn) {
+        if (btn && btn.getAttribute("data-url")) {
+            var u = btn.getAttribute("data-url");
+            if (window.location.protocol === "http:" || window.location.protocol === "https:") {
+                if (window.location.hostname !== "localhost" && window.location.hostname !== "127.0.0.1") {
+                    return window.location.href.split("#")[0].split("?")[0];
+                }
+            }
+            return u;
+        }
+        return window.location.href.split("#")[0].split("?")[0];
+    }
+
+    function copyBriefLink(btn) {
+        var url = getBriefShareUrl(btn);
+        navigator.clipboard.writeText(url).then(function() {
+            var old = btn.innerHTML;
+            btn.innerHTML = "✓ Copied Link!";
+            setTimeout(function() { btn.innerHTML = old; }, 2200);
+        }).catch(function() {
+            prompt("Copy brief link:", url);
+        });
+    }
+
+    function copyBriefPost(btn) {
+        var pre = document.getElementById("share-post-content");
+        var txt = pre ? pre.innerText : "";
+        if (!txt && btn && btn.getAttribute("data-url")) {
+            txt = getBriefShareUrl(btn);
+        }
+        navigator.clipboard.writeText(txt).then(function() {
+            var old = btn.innerHTML;
+            btn.innerHTML = "✓ Copied Post!";
+            setTimeout(function() { btn.innerHTML = old; }, 2200);
+        }).catch(function() {
+            prompt("Copy post text:", txt);
+        });
+    }
+
+    function nativeShareBrief(btn) {
+        if (navigator.share) {
+            var url = getBriefShareUrl(btn);
+            var title = document.title ? document.title.replace(" — Loretta's Ledger", "") : "Policy Brief";
+            navigator.share({
+                title: title,
+                text: title + " — Loretta's Ledger",
+                url: url
+            }).catch(function(e) {});
+        }
+    }
+
+    document.addEventListener("DOMContentLoaded", function() {
+        if (navigator.share) {
+            var nativeBtns = document.querySelectorAll(".btn-share-native");
+            nativeBtns.forEach(function(b) { b.style.display = "inline-block"; });
+        }
+    });
+    </script>
 </body>
 </html>
