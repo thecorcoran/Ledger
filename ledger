@@ -13,6 +13,8 @@ case "$1" in
     python3 -m pipeline.view --serve
     ;;
   push|publish)
+    echo "Exporting approved briefs and static site..."
+    python3 -c "from pipeline.db import get_db_connection; from pipeline.export import export_site_content; c=get_db_connection(); stats=export_site_content(c); print(f'Exported {stats.get(\"briefs\", 0)} briefs across {stats.get(\"matters\", 0)} matters.'); c.close()"
     echo "Staging approved briefs and public site updates..."
     git add docs/ site/_site/ config/ pipeline/ tests/ README.md reading.md
     git add -u ':!data/**'
@@ -28,7 +30,10 @@ case "$1" in
     fi
     echo "Pushing to public website repository..."
     git push origin main
-    python3 -c "from pipeline.db import get_db_connection; from pipeline.matters import mark_all_approved_as_published; c=get_db_connection(); mark_all_approved_as_published(c); c.close()"
+    python3 -c "from pipeline.db import get_db_connection; from pipeline.matters import mark_all_approved_as_published; c=get_db_connection(); n=mark_all_approved_as_published(c); print(f'Marked {n} matter briefs as published in local database.'); c.close()"
+    echo "Published successfully to https://thecorcoran.github.io/Ledger/"
+    echo "Note: GitHub Pages takes 1-2 minutes to deploy. Do a hard refresh (Ctrl+Shift+R or Cmd+Shift+R) to clear local browser cache."
+    echo "All published briefs can be viewed directly at https://thecorcoran.github.io/Ledger/briefs.html"
     ;;
   test)
     python3 -m unittest discover tests
