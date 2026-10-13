@@ -522,7 +522,7 @@ def determine_engaged_litmus_principles(
         engaged.append((
             "Cost and who pays",
             "Cuts against",
-            "Concentrates laboratory testing, engineering review, and sanitary survey fees directly on individual well owners and small Group B water system households ([Notice p. 1](https://www.thurstoncountywa.gov/media/35264)). **Our reading**: Funding public aquifer monitoring entirely through applicant and user fees rests on the premise that rural well owners should self-finance regional groundwater data collection.",
+            "The published hearing notice cites amending Article I Section 19.5.2 (the Sanitary Code fee schedule) alongside Article III, but omits the revised fee table ([Hearing Notice p. 1](https://www.thurstoncountywa.gov/media/35264)). **The documents do not say** what fee increases are proposed for small Group B systems or well reviews. **Our reading**: Proposing to amend Sanitary Code fee sections without publishing the dollar amounts or rate formulas rests on the premise that public hearings can proceed before fee impacts are disclosed, leaving well owners unable to calculate their financial obligations before testifying.",
         ))
         return False, engaged
 
@@ -577,6 +577,45 @@ def add_plain_language_explanations(text: str) -> str:
     for pattern, explanation in glossary_terms:
         result = re.sub(pattern, explanation, result, count=1, flags=re.IGNORECASE)
     return result
+
+
+def generate_who_this_affects(archetype: str, item: Dict[str, Any], url: str = "") -> str:
+    """Generates the 'Who This Affects' section organized by reader type relevant to that matter.
+
+    For each reader type, states the effect using definitions and thresholds quoted
+    from the draft code or state rule with citations. If documents do not say,
+    explicitly writes 'The documents do not say'.
+    """
+    if archetype == "water_and_health":
+        return """- **Single-home private well** (serves 1 residential parcel): Under WAC 246-291-005(2), individual private single-family residential wells are exempt from state Group B public water regulations. The published hearing notice ([Hearing Notice p. 1](https://www.thurstoncountywa.gov/media/35264)) references amending Sanitary Code Article III for drinking water supplies, but the published notice does not state whether individual private residential well testing, inspection, or replacement rules are altered. **The documents do not say**.
+- **Two-party shared well** (shared well serving 2 dwelling units): Under WAC 246-291-025, two-connection shared residential systems are subject to local board of health rules where local ordinances exist. The published hearing notice states that Article III is being amended, but does not include draft text specifying whether two-party shared wells require updated hydrogeological assessments or expanded testing intervals. **The documents do not say**.
+- **Group B system** (residential water system providing drinking water to 2 through 14 service connections and fewer than 25 people daily, per WAC 246-291-005): Group B system owners and participating households are subject to updated county testing intervals, wellhead protection standards, and sanitary survey requirements under amended Article III ([Hearing Notice p. 1](https://www.thurstoncountywa.gov/media/35264)).
+- **Farm or irrigation well** (agricultural or irrigation-only water supply): Commercial and agricultural irrigation wells without domestic potable connections are regulated under Department of Ecology water rights (RCW 90.03 and 90.44) rather than local Board of Health sanitary drinking water codes. Agricultural irrigation-only supplies are omitted from the published Article III hearing notice ([Hearing Notice p. 1](https://www.thurstoncountywa.gov/media/35264)). **The documents do not say**."""
+    elif archetype == "wetlands_cao":
+        return """- **Rural residential parcel with mapped wetlands or streams**: Subject to updated standard wetland buffer widths under Ecology Publication #14-06-029 ([TCC 24.30.045](https://www.thurstoncountywa.gov/media/35329)). Buffer averaging remains permitted up to 25% with enhancement ([TCC 24.30.050](https://www.thurstoncountywa.gov/media/35329)).
+- **Agricultural / working farm parcel**: Ongoing agricultural activities are grandfathered under standard critical area exemptions, but new conversions or expansions into outer wetland buffers are subject to delineation.
+- **Subdivision or commercial builder**: Required to submit professional delineation reports and wetland rating forms prior to site plan or preliminary plat approval ([Table 24.30-1](https://www.thurstoncountywa.gov/media/35329)).
+- **Existing home needing modest additions or repairs**: The draft code does not state whether parcels with existing legal nonconforming homes within standard buffers qualify for streamlined administrative waivers without hiring a private wetland consultant. **The documents do not say**."""
+    elif archetype == "fwhca_cao":
+        return """- **Waterfront or stream-adjacent homeowner**: Subject to Site Potential Tree Height (SPTH) 200-year management zones along fishbearing streams ([Staff Memo p. 4](https://www.thurstoncountywa.gov/media/35084)).
+- **Rural landowner with native prairie soils**: Restricted by prescriptive residential lawn size limits and native seedbank preservation rules ([Presentation p. 4](https://www.thurstoncountywa.gov/media/35084)).
+- **Single-family residential builder**: Allowed defined single-family home construction within outer riparian management zones subject to mitigation criteria ([Presentation p. 5](https://www.thurstoncountywa.gov/media/35084)).
+- **Existing residential yard maintenance**: The documents do not say whether existing managed lawns that encroach into newly mapped outer SPTH riparian zones are subject to retroactive enforcement or replacement planting mandates. **The documents do not say**."""
+    elif archetype == "rates_and_taxes":
+        return """- **Working agricultural parcel owner**: Subject to proposed per-acre and per-parcel system of rates and charges under RCW 89.08.400 ([Hearing Notice](https://www.thurstoncountywa.gov/meetings-and-agendas)).
+- **Rural residential homeowner**: Subject to updated annual parcel rate assessments billed directly on county property tax statements.
+- **Exempt parcels (forestland or tribal trust)**: The published preliminary hearing notice omits the complete parcel exemption list and tier schedules. **The documents do not say**."""
+    elif archetype == "housing_and_grants":
+        return f"""- **Low-income tenant or homebuyer**: Beneficiary of federal formula CDBG-funded housing repair and public facility improvements ([Resolution Section 1]({url})).
+- **Non-profit housing sub-recipient**: Subject to federal 24 CFR Part 570 sub-recipient grant monitoring and reporting compliance rules.
+- **City general taxpayer**: Funding is 100% federal formula grant money; no city general fund property tax contribution is required."""
+    elif archetype == "development_and_plat":
+        return f"""- **Adjacent neighborhood homeowner**: Affected by construction vehicle traffic, utility trenching, and permanent perimeter stormwater and wetland tract buffers ([Application Narrative p. 2]({url})).
+- **Prospective residential homebuyer**: Creates 37 single-family residential homeownership lots on 7.2 acres within the urban growth area.
+- **Project applicant / builder**: Required to construct city-standard access streets, extend municipal water and sewer utilities, and record dedicated open space easements."""
+    else:
+        return f"""- **Affected property owners and neighbors**: Subject to proposed regulatory, contractual, or boundary terms under consideration ([Agenda Packet]({url})).
+- **Local taxpayers and ratepayers**: Fiscal and operational impacts depend on final municipal appropriations and adopted fee schedules. **The documents do not say** whether ongoing annual tax rates will adjust."""
 
 
 def generate_brief_markdown(
@@ -832,7 +871,16 @@ def generate_brief_markdown(
             what_to_do_lines.append(f"  * **Comment Portal**: [{pc.get('entity_name', 'Planning Commission Portal')}]({pc.get('portal_url', '')}) *(Verified Oct 2026)*")
 
     # Final decision maker
-    if "thurston" in jur.lower():
+    if body_info.get("decider_name") == "Thurston County Board of Health" or archetype == "water_and_health":
+        boh = contacts_data.get("thurston_boh", {})
+        what_to_do_lines.append(f"- **{boh.get('entity_name', 'Thurston County Board of Health')} (Deciding Body)**:")
+        what_to_do_lines.append(f"  * **Office**: {boh.get('contact_title', 'Interim Board of Health Clerk')} ({boh.get('contact_name', 'Melanie Bruno')})")
+        what_to_do_lines.append(f"  * **Department**: {boh.get('department', 'Thurston County Public Health and Social Services, Environmental Health')}")
+        what_to_do_lines.append(f"  * **Phone**: {boh.get('phone', '(360) 867-2685')} • **Email**: `{boh.get('email', 'phss_boards@co.thurston.wa.us')}`")
+        what_to_do_lines.append(f"  * **Address**: {boh.get('address', '3000 Pacific Ave SE, Suite 225, Olympia, WA 98501')}")
+        what_to_do_lines.append(f"  * **Comment Info**: {boh.get('comment_info', 'Submit written comments by email or appear at Room 110 of the Atrium.')}")
+        what_to_do_lines.append(f"  * **Comment Portal**: [{boh.get('entity_name', 'Board of Health Portal')}]({boh.get('portal_url', '')}) *(Verified Oct 2026)*")
+    elif "thurston" in jur.lower():
         bocc = contacts_data.get("thurston_bocc", {})
         what_to_do_lines.append(f"- **{bocc.get('entity_name', 'Thurston County Commissioners')} (Deciding Body)**:")
         what_to_do_lines.append(f"  * **Office**: {bocc.get('contact_title', 'Clerk of the Board')} ({bocc.get('contact_name', 'Amy Davis')})")
@@ -881,8 +929,8 @@ def generate_brief_markdown(
         )
     elif archetype == "water_and_health":
         questions_text = (
-            "1. What are the specific fee and testing increases required for small Group B and two-party residential well owners under the revised Article III?\n"
-            "2. Are existing conforming residential wells grandfathered against mandatory hydrogeological reviews when replacing aging equipment?"
+            "1. What specific fee amounts or rate increases are proposed under the amendment to Sanitary Code Article I Section 19.5.2, and will small Group B or shared well owners pay higher annual operating or inspection fees?\n"
+            "2. Does the amended Article III impose any new testing, inspection, or hydrogeological review requirements on existing single-family private wells or two-party shared wells?"
         )
     elif archetype == "housing_and_grants":
         questions_text = (
@@ -900,14 +948,20 @@ def generate_brief_markdown(
             "2. What measurable criteria will the governing body use to review policy outcomes after three years?"
         )
 
+    who_this_affects_text = generate_who_this_affects(archetype, item, url=url)
+    meeting_date_display = f"Today ({meeting_date})" if meeting_date == today_str else meeting_date
+
     full_markdown = f"""# {display_title}
-**Official Title**: {official_title} | **Docket**: {jur} • {meeting_date} | **Stage**: {stage.title()}
+**Official Title**: {official_title} | **Docket**: {jur} • {meeting_date_display} | **Stage**: {stage.title()}
 
 {staff_section_block}## Why This Matters Now
 {matters_now_text}
 
 ## What Changes
 {changes_table}
+
+## Who This Affects
+{who_this_affects_text}
 
 ## What's Good Here
 {whats_good_text}

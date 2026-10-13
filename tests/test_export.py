@@ -149,26 +149,15 @@ class TestExport(unittest.TestCase):
         self.assertIn(f'property="og:url" content="https://thecorcoran.github.io/Ledger/briefs/brief-{self.item_id}.html"', html)
         self.assertIn('<meta name="twitter:card" content="summary">', html)
 
-        # 2. Top Share & Social Post memo box
-        self.assertIn("Share this Brief", html)
-        self.assertIn("🔗 Copy Link", html)
-        self.assertIn("📋 Copy Post Text", html)
-        self.assertIn("Share on X", html)
-        self.assertIn("Facebook", html)
+        # 2. Simplified one-line Share · Ask a question bar
+        self.assertIn("Share &middot; Ask a question", html)
+        self.assertIn("Copy link", html)
         self.assertIn("Email", html)
-        self.assertIn("twitter.com/intent/tweet", html)
-        self.assertIn("facebook.com/sharer/sharer.php", html)
+        self.assertIn("Ask a question", html)
+        self.assertIn("mailto:thecorcoran@gmail.com?subject=Question%3A", html)
 
-        # 3. Pre-formatted social post block
-        self.assertIn('id="share-post-content"', html)
-        self.assertIn("Read the full policy brief on Loretta&#x27;s Ledger", html)
-
-        # 4. Bottom Community Share box
-        self.assertIn("Share this brief with neighbors", html)
-
-        # 5. Interactive clipboard copy script
+        # 3. Interactive clipboard copy script
         self.assertIn("function copyBriefLink(", html)
-        self.assertIn("function copyBriefPost(", html)
         self.assertIn("function getBriefShareUrl(", html)
 
     def test_dashboard_handler_routes(self):

@@ -6,6 +6,21 @@
 # 3. Flagged in the review dashboard if last_verified is older than 90 days.
 
 contacts:
+  thurston_boh:
+    jurisdiction: thurston
+    entity_name: "Thurston County Board of Health"
+    role: "County Public Health Governing Body"
+    contact_name: "Melanie Bruno"
+    contact_title: "Interim Board of Health Clerk"
+    department: "Thurston County Public Health and Social Services, Environmental Health"
+    phone: "(360) 867-2685"
+    email: "phss_boards@co.thurston.wa.us"
+    portal_url: "https://www.thurstoncountywa.gov/departments/public-health-and-social-services/board-health"
+    comment_info: "Submit written comments by email to phss_boards@co.thurston.wa.us or appear at Room 110 of the Atrium, 3000 Pacific Ave. SE, Olympia, WA."
+    address: "3000 Pacific Ave SE, Suite 225, Olympia, WA 98501"
+    source_url: "https://www.thurstoncountywa.gov/media/35264"
+    last_verified: "2026-10-13"
+
   thurston_bocc:
     jurisdiction: thurston
     entity_name: "Thurston County Board of County Commissioners"

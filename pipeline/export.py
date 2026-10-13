@@ -1082,106 +1082,100 @@ def build_item_timeline_html(conn, item: Dict[str, Any], dedupe_key: str, matter
 
 
 def build_brief_share_html(it: Dict[str, Any], canonical_url: str) -> Tuple[str, str]:
-    """Generates the top Share bar and bottom Community Share box for a brief page.
+    """Generates the simplified one-line 'Share · Ask a question' bar for a brief page.
 
     Provides:
     - Quick Copy Link button with live visual feedback
-    - Copy Post Text button with pre-formatted social media / newsletter snippet
-    - Direct share to X (Twitter)
-    - Direct share to Facebook
-    - Pre-filled mailto: for neighbors / email lists
-    - Mobile native share sheet (navigator.share)
-    - Expandable preview of the pre-written social post
+    - Email this brief link with subject 'Loretta's Ledger: [plain title]' and body containing only URL and 1-sentence summary
+    - Ask a question link with pre-filled email to thecorcoran@gmail.com with subject 'Question: [brief title]'
     """
     title = it.get("display_title") or "Policy Brief"
-    body_label = it.get("full_body_label") or "Local Government"
-    date_str = format_short_date(it.get("meeting_date") or "")
-    stake = it.get("stake") or ""
+    stake = it.get("stake") or "Documented policy brief from Loretta's Ledger."
+    encoded_url = canonical_url
 
-    post_lines = [title]
-    if stake:
-        post_lines.append("")
-        post_lines.append(f"What's at stake: {stake}")
-    if date_str:
-        post_lines.append("")
-        post_lines.append(f"{body_label} • Meeting {date_str}")
-    post_lines.append("")
-    post_lines.append(f"Read the full policy brief on Loretta's Ledger:\n{canonical_url}")
-    social_post_text = "\n".join(post_lines).strip()
-
-    escaped_post_text = html.escape(social_post_text)
-    encoded_url = urllib.parse.quote(canonical_url, safe="")
-
-    x_tweet_text = urllib.parse.quote(f"{title}\n\nRead the documented brief on Loretta's Ledger:", safe="")
-    twitter_share_url = f"https://twitter.com/intent/tweet?text={x_tweet_text}&url={encoded_url}"
-    facebook_share_url = f"https://www.facebook.com/sharer/sharer.php?u={encoded_url}"
-
-    email_subject = urllib.parse.quote(f"Policy Brief: {title}", safe="")
-    email_body = urllib.parse.quote(f"{social_post_text}\n", safe="")
+    email_subject = urllib.parse.quote(f"Loretta's Ledger: {title}", safe="")
+    email_body = urllib.parse.quote(f"{encoded_url}\n\n{stake}\n", safe="")
     email_share_url = f"mailto:?subject={email_subject}&body={email_body}"
 
-    top_share_html = f"""
-    <div class="share-box memo-box" style="margin: 16px 0 24px 0; padding: 14px 18px;">
-        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
-            <div style="font-weight: 700; font-size: 13px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--oxblood);">
-                Share this Brief
-            </div>
-            <div class="share-actions" style="display: flex; gap: 8px; flex-wrap: wrap; align-items: center;">
-                <button type="button" class="btn-secondary btn-share-link" onclick="copyBriefLink(this)" data-url="{html.escape(canonical_url)}" style="cursor: pointer;">
-                    🔗 Copy Link
-                </button>
-                <button type="button" class="btn-secondary btn-share-post" onclick="copyBriefPost(this)" style="cursor: pointer;">
-                    📋 Copy Post Text
-                </button>
-                <a href="{twitter_share_url}" target="_blank" rel="noopener" class="btn-secondary" style="text-decoration: none;">
-                    Share on X
-                </a>
-                <a href="{facebook_share_url}" target="_blank" rel="noopener" class="btn-secondary" style="text-decoration: none;">
-                    Facebook
-                </a>
-                <a href="{email_share_url}" class="btn-secondary" style="text-decoration: none;">
-                    Email
-                </a>
-                <button type="button" class="btn-secondary btn-share-native" onclick="nativeShareBrief(this)" data-url="{html.escape(canonical_url)}" style="display: none; cursor: pointer;">
-                    Share...
-                </button>
-            </div>
-        </div>
-        <details class="share-post-preview" style="margin-top: 10px; font-size: 13px;">
-            <summary style="cursor: pointer; color: var(--ink-muted); font-size: 12px; text-transform: uppercase; letter-spacing: 0.04em;">
-                + View pre-written social post / newsletter blurb
-            </summary>
-            <div style="margin-top: 8px; background: #faf7f0; border: 1px solid var(--rule); padding: 10px 14px; border-radius: 2px;">
-                <pre id="share-post-content" style="margin: 0; white-space: pre-wrap; font-family: var(--font-serif); font-size: 13px; color: var(--ink); line-height: 1.45;">{escaped_post_text}</pre>
-            </div>
-        </details>
+    question_subject = urllib.parse.quote(f"Question: {title}", safe="")
+    question_url = f"mailto:thecorcoran@gmail.com?subject={question_subject}"
+
+    one_line_html = f"""
+    <div class="brief-share-bar" style="margin: 12px 0 20px 0; padding: 8px 14px; background: #faf7f0; border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule); font-size: 14px; display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap;">
+        <span style="font-weight: 700; color: var(--oxblood); text-transform: uppercase; letter-spacing: 0.05em; font-size: 12px;">Share &middot; Ask a question</span>
+        <span style="color: var(--rule-dark);">&mdash;</span>
+        <button type="button" class="btn-share-link" onclick="copyBriefLink(this)" data-url="{html.escape(canonical_url)}" style="background: none; border: none; padding: 0; color: var(--oxblood); text-decoration: underline; cursor: pointer; font-family: inherit; font-size: 14px;">Copy link</button>
+        <span style="color: var(--ink-faint);">&bull;</span>
+        <a href="{email_share_url}" style="color: var(--oxblood); text-decoration: underline;">Email</a>
+        <span style="color: var(--ink-faint);">&bull;</span>
+        <a href="{question_url}" style="color: var(--oxblood); text-decoration: underline;">Ask a question</a>
     </div>
     """
 
-    bottom_share_html = f"""
-    <div class="share-bottom-box memo-box" style="margin-top: 28px; margin-bottom: 24px; background: #fffcf9; border-left: 4px solid var(--oxblood);">
-        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 14px;">
-            <div>
-                <div class="ledger-meta" style="margin-bottom: 4px; color: var(--oxblood); font-weight: 700;">Community Share</div>
-                <h4 style="margin: 0 0 4px 0; font-size: 16px; color: var(--ink);">Share this brief with neighbors</h4>
-                <div style="font-size: 13px; color: var(--ink-muted);">Help residents stay informed before local votes and public comment deadlines.</div>
-            </div>
-            <div style="display: flex; gap: 8px; flex-wrap: wrap; align-items: center;">
-                <button type="button" class="btn-brief" onclick="copyBriefLink(this)" data-url="{html.escape(canonical_url)}" style="cursor: pointer; font-size: 12px;">
-                    🔗 Copy Link
-                </button>
-                <button type="button" class="btn-secondary" onclick="copyBriefPost(this)" style="cursor: pointer; font-size: 12px;">
-                    📋 Copy Post Text
-                </button>
-                <a href="{email_share_url}" class="btn-secondary" style="text-decoration: none; font-size: 12px;">
-                    Email
-                </a>
-            </div>
+    return one_line_html, ""
+
+
+def load_matter_qa_html(matter_id: Optional[str], item_id: str, brief_title: str) -> str:
+    """Loads and renders the 'Questions We've Been Asked' section for a brief.
+
+    Stored per matter in data/qa/<matter>.md (or data/qa/<item_id>.md).
+    Shown ONLY after marked approved (frontmatter 'approved: true').
+    Hidden when empty or unapproved.
+    Adds a 'Have a question about this item?' link to thecorcoran@gmail.com.
+    """
+    qa_dir = ROOT_DIR / "data" / "qa"
+    if not qa_dir.exists():
+        return ""
+
+    candidates = []
+    if matter_id:
+        candidates.append(qa_dir / f"{matter_id}.md")
+    candidates.append(qa_dir / f"{item_id}.md")
+    candidates.append(qa_dir / f"brief-{item_id}.md")
+
+    qa_file = None
+    for c in candidates:
+        if c.exists():
+            qa_file = c
+            break
+
+    if not qa_file:
+        return ""
+
+    try:
+        content = qa_file.read_text(encoding="utf-8").strip()
+    except Exception:
+        return ""
+
+    is_approved = False
+    qa_body = content
+    if content.startswith("---"):
+        parts = content.split("---", 2)
+        if len(parts) >= 3:
+            fm_text = parts[1]
+            qa_body = parts[2].strip()
+            for line in fm_text.splitlines():
+                k, sep, v = line.partition(":")
+                if sep and k.strip().lower() == "approved" and v.strip().lower() in ("true", "yes", "1"):
+                    is_approved = True
+                    break
+
+    if not is_approved or not qa_body:
+        return ""
+
+    qa_html = markdown_to_html(qa_body)
+    q_subject = urllib.parse.quote(f"Question: {brief_title}", safe="")
+    ask_link = f'<p style="margin-top: 14px;"><a href="mailto:thecorcoran@gmail.com?subject={q_subject}" style="color: var(--oxblood); text-decoration: underline; font-weight: 600;">Have a question about this item? &rarr;</a></p>'
+
+    return f"""
+    <div class="qa-section memo-box" style="margin-top: 28px; margin-bottom: 24px; padding: 18px 22px; background: #fffcf8; border-left: 4px solid var(--oxblood);">
+        <h2 class="section-label" style="margin-top: 0; font-size: 18px; color: var(--oxblood);">Questions We&#x27;ve Been Asked</h2>
+        <div class="qa-content" style="font-size: 15px; line-height: 1.6;">
+            {qa_html}
         </div>
+        {ask_link}
     </div>
     """
-
-    return top_share_html, bottom_share_html
 
 
 def export_site_content(
@@ -1336,7 +1330,8 @@ def export_site_content(
                 <a href="../briefs.html">&larr; All Briefs</a> &bull; {html.escape(it['full_body_label'])} &bull; {html.escape(format_short_date(it.get('meeting_date') or ''))}
             </div>
             """
-            full_brief_html = back_bar + html_body_with_share + bottom_share_html + timeline_html
+            qa_section_html = load_matter_qa_html(m_rec["id"] if m_rec else None, it["id"], it["display_title"])
+            full_brief_html = back_bar + html_body_with_share + bottom_share_html + qa_section_html + timeline_html
             page_html = get_base_html_page(
                 it["display_title"],
                 full_brief_html,
@@ -1553,6 +1548,36 @@ def export_site_content(
         """)
         stats["matters"] += 1
 
+    search_index_entries = []
+    for it in merged_matters:
+        m = it.get("matter") or {}
+        mb_rec = mb_by_matter_id.get(m.get("id", ""))
+        raw_md = (
+            (mb_rec["markdown"] if mb_rec and mb_rec.get("markdown") else None)
+            or it.get("brief_markdown")
+            or it.get("any_brief_markdown")
+            or ""
+        )
+        clean_text = re.sub(r"[#*_`|\[\]\(\)\-]", " ", raw_md)
+        clean_text = " ".join(clean_text.split())
+        search_index_entries.append({
+            "id": it["id"],
+            "title": it["display_title"],
+            "official": clean_agenda_title(it.get("title", "")),
+            "jur": "City of Olympia" if (it.get("jurisdiction") or "").lower() == "olympia" else "Thurston County",
+            "body": it.get("full_body_label", ""),
+            "date": format_short_date(it.get("meeting_date") or ""),
+            "stake": it.get("stake") or "",
+            "href": f"briefs/brief-{it['id']}.html" if it["id"] in exported_brief_ids else it.get("url", "#"),
+            "has_brief": 1 if it["id"] in exported_brief_ids else 0,
+            "text": clean_text[:4000],
+        })
+    search_index_json = json.dumps(search_index_entries)
+
+    for out_base in target_dirs:
+        with open(out_base / "search-index.json", "w", encoding="utf-8") as f:
+            f.write(search_index_json)
+
     briefs_index_content = f"""
     <p style="font-size: 16px; color: var(--ink-muted); margin-bottom: 20px;">
         Living legislative tracker for Olympia and Thurston County ordinances, code amendments, budgets, contracts, and land-use cases. Sorted by next scheduled action.
@@ -1564,8 +1589,17 @@ def export_site_content(
             <label style="cursor: pointer;"><input type="radio" name="brief-filter" value="active" checked onchange="filterBriefs()"> <strong>Active</strong></label>
             <label style="cursor: pointer;"><input type="radio" name="brief-filter" value="closed" onchange="filterBriefs()"> <strong>Closed</strong></label>
             <label style="cursor: pointer;"><input type="radio" name="brief-filter" value="testcase" onchange="filterBriefs()"> <strong>Test cases</strong></label>
-            <input type="search" id="brief-search" placeholder="Search all matters..." oninput="filterBriefs()" style="font-family: var(--font-serif); font-size: 13px; padding: 4px 8px; border: 1px solid var(--rule-dark); background: var(--surface);">
+            <input type="search" id="brief-search" placeholder="Search brief text, topics, codes..." oninput="filterBriefs()" style="font-family: var(--font-serif); font-size: 13px; padding: 6px 10px; border: 1px solid var(--rule-dark); background: var(--surface); width: 280px;">
         </div>
+    </div>
+
+    <!-- Client-side Static Search Results Container -->
+    <div id="brief-search-results" style="display: none; margin-bottom: 22px; padding: 14px 18px; background: #fffcf8; border: 1px solid var(--rule); border-left: 4px solid var(--oxblood);">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+            <div id="brief-search-count" style="font-weight: 700; font-size: 13px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--oxblood);"></div>
+            <button type="button" onclick="document.getElementById('brief-search').value=''; filterBriefs();" style="background: none; border: none; font-size: 12px; text-decoration: underline; color: var(--ink-muted); cursor: pointer;">Clear search</button>
+        </div>
+        <div id="brief-search-list" style="display: flex; flex-direction: column; gap: 10px;"></div>
     </div>
 
     <table class="ledger-table" id="briefs-table">
@@ -1584,11 +1618,75 @@ def export_site_content(
     </table>
 
     <script>
+        var searchIndexData = {search_index_json};
+
+        function escapeRegExp(string) {{
+            return string.replace(/[.*+?^${{}}()|[\\]\\\\]/g, '\\\\$&');
+        }}
+
         function filterBriefs() {{
             var sel = document.querySelector('input[name="brief-filter"]:checked');
             var val = sel ? sel.value : 'active';
-            var q = (document.getElementById('brief-search').value || '').toLowerCase().trim();
+            var rawQ = document.getElementById('brief-search').value || '';
+            var q = rawQ.toLowerCase().trim();
             var rows = document.querySelectorAll('#briefs-table tbody tr');
+
+            var resultsBox = document.getElementById('brief-search-results');
+            var resultsCount = document.getElementById('brief-search-count');
+            var resultsList = document.getElementById('brief-search-list');
+
+            if (q.length >= 2) {{
+                var matches = [];
+                var terms = q.split(/\\s+/);
+                searchIndexData.forEach(function(item) {{
+                    var corpus = (item.title + ' ' + item.official + ' ' + item.body + ' ' + item.stake + ' ' + item.text).toLowerCase();
+                    var allMatch = terms.every(function(t) {{ return corpus.indexOf(t) !== -1; }});
+                    if (allMatch) {{
+                        matches.push(item);
+                    }}
+                }});
+
+                resultsBox.style.display = 'block';
+                var mWord = matches.length === 1 ? 'brief' : 'briefs';
+                resultsCount.textContent = matches.length + ' ' + mWord + ' matching "' + rawQ.trim() + '" across brief text';
+
+                var htmlItems = [];
+                matches.slice(0, 5).forEach(function(m) {{
+                    var snippet = '';
+                    var idx = m.text.toLowerCase().indexOf(terms[0]);
+                    if (idx !== -1) {{
+                        var start = Math.max(0, idx - 60);
+                        var end = Math.min(m.text.length, idx + 140);
+                        var rawSnippet = (start > 0 ? '… ' : '') + m.text.substring(start, end).trim() + (end < m.text.length ? ' …' : '');
+                        terms.forEach(function(t) {{
+                            var regex = new RegExp('(' + escapeRegExp(t) + ')', 'gi');
+                            rawSnippet = rawSnippet.replace(regex, '<mark style="background:#fef08a; padding:1px 3px; font-weight:600;">$1</mark>');
+                        }});
+                        snippet = '<div style="font-size: 13px; color: var(--ink-muted); margin-top: 4px; line-height: 1.45;">' + rawSnippet + '</div>';
+                    }} else if (m.stake) {{
+                        snippet = '<div style="font-size: 13px; color: var(--ink-muted); margin-top: 4px;">' + m.stake + '</div>';
+                    }}
+
+                    var action = m.has_brief
+                        ? '<a href="' + m.href + '" class="btn-brief" style="font-size: 11px; padding: 4px 10px;">Read brief &rarr;</a>'
+                        : '<a href="' + m.href + '" target="_blank" rel="noopener" style="font-size: 12px;">Official record &rarr;</a>';
+
+                    htmlItems.push(
+                        '<div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; padding-bottom: 8px; border-bottom: 1px dotted var(--rule);">' +
+                        '  <div>' +
+                        '    <div class="ledger-meta">' + m.jur + ' &bull; ' + m.body + ' &bull; ' + m.date + '</div>' +
+                        '    <div style="font-size: 15px;"><a href="' + m.href + '"><strong>' + m.title + '</strong></a></div>' +
+                        snippet +
+                        '  </div>' +
+                        '  <div style="flex-shrink: 0; padding-top: 4px;">' + action + '</div>' +
+                        '</div>'
+                    );
+                }});
+                resultsList.innerHTML = htmlItems.join('') || '<div style="font-size: 13px; color: var(--ink-muted);">No text matches found in briefs.</div>';
+            }} else {{
+                resultsBox.style.display = 'none';
+            }}
+
             rows.forEach(function(r) {{
                 var isAct = r.getAttribute('data-active') === '1';
                 var isCl = r.getAttribute('data-closed') === '1';

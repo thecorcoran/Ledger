@@ -234,6 +234,7 @@ CREATE TABLE IF NOT EXISTS matter_briefs (
     matter_id TEXT PRIMARY KEY,
     item_id TEXT,
     markdown TEXT NOT NULL,
+    prior_markdown TEXT,
     updated_date TEXT NOT NULL,
     changelog_json TEXT NOT NULL DEFAULT '[]',
     reviewed INTEGER NOT NULL DEFAULT 0 CHECK (reviewed IN (0, 1)),
@@ -252,6 +253,12 @@ def _ensure_migrations(conn: sqlite3.Connection) -> None:
     existing_tables = {
         r[0] for r in cursor.execute("SELECT name FROM sqlite_master WHERE type='table'").fetchall()
     }
+
+    if "matter_briefs" in existing_tables:
+        cursor.execute("PRAGMA table_info(matter_briefs)")
+        mb_cols = {row[1] for row in cursor.fetchall()}
+        if "prior_markdown" not in mb_cols:
+            cursor.execute("ALTER TABLE matter_briefs ADD COLUMN prior_markdown TEXT")
 
     if "items" in existing_tables:
         cursor.execute("PRAGMA table_info(items)")

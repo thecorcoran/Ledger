@@ -17,6 +17,7 @@ Models each policy matter as a living legislative bill-tracker record:
 import hashlib
 import html
 import json
+import difflib
 import logging
 import re
 import sqlite3
@@ -1088,7 +1089,14 @@ def link_matters(conn: sqlite3.Connection, today_str: str = DEFAULT_TODAY_STR) -
             (matter_id,),
         ).fetchone()
         draft_row = cursor.execute(
-            f"SELECT id, markdown, reviewed, reviewed_at FROM drafts WHERE item_id IN ({placeholders}) AND kind = 'brief' ORDER BY reviewed DESC, id DESC LIMIT 1",
+            f"""
+            SELECT d.id, d.markdown, d.reviewed, d.reviewed_at
+            FROM drafts d
+            JOIN items i ON d.item_id = i.id
+            WHERE d.item_id IN ({placeholders}) AND d.kind = 'brief'
+            ORDER BY d.reviewed DESC, i.meeting_date DESC, d.id DESC
+            LIMIT 1
+            """,
             item_ids,
         ).fetchone()
 
@@ -1119,6 +1127,8 @@ def link_matters(conn: sqlite3.Connection, today_str: str = DEFAULT_TODAY_STR) -
             )
 
         if woke_up or (prev_matter is not None and (new_events_count > 0 or new_versions_count > 0)):
+            needs_review = 1
+        elif prev_matter is not None and prev_matter.get("needs_review") == 1:
             needs_review = 1
         elif was_approved:
             needs_review = 0
@@ -1300,8 +1310,9 @@ def _sync_living_brief_for_matter(
         f"""
         SELECT d.id, d.item_id, d.markdown, d.reviewed, d.reviewed_at
         FROM drafts d
+        JOIN items i ON d.item_id = i.id
         WHERE d.item_id IN ({placeholders}) AND d.kind = 'brief'
-        ORDER BY d.reviewed DESC, d.id DESC
+        ORDER BY d.reviewed DESC, i.meeting_date DESC, d.id DESC
         LIMIT 1
         """,
         item_ids,
@@ -1334,10 +1345,10 @@ def _sync_living_brief_for_matter(
                 "summary": ev["outcome_text"],
             })
 
-    if draft_row:
-        base_md = draft_row["markdown"]
-    elif existing_mb:
+    if existing_mb:
         base_md = existing_mb["markdown"]
+    elif draft_row:
+        base_md = draft_row["markdown"]
     else:
         from pipeline.analyze import generate_brief_markdown
         base_md = generate_brief_markdown(dict(latest_item), [], "", today_str=today_str)
@@ -1365,15 +1376,22 @@ def _sync_living_brief_for_matter(
     approved_hash = md_hash if is_reviewed == 1 else (existing_mb["approved_hash"] if existing_mb else None)
     published_hash = existing_mb["published_hash"] if existing_mb else None
 
+    prior_md = (
+        existing_mb["prior_markdown"]
+        if (existing_mb and "prior_markdown" in existing_mb.keys() and existing_mb["prior_markdown"])
+        else (existing_mb["markdown"] if (existing_mb and existing_mb["markdown"].strip() != final_md.strip()) else None)
+    )
+
     cursor.execute(
         """
         INSERT INTO matter_briefs (
-            matter_id, item_id, markdown, updated_date, changelog_json,
+            matter_id, item_id, markdown, prior_markdown, updated_date, changelog_json,
             reviewed, reviewed_at, approved_hash, published_hash
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         ON CONFLICT(matter_id) DO UPDATE SET
             item_id=excluded.item_id,
             markdown=excluded.markdown,
+            prior_markdown=COALESCE(excluded.prior_markdown, matter_briefs.prior_markdown),
             updated_date=excluded.updated_date,
             changelog_json=excluded.changelog_json,
             reviewed=excluded.reviewed,
@@ -1385,6 +1403,7 @@ def _sync_living_brief_for_matter(
             matter_id,
             canonical_item_id,
             final_md,
+            prior_md,
             updated_date,
             json.dumps(changelog),
             is_reviewed,
@@ -1689,6 +1708,260 @@ def mark_all_approved_as_published(conn: sqlite3.Connection) -> int:
     count = cursor.rowcount
     conn.commit()
     return count
+
+
+def detect_markdown_conflicts(old_md: str, new_md: str) -> List[str]:
+    """Detects substantive differences between earlier brief text and newly generated brief text,
+    ignoring expected template additions (like 'Who This Affects', date stamps, and blank lines).
+    Returns a list of diff lines, or empty list if no conflicts.
+    """
+    if not old_md or not new_md:
+        return []
+
+    lines_old = [l.strip() for l in old_md.splitlines() if l.strip() and not l.strip().startswith("**Updated ")]
+    lines_new = [l.strip() for l in new_md.splitlines() if l.strip() and not l.strip().startswith("**Updated ")]
+
+    # Filter out Who This Affects section from new lines for comparison
+    lines_new_without_who = []
+    skip_who = False
+    for l in lines_new:
+        if l == "## Who This Affects":
+            skip_who = True
+            continue
+        if skip_who and l.startswith("## "):
+            skip_who = False
+        if not skip_who:
+            lines_new_without_who.append(l)
+
+    # Filter out Who This Affects section from old lines as well (if present)
+    lines_old_without_who = []
+    skip_who_old = False
+    for l in lines_old:
+        if l == "## Who This Affects":
+            skip_who_old = True
+            continue
+        if skip_who_old and l.startswith("## "):
+            skip_who_old = False
+        if not skip_who_old:
+            lines_old_without_who.append(l)
+
+    # Normalize "Today (YYYY-MM-DD)" to "YYYY-MM-DD" for comparison
+    norm_old = [re.sub(r"Today \(([0-9]{4}-[0-9]{2}-[0-9]{2})\)", r"\1", l) for l in lines_old_without_who]
+    norm_new = [re.sub(r"Today \(([0-9]{4}-[0-9]{2}-[0-9]{2})\)", r"\1", l) for l in lines_new_without_who]
+
+    diff = list(difflib.unified_diff(norm_old, norm_new, lineterm=""))
+    conflicts = []
+    for d in diff:
+        if d.startswith("---") or d.startswith("+++") or d.startswith("@@"):
+            continue
+        if d.startswith("-") or d.startswith("+"):
+            conflicts.append(d)
+    return conflicts
+
+
+def regenerate_active_matters(
+    conn: sqlite3.Connection,
+    today_str: str = DEFAULT_TODAY_STR,
+) -> Dict[str, Any]:
+    """Regenerates all active matters with the new brief template (including 'Who this affects' after 'What Changes').
+    Leaves Closed and Dormant matters alone.
+    Places each regenerated brief in the review queue as 'Update to review' (needs_review = 1, reviewed = 0).
+    Preserves earlier hand edits in matter_briefs.prior_markdown so they are shown alongside the new text.
+    Does NOT publish or push anything.
+    """
+    from pipeline.analyze import get_item_lineage, format_lineage_display, generate_brief_markdown
+    from pipeline.export import export_site_content
+
+    cursor = conn.cursor()
+    all_matters = cursor.execute("SELECT * FROM matters ORDER BY last_action_date DESC, id ASC").fetchall()
+
+    regenerated = []
+    conflicted = []
+    skipped_closed = []
+
+    for m in all_matters:
+        mid = m["id"]
+        stable_id = m["stable_id"] or mid
+        archive_state = m["archive_state"] or "active"
+
+        # Explicitly skip Closed and Dormant matters
+        if archive_state in ("closed", "dormant"):
+            skipped_closed.append({
+                "matter_id": mid,
+                "stable_id": stable_id,
+                "title": m["plain_title"] or m["title"],
+                "archive_state": archive_state,
+            })
+            continue
+
+        existing_mb = cursor.execute("SELECT * FROM matter_briefs WHERE matter_id = ?", (mid,)).fetchone()
+
+        # Find linked items
+        linked_items = cursor.execute(
+            """
+            SELECT i.* FROM items i
+            JOIN matter_events me ON i.id = me.item_id
+            WHERE me.matter_id = ? AND me.confidence = 'confirmed'
+            ORDER BY i.meeting_date ASC, i.id ASC
+            """,
+            (mid,),
+        ).fetchall()
+
+        if not linked_items and existing_mb and existing_mb["item_id"]:
+            it = cursor.execute("SELECT * FROM items WHERE id = ?", (existing_mb["item_id"],)).fetchone()
+            if it:
+                linked_items = [it]
+
+        if not linked_items:
+            any_items = cursor.execute(
+                """
+                SELECT i.* FROM items i
+                JOIN matter_events me ON i.id = me.item_id
+                WHERE me.matter_id = ?
+                ORDER BY i.meeting_date ASC, i.id ASC
+                """,
+                (mid,),
+            ).fetchall()
+            if any_items:
+                linked_items = any_items
+
+        if not linked_items:
+            continue
+
+        sorted_linked = sorted(linked_items, key=lambda x: (x["meeting_date"] or "", x["id"]))
+        canonical_item = sorted_linked[-1]
+
+        # Upstream refs
+        refs = cursor.execute(
+            """
+            SELECT r.*, a.name as actor_name, a.upstream_type, a.home_url
+            FROM upstream_refs r
+            JOIN upstream_actors a ON r.actor_id = a.id
+            WHERE r.item_id = ?
+            """,
+            (canonical_item["id"],),
+        ).fetchall()
+        refs_list = [dict(r) for r in refs]
+
+        # Lineage
+        lineage = get_item_lineage(conn, canonical_item["id"])
+        lineage_str = format_lineage_display(lineage) if lineage else ""
+
+        # Generate new brief markdown with new template
+        new_brief_raw = generate_brief_markdown(dict(canonical_item), refs_list, lineage_str, today_str=today_str)
+
+        # Inject or update visible "Updated [date]" line below H1
+        updated_date = m["last_action_date"] or today_str[:10]
+        updated_human = format_human_date(updated_date)
+        updated_line = f"**Updated {updated_human}** • **Matter ID:** **{stable_id}**"
+
+        lines = new_brief_raw.splitlines()
+        cleaned_lines = [ln for ln in lines if not ln.strip().startswith("**Updated ")]
+        if cleaned_lines and cleaned_lines[0].startswith("# "):
+            cleaned_lines.insert(1, "")
+            cleaned_lines.insert(2, updated_line)
+        else:
+            cleaned_lines.insert(0, updated_line)
+        final_md = "\n".join(cleaned_lines)
+
+        old_md = existing_mb["markdown"] if existing_mb else ""
+        prior_md_to_preserve = ""
+        if existing_mb:
+            if "prior_markdown" in existing_mb.keys() and existing_mb["prior_markdown"]:
+                prior_md_to_preserve = existing_mb["prior_markdown"]
+            elif existing_mb["markdown"]:
+                prior_md_to_preserve = existing_mb["markdown"]
+
+        # Conflict analysis
+        conflicts = detect_markdown_conflicts(old_md, final_md)
+        if conflicts:
+            conflicted.append({
+                "matter_id": mid,
+                "stable_id": stable_id,
+                "title": m["plain_title"] or m["official_title"] or m["title"],
+                "diff_lines": len(conflicts),
+                "diff_sample": conflicts[:8],
+            })
+
+        # Save to matter_briefs with reviewed = 0, needs_review = 1, prior_markdown preserved
+        changelog = existing_mb["changelog_json"] if existing_mb else "[]"
+        published_hash = existing_mb["published_hash"] if existing_mb else None
+
+        cursor.execute(
+            """
+            INSERT INTO matter_briefs (
+                matter_id, item_id, markdown, prior_markdown, updated_date, changelog_json,
+                reviewed, reviewed_at, approved_hash, published_hash
+            ) VALUES (?, ?, ?, ?, ?, ?, 0, NULL, NULL, ?)
+            ON CONFLICT(matter_id) DO UPDATE SET
+                item_id = excluded.item_id,
+                markdown = excluded.markdown,
+                prior_markdown = excluded.prior_markdown,
+                updated_date = excluded.updated_date,
+                reviewed = 0,
+                reviewed_at = NULL,
+                approved_hash = NULL
+            """,
+            (
+                mid,
+                canonical_item["id"],
+                final_md,
+                prior_md_to_preserve if prior_md_to_preserve != final_md else None,
+                updated_date,
+                changelog,
+                published_hash,
+            ),
+        )
+
+        cursor.execute(
+            """
+            UPDATE matters
+            SET needs_review = 1,
+                whats_new_summary = "Template updated with 'Who this affects' section and simplified reader interactions; pending review.",
+                updated_at = datetime('now')
+            WHERE id = ?
+            """,
+            (mid,),
+        )
+
+        # Also update draft rows for all linked items to reviewed = 0
+        item_ids = [it["id"] for it in linked_items]
+        if item_ids:
+            ph = ",".join("?" * len(item_ids))
+            cursor.execute(
+                f"UPDATE drafts SET reviewed = 0, reviewed_at = NULL WHERE item_id IN ({ph}) AND kind = 'brief'",
+                item_ids,
+            )
+        cursor.execute(
+            """
+            UPDATE drafts
+            SET markdown = ?, reviewed = 0, reviewed_at = NULL
+            WHERE item_id = ? AND kind = 'brief'
+            """,
+            (final_md, canonical_item["id"]),
+        )
+
+        regenerated.append({
+            "matter_id": mid,
+            "stable_id": stable_id,
+            "title": m["plain_title"] or m["official_title"] or m["title"],
+            "jurisdiction": m["jurisdiction"],
+            "has_prior_edits": bool(prior_md_to_preserve and prior_md_to_preserve != final_md),
+        })
+
+    conn.commit()
+
+    # Re-export static content locally (does NOT push or publish)
+    export_site_content(conn, today_str=today_str)
+
+    return {
+        "regenerated_count": len(regenerated),
+        "regenerated_matters": regenerated,
+        "conflicts_count": len(conflicted),
+        "conflicts": conflicted,
+        "skipped_closed_count": len(skipped_closed),
+        "skipped_closed": skipped_closed,
+    }
 
 
 if __name__ == "__main__":

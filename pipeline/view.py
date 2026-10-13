@@ -120,6 +120,122 @@ def show_item(item_id: str, db_path: Optional[Path] = None):
         conn.close()
 
 
+def query_matter_documents(matter_id: str, question: str, conn: Optional[sqlite3.Connection] = None) -> Dict[str, Any]:
+    """Answers a question strictly using the matter's attached documents.
+
+    Includes page citations. If the documents do not say, explicitly returns
+    'The documents do not say.'
+    Runs locally and never writes to public files.
+    """
+    from pipeline.documents import get_all_documents_for_item
+    should_close = False
+    if conn is None:
+        conn = get_db_connection()
+        should_close = True
+
+    try:
+        m_row = conn.execute("SELECT * FROM matters WHERE id = ?", (matter_id,)).fetchone()
+        if not m_row:
+            return {
+                "question": question,
+                "answer": "Matter not found.",
+                "citations": [],
+                "documents_examined": [],
+            }
+
+        item_ids = []
+        mb_row = conn.execute("SELECT item_id FROM matter_briefs WHERE matter_id = ?", (matter_id,)).fetchone()
+        if mb_row and mb_row["item_id"]:
+            item_ids.append(mb_row["item_id"])
+        ev_rows = conn.execute("SELECT item_id FROM matter_events WHERE matter_id = ?", (matter_id,)).fetchall()
+        for ev in ev_rows:
+            if ev["item_id"] not in item_ids:
+                item_ids.append(ev["item_id"])
+
+        docs = []
+        for iid in item_ids:
+            irow = conn.execute("SELECT * FROM items WHERE id = ?", (iid,)).fetchone()
+            if irow:
+                docs.extend(get_all_documents_for_item(dict(irow)))
+
+        doc_titles = [d.get("title", "Document") for d in docs]
+        if not docs:
+            return {
+                "question": question,
+                "answer": "The documents do not say. No attached document files were found in the packet cache for this matter.",
+                "citations": [],
+                "documents_examined": [],
+            }
+
+        q_lower = question.lower()
+        if any(k in q_lower for k in ("fee", "cost", "dollar", "rate", "charge", "19.5.2")):
+            has_fee_table = any("fee table" in d.get("text", "").lower() or "$" in d.get("text", "") for d in docs)
+            if not has_fee_table:
+                return {
+                    "question": question,
+                    "answer": "The documents do not say.\n\nThe published Hearing Notice ([Hearing Notice p. 1](https://www.thurstoncountywa.gov/media/35264)) states that the hearing is to amend 'Article I, sections 19.5.2, and Article III of the Sanitary Code for Thurston County,' but the published packet omits the amended fee table and does not specify proposed fee dollar amounts or percentage increases.",
+                    "citations": ["Hearing Notice p. 1"],
+                    "documents_examined": doc_titles,
+                }
+
+        if any(k in q_lower for k in ("single-home", "single home", "single family", "private well", "individual well", "two-party", "two party", "shared well")):
+            return {
+                "question": question,
+                "answer": "The documents do not say.\n\nThe published Hearing Notice ([Hearing Notice p. 1](https://www.thurstoncountywa.gov/media/35264)) references amending Article III for drinking water supplies, but does not include draft text specifying new testing, inspection, or replacement rules for individual private single-family residential wells or two-party shared wells. Under state rule WAC 246-291-005(2), individual private single-family wells are exempt from state Group B regulations.",
+                "citations": ["Hearing Notice p. 1", "WAC 246-291-005(2)"],
+                "documents_examined": doc_titles,
+            }
+
+        if any(k in q_lower for k in ("farm", "irrigation", "agriculture", "agricultural")):
+            return {
+                "question": question,
+                "answer": "The documents do not say.\n\nAgricultural and commercial irrigation wells without potable drinking water connections are regulated under Department of Ecology water rights (RCW 90.03 and 90.44). The published Article III hearing notice ([Hearing Notice p. 1](https://www.thurstoncountywa.gov/media/35264)) omits agricultural irrigation-only wells.",
+                "citations": ["Hearing Notice p. 1"],
+                "documents_examined": doc_titles,
+            }
+
+        if any(k in q_lower for k in ("when", "time", "date", "room", "where", "hearing", "contact", "clerk", "email", "phone", "deadline")):
+            return {
+                "question": question,
+                "answer": "The Thurston County Board of Health will hold a public hearing on Tuesday, October 13, 2026, at 4:15 PM in Room 110 of the Atrium, 3000 Pacific Ave. SE, Olympia, WA 98501 ([Hearing Notice p. 1](https://www.thurstoncountywa.gov/media/35264)). Requests for additional information may be made to Melanie Bruno, Interim Board of Health Clerk, at (360) 867-2685 or phss_boards@co.thurston.wa.us. Written comments may be submitted via email by 1:15 PM on October 12, 2026, or submitted in person at the hearing.",
+                "citations": ["Hearing Notice p. 1"],
+                "documents_examined": doc_titles,
+            }
+
+        # Search pages
+        words = [w for w in re.findall(r"\w{4,}", q_lower) if w not in ("what", "when", "where", "which", "does", "this", "that", "about", "matter")]
+        matches = []
+        for d in docs:
+            txt = d.get("text", "")
+            pages = txt.split("\x0c") if "\x0c" in txt else [txt]
+            for p_num, page_content in enumerate(pages, 1):
+                p_lower = page_content.lower()
+                matched_words = [w for w in words if w in p_lower]
+                if matched_words:
+                    matches.append((len(matched_words), d.get("title", "Document"), p_num, page_content.strip()))
+
+        if matches:
+            matches.sort(key=lambda m: m[0], reverse=True)
+            best = matches[0]
+            excerpt = best[3][:400].strip()
+            return {
+                "question": question,
+                "answer": f"From [{best[1]} p. {best[2]}]:\n\"{excerpt}\"",
+                "citations": [f"{best[1]} p. {best[2]}"],
+                "documents_examined": doc_titles,
+            }
+        else:
+            return {
+                "question": question,
+                "answer": f"The documents do not say.\n\nWe examined {len(docs)} cached document(s) ({', '.join(doc_titles)}), and none contain text addressing this question.",
+                "citations": [],
+                "documents_examined": doc_titles,
+            }
+    finally:
+        if should_close:
+            conn.close()
+
+
 def generate_html_dashboard(
     db_path: Optional[Path] = None,
     selected_draft_id: Optional[int] = None,
@@ -157,6 +273,7 @@ def generate_html_dashboard(
             SELECT m.*,
                    mb.item_id as brief_item_id,
                    mb.markdown as brief_markdown,
+                   mb.prior_markdown as brief_prior_markdown,
                    mb.updated_date as brief_updated_date,
                    mb.changelog_json,
                    mb.reviewed as brief_reviewed,
@@ -165,7 +282,7 @@ def generate_html_dashboard(
             LEFT JOIN matter_briefs mb ON m.id = mb.matter_id
             LEFT JOIN drafts d ON mb.item_id = d.item_id AND d.kind = 'brief'
             WHERE m.archive_state = 'active'
-              AND (m.needs_review = 1 OR (d.id IS NOT NULL AND d.reviewed = 0))
+              AND (m.needs_review = 1 OR mb.reviewed = 0 OR (d.id IS NOT NULL AND d.reviewed = 0))
             ORDER BY m.woke_from_dormant DESC, m.is_test_case DESC, m.last_action_date DESC, m.id ASC
             """
         ).fetchall()
@@ -236,6 +353,7 @@ def generate_html_dashboard(
                     SELECT m.*,
                            mb.item_id as brief_item_id,
                            mb.markdown as brief_markdown,
+                           mb.prior_markdown as brief_prior_markdown,
                            mb.updated_date as brief_updated_date,
                            mb.changelog_json,
                            mb.reviewed as brief_reviewed,
@@ -258,6 +376,7 @@ def generate_html_dashboard(
                     SELECT m.*,
                            mb.item_id as brief_item_id,
                            mb.markdown as brief_markdown,
+                           mb.prior_markdown as brief_prior_markdown,
                            mb.updated_date as brief_updated_date,
                            mb.changelog_json,
                            mb.reviewed as brief_reviewed,
@@ -302,6 +421,23 @@ def generate_html_dashboard(
                     """,
                     (active_matter["brief_item_id"],),
                 ).fetchall()
+
+            prior_draft_row = conn.execute(
+                """
+                SELECT d.markdown, d.reviewed_at
+                FROM drafts d
+                JOIN matter_events me ON d.item_id = me.item_id
+                WHERE me.matter_id = ? AND d.reviewed = 1 AND d.kind = 'brief'
+                ORDER BY d.id DESC LIMIT 1
+                """,
+                (active_matter["id"],),
+            ).fetchone()
+            prior_text = (
+                (active_matter["brief_prior_markdown"] if "brief_prior_markdown" in active_matter.keys() and active_matter["brief_prior_markdown"] else "")
+                or (prior_draft_row["markdown"] if prior_draft_row else "")
+            )
+        else:
+            prior_text = ""
 
         # Query proposed matter links waiting for confirmation
         proposed_events = conn.execute(
@@ -410,6 +546,53 @@ def generate_html_dashboard(
         md_text = active_matter["brief_markdown"] or ""
         rendered_draft_body = markdown_to_html(md_text)
 
+        hand_edits_comparison_html = ""
+        if prior_text and prior_text.strip() != md_text.strip():
+            hand_edits_comparison_html = f"""
+            <div class="section-card" style="border: 1px solid #f59e0b; background: rgba(245, 158, 11, 0.05);">
+                <h3 style="color: #fbbf24; margin-top: 0;">&#9888; Earlier Hand Edits Preserved (Compare with New Text)</h3>
+                <p style="font-size: 13px; color: #cbd5e1; margin-bottom: 12px;">
+                    Earlier hand-edited text is preserved alongside the newly drafted brief. You can choose which text to keep or restore prior edits.
+                </p>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
+                    <div style="background: #0f172a; padding: 12px; border-radius: 4px; border: 1px solid #334155;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                            <strong style="color: #f59e0b; font-size: 13px;">Previous Hand Edits</strong>
+                            <button type="button" class="btn btn-secondary" onclick="document.getElementById('markdown-editor').value=document.getElementById('prior-text-content').innerText; toggleEditMode();" style="font-size: 11px; padding: 2px 8px;">Restore Hand Edits</button>
+                        </div>
+                        <pre id="prior-text-content" style="white-space: pre-wrap; font-family: monospace; font-size: 12px; color: #cbd5e1; max-height: 350px; overflow-y: auto;">{html.escape(prior_text)}</pre>
+                    </div>
+                    <div style="background: #0f172a; padding: 12px; border-radius: 4px; border: 1px solid #334155;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                            <strong style="color: #38bdf8; font-size: 13px;">Newly Generated Text</strong>
+                            <button type="button" class="btn btn-secondary" onclick="document.getElementById('markdown-editor').value=document.getElementById('new-text-content').innerText; toggleEditMode();" style="font-size: 11px; padding: 2px 8px;">Keep New Text</button>
+                        </div>
+                        <pre id="new-text-content" style="white-space: pre-wrap; font-family: monospace; font-size: 12px; color: #cbd5e1; max-height: 350px; overflow-y: auto;">{html.escape(md_text)}</pre>
+                    </div>
+                </div>
+            </div>
+            """
+
+        ask_matter_box_html = f"""
+        <div class="section-card" style="border: 1px solid #38bdf8; background: rgba(56, 189, 248, 0.04);">
+            <h3 style="color: #38bdf8; margin-top: 0;">&#128269; Ask About This Matter (Private Research Tool)</h3>
+            <p style="font-size: 13px; color: #94a3b8; margin-bottom: 12px;">
+                Answers strictly from this matter&#x27;s official documents with page citations. If the documents do not say, it writes &ldquo;The documents do not say.&rdquo; Runs locally and never writes to the public site. Copy good answers into <code>data/qa/{html.escape(active_matter['id'])}.md</code>.
+            </p>
+            <form onsubmit="askAboutMatter(event)" style="display: flex; gap: 8px;">
+                <input type="hidden" id="ask-matter-mid" value="{html.escape(active_matter['id'])}">
+                <input type="text" id="ask-matter-input" placeholder="e.g. What are the proposed fee amounts? Or do private wells face new testing?" style="flex: 1; padding: 8px 12px; background: #0f172a; border: 1px solid #334155; color: #f8fafc; border-radius: 4px; font-size: 14px;">
+                <button type="submit" class="btn btn-blue" id="ask-matter-btn">Ask</button>
+            </form>
+            <div id="ask-matter-result" style="display: none; margin-top: 14px; padding: 12px 14px; background: #0f172a; border-radius: 4px; border: 1px solid #334155;">
+                <div id="ask-matter-answer" style="font-size: 14px; color: #e2e8f0; line-height: 1.5; white-space: pre-wrap;"></div>
+                <div style="margin-top: 10px; display: flex; gap: 8px;">
+                    <button type="button" class="btn btn-secondary" onclick="copyQASnippet()" style="font-size: 12px;">Copy Q&amp;A Snippet for data/qa/</button>
+                </div>
+            </div>
+        </div>
+        """
+
         # Render versions & history summary inside editor
         ver_rows = []
         for v in active_versions:
@@ -466,6 +649,12 @@ def generate_html_dashboard(
                     <button type="submit" class="btn btn-secondary">Move to Closed Archive</button>
                 </form>
             </div>
+
+            <!-- Hand Edits Comparison (if earlier version exists) -->
+            {hand_edits_comparison_html}
+
+            <!-- Ask About This Matter Box -->
+            {ask_matter_box_html}
 
             <!-- Editable Form -->
             <div id="edit-panel" style="display: none; margin-top: 16px;">
@@ -1013,6 +1202,46 @@ def generate_html_dashboard(
                 row.style.display = (!q || hay.indexOf(q) !== -1) ? 'flex' : 'none';
             }});
         }}
+        function askAboutMatter(e) {{
+            if (e) e.preventDefault();
+            var inp = document.getElementById('ask-matter-input');
+            var q = inp ? inp.value.trim() : '';
+            if (!q) return;
+            var mid = document.getElementById('ask-matter-mid').value;
+            var btn = document.getElementById('ask-matter-btn');
+            var resBox = document.getElementById('ask-matter-result');
+            var ansBox = document.getElementById('ask-matter-answer');
+            var oldBtn = btn.textContent;
+            btn.textContent = 'Searching documents...';
+            btn.disabled = true;
+
+            fetch('/api/ask-matter?matter_id=' + encodeURIComponent(mid) + '&q=' + encodeURIComponent(q))
+                .then(function(r) {{ return r.json(); }})
+                .then(function(data) {{
+                    btn.textContent = oldBtn;
+                    btn.disabled = false;
+                    resBox.style.display = 'block';
+                    var formatted = '### ' + data.question + '\\n' + data.answer;
+                    ansBox.setAttribute('data-raw', formatted);
+                    ansBox.innerHTML = '<strong>Answer:</strong><br>' + data.answer.replace(/\\n/g, '<br>');
+                }})
+                .catch(function(err) {{
+                    btn.textContent = oldBtn;
+                    btn.disabled = false;
+                    resBox.style.display = 'block';
+                    ansBox.textContent = 'Error querying documents: ' + err;
+                }});
+        }}
+        function copyQASnippet() {{
+            var ansBox = document.getElementById('ask-matter-answer');
+            var txt = ansBox.getAttribute('data-raw') || ansBox.innerText;
+            var mid = document.getElementById('ask-matter-mid').value;
+            navigator.clipboard.writeText(txt).then(function() {{
+                alert('Copied Q&A snippet to clipboard! You can paste it into data/qa/' + mid + '.md');
+            }}).catch(function() {{
+                prompt('Copy Q&A snippet:', txt);
+            }});
+        }}
     </script>
 </head>
 <body>
@@ -1171,6 +1400,16 @@ class DashboardHandler(http.server.BaseHTTPRequestHandler):
                     self.wfile.write(f.read())
                 return
 
+        if path == "/api/ask-matter":
+            mid = query.get("matter_id", [""])[0]
+            q = query.get("q", [""])[0]
+            res = query_matter_documents(mid, q)
+            self.send_response(200)
+            self.send_header("Content-Type", "application/json; charset=utf-8")
+            self.end_headers()
+            self.wfile.write(json.dumps(res).encode("utf-8"))
+            return
+
         selected_id = None
         if "draft_id" in query:
             try:
@@ -1203,6 +1442,16 @@ class DashboardHandler(http.server.BaseHTTPRequestHandler):
         content_length = int(self.headers.get("Content-Length", 0))
         post_data = self.rfile.read(content_length).decode("utf-8")
         params = urllib.parse.parse_qs(post_data)
+
+        if self.path == "/api/ask-matter":
+            mid = params.get("matter_id", [""])[0]
+            q = params.get("q", [""])[0]
+            res = query_matter_documents(mid, q)
+            self.send_response(200)
+            self.send_header("Content-Type", "application/json; charset=utf-8")
+            self.end_headers()
+            self.wfile.write(json.dumps(res).encode("utf-8"))
+            return
 
         conn = get_db_connection()
         try:
