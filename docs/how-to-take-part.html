@@ -1,0 +1,797 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How to Take Part in Local Decisions — Loretta's Ledger</title>
+    <meta property="og:site_name" content="Loretta's Ledger">
+    <meta property="og:title" content="How to Take Part in Local Decisions — Loretta's Ledger">
+    <meta property="og:description" content="Independent public account of local decisions, upstream influences, and policy trajectories in Olympia and Thurston County.">
+    <meta property="og:type" content="website">
+    <meta name="description" content="Independent public account of local decisions, upstream influences, and policy trajectories in Olympia and Thurston County.">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="How to Take Part in Local Decisions — Loretta's Ledger">
+    <meta name="twitter:description" content="Independent public account of local decisions, upstream influences, and policy trajectories in Olympia and Thurston County.">
+    <style>
+        :root {
+            --bg: #fcfaf5;
+            --surface: #ffffff;
+            --ink: #1c1a17;
+            --ink-muted: #575249;
+            --ink-faint: #807a70;
+            --rule: #ded8cb;
+            --rule-dark: #2c2824;
+            --oxblood: #7b2a26;
+            --oxblood-tint: #f5ebea;
+            --font-serif: "Iowan Old Style", "Palatino Linotype", "URW Palladio L", Palatino, Georgia, serif;
+            --font-mono: "SF Mono", "Consolas", "Liberation Mono", Courier, monospace;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            font-family: var(--font-serif);
+            background-color: var(--bg);
+            color: var(--ink);
+            margin: 0;
+            padding: 0;
+            line-height: 1.55;
+            font-size: 16px;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        header.broadsheet-masthead {
+            background: var(--bg);
+            border-bottom: 2px solid var(--rule-dark);
+            padding: 24px 20px 14px 20px;
+        }
+
+        .masthead-inner {
+            max-width: 1040px;
+            margin: 0 auto;
+        }
+
+        .top-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            border-bottom: 1px solid var(--rule);
+            padding-bottom: 8px;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--ink-muted);
+        }
+
+        .top-row span.meta-date {
+            font-variant-numeric: tabular-nums;
+        }
+
+        .masthead-title {
+            text-align: center;
+            margin: 18px 0 6px 0;
+        }
+
+        .masthead-title a {
+            color: var(--ink);
+            text-decoration: none;
+            font-size: 38px;
+            font-weight: 700;
+            letter-spacing: -0.01em;
+            text-transform: uppercase;
+        }
+
+        .masthead-subtitle {
+            text-align: center;
+            font-size: 14px;
+            font-style: italic;
+            color: var(--ink-muted);
+            margin: 0 0 16px 0;
+        }
+
+        nav.ledger-nav {
+            border-top: 1px solid var(--rule-dark);
+            border-bottom: 1px solid var(--rule-dark);
+            padding: 8px 0;
+            text-align: center;
+        }
+
+        nav.ledger-nav a {
+            color: var(--ink);
+            text-decoration: none;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            margin: 0 16px;
+            padding: 4px 2px;
+            font-weight: 600;
+        }
+
+        nav.ledger-nav a:hover, nav.ledger-nav a.active {
+            color: var(--oxblood);
+            border-bottom: 2px solid var(--oxblood);
+        }
+
+        .container {
+            max-width: 1040px;
+            margin: 0 auto;
+            padding: 32px 20px 70px 20px;
+        }
+
+        h1.headline-title {
+            font-size: 28px;
+            font-weight: 700;
+            line-height: 1.25;
+            margin: 0 0 16px 0;
+            color: var(--ink);
+            border-bottom: 2px solid var(--rule-dark);
+            padding-bottom: 10px;
+        }
+
+        h2.section-label {
+            font-size: 17px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: var(--oxblood);
+            border-bottom: 1px solid var(--rule);
+            padding-bottom: 4px;
+            margin: 32px 0 14px 0;
+        }
+
+        h3.subsection-label {
+            font-size: 16px;
+            font-weight: 700;
+            margin: 20px 0 8px 0;
+            color: var(--ink);
+        }
+
+        p {
+            margin: 0 0 14px 0;
+        }
+
+        a {
+            color: var(--oxblood);
+            text-decoration: underline;
+            text-underline-offset: 2px;
+        }
+
+        .btn-brief {
+            display: inline-block;
+            background: var(--oxblood);
+            color: #ffffff !important;
+            text-decoration: none !important;
+            padding: 6px 14px;
+            font-size: 13px;
+            font-weight: 600;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+            border: 1px solid var(--oxblood);
+            transition: background 0.15s ease;
+        }
+
+        .btn-brief:hover {
+            background: #521a17;
+        }
+
+        .btn-secondary {
+            display: inline-block;
+            background: transparent;
+            color: var(--oxblood) !important;
+            text-decoration: none !important;
+            padding: 5px 12px;
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+            border: 1px solid var(--oxblood);
+            font-family: inherit;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+
+        .btn-secondary:hover {
+            background: var(--oxblood-tint);
+        }
+
+        button.btn-brief, button.btn-secondary {
+            font-family: inherit;
+            cursor: pointer;
+        }
+
+        .share-box {
+            background: #ffffff;
+            border: 1px solid var(--rule);
+            border-left: 4px solid var(--oxblood);
+        }
+
+        .share-actions {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .share-post-preview summary {
+            outline: none;
+            user-select: none;
+        }
+
+        .share-post-preview summary:hover {
+            color: var(--oxblood);
+        }
+
+        .share-bottom-box {
+            background: #fdfbf7;
+            border: 1px solid var(--rule);
+            border-left: 4px solid var(--oxblood);
+            padding: 16px 20px;
+            margin-top: 28px;
+            margin-bottom: 24px;
+        }
+
+        .attention-card {
+            background: var(--surface);
+            border: 1px solid var(--rule);
+            border-left: 4px solid var(--oxblood);
+            padding: 18px 20px;
+            margin-bottom: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 20px;
+        }
+
+        .attention-card-main {
+            flex: 1;
+        }
+
+        .attention-card-action {
+            flex-shrink: 0;
+            padding-top: 4px;
+        }
+
+        details.calendar-group {
+            border-bottom: 1px solid var(--rule);
+            padding: 10px 0;
+        }
+
+        details.calendar-group summary {
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 15px;
+            color: var(--ink);
+            list-style: none;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        details.calendar-group summary::-webkit-details-marker {
+            display: none;
+        }
+
+        details.calendar-group summary::after {
+            content: "+ Show items";
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--oxblood);
+            font-weight: 600;
+        }
+
+        details.calendar-group[open] summary::after {
+            content: "− Hide items";
+        }
+
+        /* Ledger table styles */
+        table.ledger-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+            margin: 20px 0 32px 0;
+            border-top: 2px solid var(--rule-dark);
+            border-bottom: 2px solid var(--rule-dark);
+        }
+
+        table.ledger-table th {
+            text-align: left;
+            padding: 9px 12px;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.07em;
+            background: #f4eee2;
+            border-bottom: 1px solid var(--rule-dark);
+            color: var(--ink);
+        }
+
+        table.ledger-table td {
+            padding: 10px 12px;
+            border-bottom: 1px solid var(--rule);
+            vertical-align: top;
+            font-variant-numeric: tabular-nums;
+        }
+
+        table.ledger-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        /* Ruled boxes and entries */
+        .ledger-entry {
+            border-bottom: 1px solid var(--rule);
+            padding: 16px 0;
+        }
+
+        .ledger-entry:first-child {
+            padding-top: 0;
+        }
+
+        .ledger-meta {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: var(--ink-faint);
+            margin-bottom: 5px;
+        }
+
+        .tag-oxblood {
+            color: var(--oxblood);
+            font-weight: 700;
+        }
+
+        .tag-testcase {
+            background: var(--oxblood-tint);
+            color: var(--oxblood);
+            border: 1px solid var(--oxblood);
+            padding: 2px 6px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-right: 6px;
+            display: inline-block;
+        }
+
+        .status-badge {
+            display: inline-block;
+            font-size: 12px;
+            font-weight: 600;
+            padding: 2px 8px;
+            border: 1px solid var(--rule-dark);
+            background: #f4eee2;
+            color: var(--ink);
+        }
+
+        .status-badge.ready {
+            background: var(--oxblood-tint);
+            border-color: var(--oxblood);
+            color: var(--oxblood);
+        }
+
+        .timeline-block {
+            border-left: 2px solid var(--oxblood);
+            padding-left: 18px;
+            margin: 16px 0;
+        }
+
+        .timeline-item {
+            margin-bottom: 14px;
+        }
+
+        .memo-box {
+            background: #fff;
+            border: 1px solid var(--rule);
+            border-left: 4px solid var(--oxblood);
+            padding: 18px 20px;
+            margin: 20px 0;
+        }
+
+        ul.ledger-list {
+            margin: 8px 0 16px 20px;
+            padding: 0;
+        }
+
+        ul.ledger-list li {
+            margin-bottom: 6px;
+        }
+
+        .spacer { height: 10px; }
+
+        footer.broadsheet-footer {
+            border-top: 2px solid var(--rule-dark);
+            padding: 26px 20px;
+            text-align: center;
+            font-size: 13px;
+            color: var(--ink-muted);
+            background: var(--bg);
+        }
+
+        @media (max-width: 768px) {
+            .top-row { flex-direction: column; gap: 4px; }
+            nav.ledger-nav a { display: inline-block; margin: 4px 8px; font-size: 13px; }
+            .masthead-title a { font-size: 28px; }
+            .attention-card { flex-direction: column; gap: 12px; }
+            table.ledger-table { display: block; overflow-x: auto; }
+        }
+
+        @media print {
+            body { background: #fff; color: #000; font-size: 11pt; }
+            header.broadsheet-masthead, footer.broadsheet-footer, nav.ledger-nav { display: none; }
+            .share-box, .share-bottom-box { display: none !important; }
+            .container { max-width: 100%; padding: 0; }
+            a { text-decoration: none; color: #000; }
+            .memo-box { border: 1px solid #ccc; }
+        }
+    </style>
+</head>
+<body>
+    <header class="broadsheet-masthead">
+        <div class="masthead-inner">
+            <div class="top-row">
+                <span>Independent Public Account &bull; Olympia &amp; Thurston County</span>
+                <span class="meta-date">Vol. I &bull; Record Current to October 2026</span>
+            </div>
+            <div class="masthead-title">
+                <a href="index.html">Loretta's Ledger</a>
+            </div>
+            <div class="masthead-subtitle">
+                An Account of Local Decisions, Upstream Influences, and Public Trajectory
+            </div>
+            <nav class="ledger-nav">
+                <a href="index.html" class="">Home</a>
+                <a href="briefs.html" class="">Briefs</a>
+                <a href="actors.html" class="">Who's in the Room</a>
+                <a href="principles.html" class="">Principles</a>
+                <a href="about.html" class="">About</a>
+            </nav>
+        </div>
+    </header>
+    <div class="container">
+        
+    <div class="ledger-meta" style="margin-bottom: 12px;">
+        <a href="index.html">&larr; Home</a> &bull; Public Participation Guide &bull; Updated Oct 12, 2026
+    </div>
+
+    <h1 class="headline-title">How to Take Part</h1>
+    
+    <p style="font-size: 18px; line-height: 1.55; color: var(--ink); margin-bottom: 28px; border-bottom: 1px solid var(--rule); padding-bottom: 16px;">
+        You don't need to be an expert to speak up about a local decision. This page covers four things: how to comment on something already scheduled, how to ask for something to be added to an agenda, how to write to staff and to officials, and how to keep track of the dates.
+    </p>
+
+    <!-- Section 1 -->
+    <h2 class="section-label">1. Commenting on an item that is already scheduled</h2>
+    <div style="font-size: 15px; line-height: 1.6; margin-bottom: 24px;">
+        <p>Every brief on this site lists who decides, the meeting date, and the comment deadline when the documents give one. Most bodies take comment in one or more of these ways:</p>
+        <ul class="ledger-list">
+            <li><strong>In writing</strong>, by email or an online form, usually due before the meeting. Some cutoffs are as short as two hours before it starts.</li>
+            <li><strong>In person</strong> at the meeting.</li>
+            <li><strong>By video call</strong>, often with a sign-up that closes before the meeting.</li>
+        </ul>
+        <p>Written comments sent to the clerk or through the official portal go into the record the decision-makers receive. An email sent only to one official may not. When it matters, send it both ways.</p>
+        <p>Deadlines and rules change. Each brief links to the official agenda, and that is the final word.</p>
+    </div>
+
+    <!-- Section 2 -->
+    <h2 class="section-label">2. Asking for something to be added to an agenda</h2>
+    <div style="font-size: 15px; line-height: 1.6; margin-bottom: 20px;">
+        <p>Commenting on a scheduled item is different from asking a body to take something up. Agenda requests usually go to a chair, a mayor, a council member, a commissioner, or a clerk, and often need to be made weeks ahead. The rules differ by body.</p>
+        <p>Below is a short guide for each body we follow. Each entry shows when it meets, how it takes comment, how to ask for an agenda item, who to contact, and the date we last checked.</p>
+    </div>
+
+    
+        <div class="memo-box" style="margin-bottom: 16px; background: var(--surface); padding: 18px 20px; border-left: 4px solid var(--oxblood);">
+            <h3 style="margin: 0 0 2px 0; font-size: 17px; font-weight: 700; color: var(--ink);">City of Olympia City Council</h3>
+            <div style="font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--ink-muted); margin-bottom: 12px;">Municipal Legislative Body</div>
+            
+            <div style="font-size: 14px; margin-bottom: 8px;"><strong>When it meets:</strong> Meets Tuesdays at 5:30 PM or 7:00 PM, Council Chambers, Olympia City Hall, 601 4th Ave E, Olympia, WA. Study sessions on 1st/3rd Tuesdays; business meetings on 2nd/4th Tuesdays.</div>
+            <div style="font-size: 14px; margin-bottom: 8px;"><strong>How it takes comment:</strong> Public comment period held during Tuesday meetings. Written comments submitted to citycouncil@olympiawa.gov or via portal by 4:00 PM on meeting day. Live Zoom/in-person testimony requires sign-up before 4:00 PM.</div>
+            <div style="font-size: 14px; margin-bottom: 8px;"><strong>How to request an agenda item:</strong> Agenda items are set by the Mayor and City Manager in consultation with Councilmembers. Public requests can be submitted in writing to the Mayor, Council, or City Clerk.</div>
+            <div style="font-size: 14px; margin-bottom: 10px;"><strong>Contact:</strong> Sean Krier (City Clerk) &bull; <a href='mailto:citycouncil@olympiawa.gov'>citycouncil@olympiawa.gov</a> &bull; (360) 753-8325</div>
+            
+            <div style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--ink-faint); border-top: 1px solid var(--rule); padding-top: 8px;">
+                Last checked: Oct 13, 2026 &bull; <a href="https://www.olympiawa.gov/government/city_council/contact_the_city_council.php" target="_blank" rel="noopener">Official Source</a>
+            </div>
+        </div>
+        
+        <div class="memo-box" style="margin-bottom: 16px; background: var(--surface); padding: 18px 20px; border-left: 4px solid var(--oxblood);">
+            <h3 style="margin: 0 0 2px 0; font-size: 17px; font-weight: 700; color: var(--ink);">Olympia Planning Commission</h3>
+            <div style="font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--ink-muted); margin-bottom: 12px;">Advisory Citizen Commission on Comprehensive Plan and Land Use Regulations</div>
+            
+            <div style="font-size: 14px; margin-bottom: 8px;"><strong>When it meets:</strong> Meets 1st and 3rd Mondays at 6:00 PM, Council Chambers, Olympia City Hall, 601 4th Ave E, Olympia, WA.</div>
+            <div style="font-size: 14px; margin-bottom: 8px;"><strong>How it takes comment:</strong> Written comments submitted to cpdinfo@olympiawa.gov or City Clerk by 4:00 PM on meeting day. Oral testimony taken during public hearings.</div>
+            <div style="font-size: 14px; margin-bottom: 8px;"><strong>How to request an agenda item:</strong> Work program is established by City Council through the Comprehensive Plan Docket. Citizens propose amendments during the annual Comprehensive Plan cycle.</div>
+            <div style="font-size: 14px; margin-bottom: 10px;"><strong>Contact:</strong> Community Planning & Development (Staff Liaison) &bull; <a href='mailto:cpdinfo@olympiawa.gov'>cpdinfo@olympiawa.gov</a> &bull; (360) 753-8314</div>
+            
+            <div style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--ink-faint); border-top: 1px solid var(--rule); padding-top: 8px;">
+                Last checked: Oct 13, 2026 &bull; <a href="https://www.olympiawa.gov/government/advisory_committees/planning_commission.php" target="_blank" rel="noopener">Official Source</a>
+            </div>
+        </div>
+        
+        <div class="memo-box" style="margin-bottom: 16px; background: var(--surface); padding: 18px 20px; border-left: 4px solid var(--oxblood);">
+            <h3 style="margin: 0 0 2px 0; font-size: 17px; font-weight: 700; color: var(--ink);">Olympia Advisory Committees and Boards</h3>
+            <div style="font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--ink-muted); margin-bottom: 12px;">Council Advisory Committees (Parks, Land Use, Utility, Finance, Equity, Heritage)</div>
+            
+            <div style="font-size: 14px; margin-bottom: 8px;"><strong>When it meets:</strong> Meets monthly or bi-monthly (Parks: 3rd Thu 5:30 PM; Land Use: 4th Thu 4:00 PM; Finance: 2nd Tue 2:00 PM; Utility: 2nd Thu 4:00 PM).</div>
+            <div style="font-size: 14px; margin-bottom: 8px;"><strong>How it takes comment:</strong> Brief public comment allowed at opening of regular meetings. Written comments sent to committee staff liaison or City Clerk at least 24 hours prior.</div>
+            <div style="font-size: 14px; margin-bottom: 8px;"><strong>How to request an agenda item:</strong> Items arise from City Council referrals or committee annual work programs. Inquire with staff liaison or committee chair.</div>
+            <div style="font-size: 14px; margin-bottom: 10px;"><strong>Contact:</strong> City Clerk's Office (Committee Coordination) &bull; <a href='mailto:cityclerk@olympiawa.gov'>cityclerk@olympiawa.gov</a> &bull; (360) 753-8325</div>
+            
+            <div style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--ink-faint); border-top: 1px solid var(--rule); padding-top: 8px;">
+                Last checked: Oct 13, 2026 &bull; <a href="https://www.olympiawa.gov/government/advisory_committees/index.php" target="_blank" rel="noopener">Official Source</a>
+            </div>
+        </div>
+        
+        <div class="memo-box" style="margin-bottom: 16px; background: var(--surface); padding: 18px 20px; border-left: 4px solid var(--oxblood);">
+            <h3 style="margin: 0 0 2px 0; font-size: 17px; font-weight: 700; color: var(--ink);">Thurston County Board of County Commissioners</h3>
+            <div style="font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--ink-muted); margin-bottom: 12px;">County Legislative and Executive Body</div>
+            
+            <div style="font-size: 14px; margin-bottom: 8px;"><strong>When it meets:</strong> Meets Tuesdays at 2:00 PM for regular business and public hearings (Room 110 of The Atrium, 3000 Pacific Ave SE, Olympia, WA). Work sessions Tuesday mornings at 9:00 AM.</div>
+            <div style="font-size: 14px; margin-bottom: 8px;"><strong>How it takes comment:</strong> Public comment taken at 2:00 PM meetings in person or via Zoom. Written comments submitted via portal or email to Clerk of the Board up to 2 hours before the meeting.</div>
+            <div style="font-size: 14px; margin-bottom: 8px;"><strong>How to request an agenda item:</strong> Agenda items must be sponsored by a County Commissioner, County Manager, or department director. Citizens can request an item by contacting commissioners or during general public comment.</div>
+            <div style="font-size: 14px; margin-bottom: 10px;"><strong>Contact:</strong> Amy Davis (Clerk of the Board) &bull; (360) 786-5440</div>
+            
+            <div style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--ink-faint); border-top: 1px solid var(--rule); padding-top: 8px;">
+                Last checked: Oct 13, 2026 &bull; <a href="https://www.thurstoncountywa.gov/departments/board-county-commissioners" target="_blank" rel="noopener">Official Source</a>
+            </div>
+        </div>
+        
+        <div class="memo-box" style="margin-bottom: 16px; background: var(--surface); padding: 18px 20px; border-left: 4px solid var(--oxblood);">
+            <h3 style="margin: 0 0 2px 0; font-size: 17px; font-weight: 700; color: var(--ink);">Thurston County Planning Commission</h3>
+            <div style="font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--ink-muted); margin-bottom: 12px;">Advisory Citizen Commission on Land Use and Development Code</div>
+            
+            <div style="font-size: 14px; margin-bottom: 8px;"><strong>When it meets:</strong> Meets 1st and 3rd Wednesdays at 6:30 PM (Room 110 of The Atrium, 3000 Pacific Ave SE, Olympia, WA).</div>
+            <div style="font-size: 14px; margin-bottom: 8px;"><strong>How it takes comment:</strong> Written comments submitted to CPED staff liaison prior to hearings/work sessions. Oral testimony heard during formal public hearings.</div>
+            <div style="font-size: 14px; margin-bottom: 8px;"><strong>How to request an agenda item:</strong> Follows the official Thurston County Comprehensive Plan and Development Code Docket established annually by the Board of County Commissioners. Private docket requests must be submitted during the annual amendment cycle.</div>
+            <div style="font-size: 14px; margin-bottom: 10px;"><strong>Contact:</strong> Community Planning & Economic Development Staff (Planning Commission Staff Liaison) &bull; (360) 786-5490</div>
+            
+            <div style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--ink-faint); border-top: 1px solid var(--rule); padding-top: 8px;">
+                Last checked: Oct 13, 2026 &bull; <a href="https://www.thurstoncountywa.gov/departments/community-planning-and-economic-development/community-planning/planning-commission" target="_blank" rel="noopener">Official Source</a>
+            </div>
+        </div>
+        
+        <div class="memo-box" style="margin-bottom: 16px; background: var(--surface); padding: 18px 20px; border-left: 4px solid var(--oxblood);">
+            <h3 style="margin: 0 0 2px 0; font-size: 17px; font-weight: 700; color: var(--ink);">Thurston County Board of Health</h3>
+            <div style="font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--ink-muted); margin-bottom: 12px;">County Public Health Governing Body</div>
+            
+            <div style="font-size: 14px; margin-bottom: 8px;"><strong>When it meets:</strong> Meets 2nd Tuesday of each month at 3:30 PM, Room 110 of The Atrium, 3000 Pacific Ave SE, Olympia, WA.</div>
+            <div style="font-size: 14px; margin-bottom: 8px;"><strong>How it takes comment:</strong> Written comments accepted by email to phss_boards@co.thurston.wa.us or mail up to 2 hours before meeting time. Oral testimony taken during public comment and hearings.</div>
+            <div style="font-size: 14px; margin-bottom: 8px;"><strong>How to request an agenda item:</strong> Agenda items are scheduled by the Public Health Director, Health Officer, or Board members. Contact the Board of Health Clerk to inquire.</div>
+            <div style="font-size: 14px; margin-bottom: 10px;"><strong>Contact:</strong> Melanie Bruno (Interim Board of Health Clerk) &bull; <a href='mailto:phss_boards@co.thurston.wa.us'>phss_boards@co.thurston.wa.us</a> &bull; (360) 867-2685</div>
+            
+            <div style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--ink-faint); border-top: 1px solid var(--rule); padding-top: 8px;">
+                Last checked: Oct 13, 2026 &bull; <a href="https://www.thurstoncountywa.gov/media/35264" target="_blank" rel="noopener">Official Source</a>
+            </div>
+        </div>
+        
+
+    <p style="font-size: 13px; color: var(--ink-muted); margin-top: -6px; margin-bottom: 28px;">If a body's rules aren't posted anywhere we can find, we say so and point you to its clerk.</p>
+
+    <!-- Section 3 -->
+    <h2 class="section-label">3. Writing to staff and writing to officials</h2>
+    <div style="font-size: 15px; line-height: 1.6; margin-bottom: 24px;">
+        <p>These are two different kinds of email, and mixing them up is the most common reason a message doesn't land.</p>
+        <p><strong>Staff answer questions.</strong> They wrote or manage the documents, and they can tell you what a section means, where something is, or how a process works. They don't decide the matter, and it isn't fair to ask them to take a side.</p>
+        <p><strong>Officials make decisions.</strong> Council members, commissioners, and board members are the people to tell what you think and what you'd like them to do.</p>
+        
+        <h3 class="subsection-label" style="margin-top: 24px; font-size: 17px;">Writing to staff: asking a question</h3>
+        <ul class="ledger-list">
+            <li>Look in the packet first. If you can't find your answer, say so: <em>"I looked in the packet and couldn't find&hellip;"</em></li>
+            <li>Put the item and date in the subject line.</li>
+            <li>In the first two sentences, say who you are (a resident, and where), which item, and what you're asking.</li>
+            <li>Ask one specific question, ideally one that can be answered in a few lines or with a section number.</li>
+            <li>Keep it to about 100 to 150 words.</li>
+            <li>Write early, so an answer can arrive before the hearing.</li>
+        </ul>
+
+        <div style="background: #ffffff; border: 1px solid var(--rule); border-left: 4px solid var(--oxblood); padding: 16px 20px; margin: 14px 0 24px 0; font-size: 14px; font-style: italic;">
+            <div style="font-style: normal; font-weight: 700; color: var(--oxblood); margin-bottom: 8px;">Example starting draft for staff:</div>
+            <strong>Subject:</strong> Question about [item] ([meeting date])<br><br>
+            Hello [name],<br><br>
+            I'm a resident of [area] reading the packet for [item] on [date]. I couldn't find where it says [what you're looking for]. Could you point me to the section?<br><br>
+            Thank you,<br>
+            [Your name]<br>
+            [Your phone or address, optional]
+        </div>
+
+        <h3 class="subsection-label" style="margin-top: 24px; font-size: 17px;">Writing to officials: telling them what you think</h3>
+        <ul class="ledger-list">
+            <li>Put the item, date, and your position in the subject line: <em>"[Item]: support,"</em> <em>"[Item]: oppose,"</em> or <em>"[Item]: from a resident of [area]."</em></li>
+            <li>State your conclusion in the first sentence: what you're asking them to do (vote yes, vote no, amend, hold a hearing, take more time).</li>
+            <li>Give two or three reasons, grounded in your experience or in the packet. Numbers and specific sections help; general accusations don't.</li>
+            <li>If you have an alternative, say what it is: <em>"Instead of X, please consider Y."</em></li>
+            <li>Thank them for their service, even if you disagree with them.</li>
+            <li>Keep it to about 200 to 300 words.</li>
+        </ul>
+
+        <div style="background: #ffffff; border: 1px solid var(--rule); border-left: 4px solid var(--oxblood); padding: 16px 20px; margin: 14px 0 24px 0; font-size: 14px; font-style: italic;">
+            <div style="font-style: normal; font-weight: 700; color: var(--oxblood); margin-bottom: 8px;">Example starting draft for officials:</div>
+            <strong>Subject:</strong> [Item]: from a [city or area] resident<br><br>
+            Hello [name],<br><br>
+            I'm writing about [item] on the [date] agenda.<br><br>
+            I'm concerned about [specific provision] because [one clear reason].<br><br>
+            I'd ask that you [specific request, such as: amend section X to&hellip;, ask staff for&hellip;, or vote no on&hellip;].<br><br>
+            Thank you for your service to our community.<br><br>
+            [Your name]<br>
+            [Your address or neighborhood &mdash; officials pay closest attention to their own constituents]
+        </div>
+    </div>
+
+    <!-- Section 4 -->
+    <h2 class="section-label">4. Keeping track of the dates</h2>
+    <div style="font-size: 15px; line-height: 1.6;">
+        <p>Subscribe to our static calendar feeds to stay informed about upcoming public hearings, votes, and comment deadlines in your personal calendar.</p>
+    </div>
+
+    
+    <div class="calendar-picker-widget" style="background: #ffffff; border: 1px solid var(--rule); border-left: 4px solid var(--oxblood); padding: 20px 22px; margin: 24px 0;">
+        <div class="ledger-meta" style="margin-bottom: 6px;">Calendar Feeds (.ics)</div>
+        <h3 style="margin: 0 0 10px 0; font-size: 18px; font-weight: 700; color: var(--ink);">Subscribe to Hearing &amp; Meeting Calendars</h3>
+        
+        <p style="margin: 0 0 16px 0; font-size: 14px; color: var(--ink-muted); line-height: 1.5;">
+            These calendar feeds update automatically whenever a new edition of Loretta's Ledger is published. Event dates and comment deadlines come strictly from official agenda packets and hearing notices; if a deadline is not documented, please confirm on the official agenda.
+        </p>
+
+        <div style="margin-bottom: 16px;">
+            <label for="cal-feed-select" style="font-weight: 600; font-size: 13px; text-transform: uppercase; letter-spacing: 0.05em; display: block; margin-bottom: 6px;">Select Jurisdiction or Feed:</label>
+            <select id="cal-feed-select" onchange="updateCalendarFeedWidget()" style="font-family: var(--font-serif); font-size: 14px; padding: 6px 10px; border: 1px solid var(--rule-dark); background: var(--bg); max-width: 100%;">
+                <option value="all">Everything (All Matters, Hearings, Deadlines)</option>
+                <option value="thurston">Thurston County (Board of Health, BOCC, Planning Commission)</option>
+                <option value="olympia">City of Olympia (City Council, Planning Commission, Committees)</option>
+                <option value="test-cases">Test Cases Only</option>
+            </select>
+        </div>
+
+        <div id="cal-feed-details" style="background: #faf7f0; border: 1px solid var(--rule); padding: 16px 18px; margin-bottom: 12px;">
+            <div id="cal-feed-title" style="font-weight: 700; font-size: 15px; margin-bottom: 4px; color: var(--ink);">Loretta's Ledger — Everything</div>
+            <div id="cal-feed-desc" style="font-size: 13px; color: var(--ink-muted); margin-bottom: 14px;">All public hearings, votes, and documented comment deadlines across Thurston County and the City of Olympia.</div>
+            
+            <div style="display: flex; gap: 8px; flex-wrap: wrap; align-items: center;">
+                <a id="cal-webcal-link" href="webcal://thecorcoran.github.io/Ledger/calendars/all.ics" class="btn-brief" style="font-size: 12px; padding: 6px 12px;">Subscribe in Calendar</a>
+                <button id="cal-copy-btn" type="button" class="btn-secondary" onclick="copyCalendarLink(this)" data-url="https://thecorcoran.github.io/Ledger/calendars/all.ics" style="font-size: 12px; padding: 6px 12px;">Copy Link for Google Calendar</button>
+                <a id="cal-download-link" href="calendars/all.ics" download style="font-size: 12px; color: var(--oxblood); text-decoration: underline; margin-left: 6px;">Download .ics file</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    var CAL_FEEDS = {
+        "all": {
+            "title": "Loretta's Ledger — Everything",
+            "desc": "All public hearings, votes, and documented comment deadlines across Thurston County and the City of Olympia.",
+            "slug": "all"
+        },
+        "thurston": {
+            "title": "Loretta's Ledger — Thurston County",
+            "desc": "Public hearings and deadlines for Thurston County Board of Health, Board of County Commissioners, and Planning Commission.",
+            "slug": "thurston"
+        },
+        "olympia": {
+            "title": "Loretta's Ledger — City of Olympia",
+            "desc": "Public hearings and deadlines for Olympia City Council, Planning Commission, and advisory committees.",
+            "slug": "olympia"
+        },
+        "test-cases": {
+            "title": "Loretta's Ledger — Test Cases",
+            "desc": "Tracked policy matters designated as test cases for reader verification and public interest.",
+            "slug": "test-cases"
+        }
+    };
+
+    function updateCalendarFeedWidget() {
+        var sel = document.getElementById("cal-feed-select");
+        var key = sel ? sel.value : "all";
+        var feed = CAL_FEEDS[key] || CAL_FEEDS["all"];
+        var titleEl = document.getElementById("cal-feed-title");
+        var descEl = document.getElementById("cal-feed-desc");
+        var webcalEl = document.getElementById("cal-webcal-link");
+        var copyBtn = document.getElementById("cal-copy-btn");
+        var dlLink = document.getElementById("cal-download-link");
+
+        if (titleEl) titleEl.innerText = feed.title;
+        if (descEl) descEl.innerText = feed.desc;
+        var httpUrl = "https://thecorcoran.github.io/Ledger/calendars/" + feed.slug + ".ics";
+        var webcalUrl = "webcal://thecorcoran.github.io/Ledger/calendars/" + feed.slug + ".ics";
+        if (webcalEl) webcalEl.href = webcalUrl;
+        if (copyBtn) copyBtn.setAttribute("data-url", httpUrl);
+        if (dlLink) dlLink.href = "calendars/" + feed.slug + ".ics";
+    }
+    </script>
+    
+    
+    </div>
+    <footer class="broadsheet-footer">
+        Loretta's Ledger &bull; Documented Public Record for Thurston County and City of Olympia &bull; Strictly Factual &bull; <a href="how-to-take-part.html">How to Take Part</a> &bull; <a href="calendar.html">Calendar</a> &bull; <a href="glossary.html">Glossary</a> &bull; <a href="reading/">Further Reading</a>
+    </footer>
+    <script>
+    function getBriefShareUrl(btn) {
+        if (btn && btn.getAttribute("data-url")) {
+            var u = btn.getAttribute("data-url");
+            if (window.location.protocol === "http:" || window.location.protocol === "https:") {
+                if (window.location.hostname !== "localhost" && window.location.hostname !== "127.0.0.1") {
+                    return window.location.href.split("#")[0].split("?")[0];
+                }
+            }
+            return u;
+        }
+        return window.location.href.split("#")[0].split("?")[0];
+    }
+
+    function copyBriefLink(btn) {
+        var url = getBriefShareUrl(btn);
+        navigator.clipboard.writeText(url).then(function() {
+            var old = btn.innerHTML;
+            btn.innerHTML = "✓ Copied Link!";
+            setTimeout(function() { btn.innerHTML = old; }, 2200);
+        }).catch(function() {
+            prompt("Copy brief link:", url);
+        });
+    }
+
+    function copyBriefPost(btn) {
+        var pre = document.getElementById("share-post-content");
+        var txt = pre ? pre.innerText : "";
+        if (!txt && btn && btn.getAttribute("data-url")) {
+            txt = getBriefShareUrl(btn);
+        }
+        navigator.clipboard.writeText(txt).then(function() {
+            var old = btn.innerHTML;
+            btn.innerHTML = "✓ Copied Post!";
+            setTimeout(function() { btn.innerHTML = old; }, 2200);
+        }).catch(function() {
+            prompt("Copy post text:", txt);
+        });
+    }
+
+    function nativeShareBrief(btn) {
+        if (navigator.share) {
+            var url = getBriefShareUrl(btn);
+            var title = document.title ? document.title.replace(" — Loretta's Ledger", "") : "Policy Brief";
+            navigator.share({
+                title: title,
+                text: title + " — Loretta's Ledger",
+                url: url
+            }).catch(function(e) {});
+        }
+    }
+
+    function copyContactAddress(btn, addr) {
+        navigator.clipboard.writeText(addr).then(function() {
+            var old = btn.innerHTML;
+            btn.innerHTML = "✓ Copied Address!";
+            setTimeout(function() { btn.innerHTML = old; }, 2200);
+        }).catch(function() {
+            prompt("Copy address:", addr);
+        });
+    }
+
+    function copyDraftText(btn) {
+        var draft = btn.getAttribute("data-draft") || "";
+        navigator.clipboard.writeText(draft).then(function() {
+            var old = btn.innerHTML;
+            btn.innerHTML = "✓ Copied Draft!";
+            setTimeout(function() { btn.innerHTML = old; }, 2200);
+        }).catch(function() {
+            prompt("Copy draft text:", draft);
+        });
+    }
+
+    function copyCalendarLink(btn) {
+        var url = btn.getAttribute("data-url") || "";
+        navigator.clipboard.writeText(url).then(function() {
+            var old = btn.innerHTML;
+            btn.innerHTML = "✓ Copied Calendar Link!";
+            setTimeout(function() { btn.innerHTML = old; }, 2200);
+        }).catch(function() {
+            prompt("Copy calendar link:", url);
+        });
+    }
+
+    document.addEventListener("DOMContentLoaded", function() {
+        if (navigator.share) {
+            var nativeBtns = document.querySelectorAll(".btn-share-native");
+            nativeBtns.forEach(function(b) { b.style.display = "inline-block"; });
+        }
+    });
+    </script>
+</body>
+</html>

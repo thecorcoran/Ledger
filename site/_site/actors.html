@@ -455,10 +455,17 @@
     <div style="margin-top: 20px;">
         
         <div class="ledger-entry">
-            <div class="ledger-meta">State Law &bull; Touched 1 Briefs</div>
+            <div class="ledger-meta">State Law &bull; Touched 3 Briefs</div>
             <h3 style="margin: 0 0 6px 0;"><a href="actors/wa-gma.html">Washington Growth Management Act</a></h3>
             <p style="font-size: 14px; margin-bottom: 6px;">Comprehensive state land use and planning framework.</p>
             <div style="font-size: 13px;"><a href="actors/wa-gma.html">View Documented Record &rarr;</a></div>
+        </div>
+        
+        <div class="ledger-entry">
+            <div class="ledger-meta">State Agency &bull; Touched 1 Briefs</div>
+            <h3 style="margin: 0 0 6px 0;"><a href="actors/wa-wdfw.html">Washington Department of Fish and Wildlife</a></h3>
+            <p style="font-size: 14px; margin-bottom: 6px;">State agency issuing Priority Habitats and Species (PHS) guidance and management recommendations for local critical areas ordinances.</p>
+            <div style="font-size: 13px;"><a href="actors/wa-wdfw.html">View Documented Record &rarr;</a></div>
         </div>
         
         <div class="ledger-entry">
@@ -493,7 +500,7 @@
     
     </div>
     <footer class="broadsheet-footer">
-        Loretta's Ledger &bull; Documented Public Record for Thurston County and City of Olympia &bull; Strictly Factual &bull; <a href="glossary.html">Glossary</a> &bull; <a href="reading/">Further Reading</a>
+        Loretta's Ledger &bull; Documented Public Record for Thurston County and City of Olympia &bull; Strictly Factual &bull; <a href="how-to-take-part.html">How to Take Part</a> &bull; <a href="calendar.html">Calendar</a> &bull; <a href="glossary.html">Glossary</a> &bull; <a href="reading/">Further Reading</a>
     </footer>
     <script>
     function getBriefShareUrl(btn) {
@@ -545,6 +552,38 @@
                 url: url
             }).catch(function(e) {});
         }
+    }
+
+    function copyContactAddress(btn, addr) {
+        navigator.clipboard.writeText(addr).then(function() {
+            var old = btn.innerHTML;
+            btn.innerHTML = "✓ Copied Address!";
+            setTimeout(function() { btn.innerHTML = old; }, 2200);
+        }).catch(function() {
+            prompt("Copy address:", addr);
+        });
+    }
+
+    function copyDraftText(btn) {
+        var draft = btn.getAttribute("data-draft") || "";
+        navigator.clipboard.writeText(draft).then(function() {
+            var old = btn.innerHTML;
+            btn.innerHTML = "✓ Copied Draft!";
+            setTimeout(function() { btn.innerHTML = old; }, 2200);
+        }).catch(function() {
+            prompt("Copy draft text:", draft);
+        });
+    }
+
+    function copyCalendarLink(btn) {
+        var url = btn.getAttribute("data-url") || "";
+        navigator.clipboard.writeText(url).then(function() {
+            var old = btn.innerHTML;
+            btn.innerHTML = "✓ Copied Calendar Link!";
+            setTimeout(function() { btn.innerHTML = old; }, 2200);
+        }).catch(function() {
+            prompt("Copy calendar link:", url);
+        });
     }
 
     document.addEventListener("DOMContentLoaded", function() {

@@ -1,0 +1,867 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Loretta's Ledger//Policy Tracker Calendar//EN
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+X-WR-CALNAME:Loretta's Ledger — City of Olympia
+X-WR-CALDESC:Public hearings, city council votes, and comment deadlines for the City of Olympia. Dates change; confirm on the official agenda. Updated 2026-10-12.
+X-WR-TIMEZONE:America/Los_Angeles
+BEGIN:VTIMEZONE
+TZID:America/Los_Angeles
+X-LIC-LOCATION:America/Los_Angeles
+BEGIN:DAYLIGHT
+TZOFFSETFROM:-0800
+TZOFFSETTO:-0700
+TZNAME:PDT
+DTSTART:19700308T020000
+RRULE:FREQ=YEARLY;BYMONTH=3;BYDAY=2SU
+END:DAYLIGHT
+BEGIN:STANDARD
+TZOFFSETFROM:-0700
+TZOFFSETTO:-0800
+TZNAME:PST
+DTSTART:19701101T020000
+RRULE:FREQ=YEARLY;BYMONTH=11;BYDAY=1SU
+END:STANDARD
+END:VTIMEZONE
+BEGIN:VEVENT
+UID:ledger-case-25-0980-hearing@lorettas-ledger.local
+DTSTAMP:20261014T081357Z
+DTSTART;TZID=America/Los_Angeles:20260928T100000
+DTEND;TZID=America/Los_Angeles:20260928T120000
+SUMMARY:Public Hearing: Hearing Examiner holds hearing on Springwood Garden subdivision
+DESCRIPTION:Olympia Hearing Examiner - Hearing Examiner holds hearing on Springwood Garden subdivision\n\nBrief: https://thecorcoran.github.io/Ledger/briefs/brief-olympia-event-6984-item-102122.html\n\nDates change; confirm on the official agenda.
+URL:https://thecorcoran.github.io/Ledger/briefs/brief-olympia-event-6984-item-102122.html
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ledger-case-25-1692-hearing@lorettas-ledger.local
+DTSTAMP:20261014T081357Z
+DTSTART;TZID=America/Los_Angeles:20260928T100000
+DTEND;TZID=America/Los_Angeles:20260928T120000
+SUMMARY:Public Hearing: Hearing Examiner holds hearing on West Bay Marina replacement
+DESCRIPTION:Olympia Hearing Examiner - Hearing Examiner holds hearing on West Bay Marina replacement\n\nBrief: https://thecorcoran.github.io/Ledger/briefs/brief-olympia-event-6984-item-102121.html\n\nDates change; confirm on the official agenda.
+URL:https://thecorcoran.github.io/Ledger/briefs/brief-olympia-event-6984-item-102121.html
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ledger-case-26-1865-meeting@lorettas-ledger.local
+DTSTAMP:20261014T081357Z
+DTSTART;TZID=America/Los_Angeles:20260917T170000
+DTEND;TZID=America/Los_Angeles:20260917T190000
+SUMMARY:Public Meeting: Design Review Board reviews Palomino Multifamily project design (Case 26-1865)
+DESCRIPTION:Olympia Design Review Board - Design Review Board reviews Palomino Multifamily project design (Case 26-1865)\n\nBrief: https://thecorcoran.github.io/Ledger/briefs/brief-olympia-event-7008-item-101936.html\n\nDates change; confirm on the official agenda.
+URL:https://thecorcoran.github.io/Ledger/briefs/brief-olympia-event-7008-item-101936.html
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ledger-case-26-4705-meeting@lorettas-ledger.local
+DTSTAMP:20261014T081357Z
+DTSTART;TZID=America/Los_Angeles:20260909T170000
+DTEND;TZID=America/Los_Angeles:20260909T190000
+SUMMARY:Public Meeting: Site Plan Committee reviews Poplar Street parking lot site plan
+DESCRIPTION:Olympia Site Plan Review Committee - Site Plan Committee reviews Poplar Street parking lot site plan\n\nBrief: https://thecorcoran.github.io/Ledger/briefs/brief-olympia-event-6951-item-101887.html\n\nDates change; confirm on the official agenda.
+URL:https://thecorcoran.github.io/Ledger/briefs/brief-olympia-event-6951-item-101887.html
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ledger-case-26-4842-meeting@lorettas-ledger.local
+DTSTAMP:20261014T081357Z
+DTSTART;TZID=America/Los_Angeles:20260917T170000
+DTEND;TZID=America/Los_Angeles:20260917T190000
+SUMMARY:Public Meeting: Design Review Board reviews Police Evidence Facility design (Case 26-4842)
+DESCRIPTION:Olympia Design Review Board - Design Review Board reviews Police Evidence Facility design (Case 26-4842)\n\nBrief: https://thecorcoran.github.io/Ledger/briefs/brief-olympia-event-7008-item-101894.html\n\nDates change; confirm on the official agenda.
+URL:https://thecorcoran.github.io/Ledger/briefs/brief-olympia-event-7008-item-101894.html
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ledger-case-26-5119-meeting@lorettas-ledger.local
+DTSTAMP:20261014T081357Z
+DTSTART;TZID=America/Los_Angeles:20260914T170000
+DTEND;TZID=America/Los_Angeles:20260914T190000
+SUMMARY:Public Meeting: Heritage Commission reviews heritage permit for French door installation
+DESCRIPTION:Olympia Heritage Commission - Heritage Commission reviews heritage permit for French door installation\n\nBrief: https://thecorcoran.github.io/Ledger/briefs/brief-olympia-event-7286-item-102031.html\n\nDates change; confirm on the official agenda.
+URL:https://thecorcoran.github.io/Ledger/briefs/brief-olympia-event-7286-item-102031.html
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ledger-case-26-5305-meeting@lorettas-ledger.local
+DTSTAMP:20261014T081357Z
+DTSTART;TZID=America/Los_Angeles:20260930T170000
+DTEND;TZID=America/Los_Angeles:20260930T190000
+SUMMARY:Public Meeting: Site Plan Committee reviews Swantown Boatworks yard expansion plan
+DESCRIPTION:Olympia Site Plan Review Committee - Site Plan Committee reviews Swantown Boatworks yard expansion plan\n\nBrief: https://thecorcoran.github.io/Ledger/briefs/brief-olympia-event-6954-item-102282.html\n\nDates change; confirm on the official agenda.
+URL:https://thecorcoran.github.io/Ledger/briefs/brief-olympia-event-6954-item-102282.html
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ledger-case-26-5506-meeting@lorettas-ledger.local
+DTSTAMP:20261014T081357Z
+DTSTART;TZID=America/Los_Angeles:20260930T170000
+DTEND;TZID=America/Los_Angeles:20260930T190000
+SUMMARY:Public Meeting: Site Plan Committee reviews Prospect Street multifamily site plan
+DESCRIPTION:Olympia Site Plan Review Committee - Site Plan Committee reviews Prospect Street multifamily site plan\n\nBrief: https://thecorcoran.github.io/Ledger/briefs/brief-olympia-event-6954-item-102281.html\n\nDates change; confirm on the official agenda.
+URL:https://thecorcoran.github.io/Ledger/briefs/brief-olympia-event-6954-item-102281.html
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ledger-case-26-5942-meeting@lorettas-ledger.local
+DTSTAMP:20261014T081357Z
+DTSTART;TZID=America/Los_Angeles:20261021T170000
+DTEND;TZID=America/Los_Angeles:20261021T190000
+SUMMARY:Public Meeting: Site Plan Committee reviews Cooper Point Pharmacy drive-through plan
+DESCRIPTION:Olympia Site Plan Review Committee - Site Plan Committee reviews Cooper Point Pharmacy drive-through plan\n\nBrief: https://thecorcoran.github.io/Ledger/briefs/brief-olympia-event-6957-item-102505.html\n\nDates change; confirm on the official agenda.
+URL:https://thecorcoran.github.io/Ledger/briefs/brief-olympia-event-6957-item-102505.html
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ledger-file-26-0513-meeting@lorettas-ledger.local
+DTSTAMP:20261014T081357Z
+DTSTART;TZID=America/Los_Angeles:20260915T173000
+DTEND;TZID=America/Los_Angeles:20260915T200000
+SUMMARY:Public Meeting: City Council approves reappointing David Brine to regional facilities board
+DESCRIPTION:Olympia City Council - City Council approves reappointing David Brine to regional facilities board\n\nBrief: https://thecorcoran.github.io/Ledger/briefs/brief-olympia-event-7127-item-102046.html\n\nDates change; confirm on the official agenda.
+URL:https://thecorcoran.github.io/Ledger/briefs/brief-olympia-event-7127-item-102046.html
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ledger-file-26-0595-meeting@lorettas-ledger.local
+DTSTAMP:20261014T081357Z
+DTSTART;TZID=America/Los_Angeles:20261006T173000
+DTEND;TZID=America/Los_Angeles:20261006T200000
+SUMMARY:Public Meeting: City Council approves lease for fire vehicle storage
+DESCRIPTION:Olympia City Council - City Council approves lease for fire vehicle storage\n\nBrief: https://thecorcoran.github.io/Ledger/briefs/brief-olympia-event-7131-item-102416.html\n\nDates change; confirm on the official agenda.
+URL:https://thecorcoran.github.io/Ledger/briefs/brief-olympia-event-7131-item-102416.html
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ledger-file-26-0618-meeting@lorettas-ledger.local
+DTSTAMP:20261014T081357Z
+DTSTART;TZID=America/Los_Angeles:20260915T173000
+DTEND;TZID=America/Los_Angeles:20260915T200000
+SUMMARY:Public Meeting: City Council approves fire protection agreement with state Enterprise Services
+DESCRIPTION:Olympia City Council - City Council approves fire protection agreement with state Enterprise Services\n\nBrief: https://thecorcoran.github.io/Ledger/briefs/brief-olympia-event-7127-item-102047.html\n\nDates change; confirm on the official agenda.
+URL:https://thecorcoran.github.io/Ledger/briefs/brief-olympia-event-7127-item-102047.html
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ledger-file-26-0624-meeting@lorettas-ledger.local
+DTSTAMP:20261014T081357Z
+DTSTART;TZID=America/Los_Angeles:20260915T173000
+DTEND;TZID=America/Los_Angeles:20260915T200000
+SUMMARY:Public Meeting: City Council approves fire protection agreement with WaTech
+DESCRIPTION:Olympia City Council - City Council approves fire protection agreement with WaTech\n\nBrief: https://thecorcoran.github.io/Ledger/briefs/brief-olympia-event-7127-item-102048.html\n\nDates change; confirm on the official agenda.
+URL:https://thecorcoran.github.io/Ledger/briefs/brief-olympia-event-7127-item-102048.html
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ledger-file-26-0630-meeting@lorettas-ledger.local
+DTSTAMP:20261014T081357Z
+DTSTART;TZID=America/Los_Angeles:20260915T173000
+DTEND;TZID=America/Los_Angeles:20260915T200000
+SUMMARY:Public Meeting: City Council approves joint funding for Franz Anderson supportive housing
+DESCRIPTION:Olympia City Council - City Council approves joint funding for Franz Anderson supportive housing\n\nBrief: https://thecorcoran.github.io/Ledger/briefs/brief-olympia-event-7127-item-102049.html\n\nDates change; confirm on the official agenda.
+URL:https://thecorcoran.github.io/Ledger/briefs/brief-olympia-event-7127-item-102049.html
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ledger-file-26-0651-meeting@lorettas-ledger.local
+DTSTAMP:20261014T081357Z
+DTSTART;TZID=America/Los_Angeles:20260915T173000
+DTEND;TZID=America/Los_Angeles:20260915T200000
+SUMMARY:Public Meeting: City Council approves state grant for police hiring and training
+DESCRIPTION:Olympia City Council - City Council approves state grant for police hiring and training\n\nBrief: https://thecorcoran.github.io/Ledger/briefs/brief-olympia-event-7127-item-102050.html\n\nDates change; confirm on the official agenda.
+URL:https://thecorcoran.github.io/Ledger/briefs/brief-olympia-event-7127-item-102050.html
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ledger-file-26-0660-meeting@lorettas-ledger.local
+DTSTAMP:20261014T081357Z
+DTSTART;TZID=America/Los_Angeles:20260915T173000
+DTEND;TZID=America/Los_Angeles:20260915T200000
+SUMMARY:Public Meeting: City Council approves grant request for Franz Anderson housing
+DESCRIPTION:Olympia City Council - City Council approves grant request for Franz Anderson housing\n\nBrief: https://thecorcoran.github.io/Ledger/briefs/brief-olympia-event-7127-item-102051.html\n\nDates change; confirm on the official agenda.
+URL:https://thecorcoran.github.io/Ledger/briefs/brief-olympia-event-7127-item-102051.html
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ledger-file-26-0662-meeting@lorettas-ledger.local
+DTSTAMP:20261014T081357Z
+DTSTART;TZID=America/Los_Angeles:20260915T173000
+DTEND;TZID=America/Los_Angeles:20260915T200000
+SUMMARY:Public Meeting: City Council approves land sale agreement with Low Income Housing Institute
+DESCRIPTION:Olympia City Council - City Council approves land sale agreement with Low Income Housing Institute\n\nBrief: https://thecorcoran.github.io/Ledger/briefs/brief-olympia-event-7127-item-102052.html\n\nDates change; confirm on the official agenda.
+URL:https://thecorcoran.github.io/Ledger/briefs/brief-olympia-event-7127-item-102052.html
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ledger-file-26-0676-meeting@lorettas-ledger.local
+DTSTAMP:20261014T081357Z
+DTSTART;TZID=America/Los_Angeles:20260910T170000
+DTEND;TZID=America/Los_Angeles:20260910T190000
+SUMMARY:Public Meeting: Arts Commission approves Marj Yung Park Public Art Final Design
+DESCRIPTION:Olympia Arts Commission - Arts Commission approves Marj Yung Park Public Art Final Design\n\nBrief: https://thecorcoran.github.io/Ledger/briefs/brief-olympia-event-7279-item-101930.html\n\nDates change; confirm on the official agenda.
+URL:https://thecorcoran.github.io/Ledger/briefs/brief-olympia-event-7279-item-101930.html
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ledger-file-26-0677-meeting@lorettas-ledger.local
+DTSTAMP:20261014T081357Z
+DTSTART;TZID=America/Los_Angeles:20260910T170000
+DTEND;TZID=America/Los_Angeles:20260910T190000
+SUMMARY:Public Meeting: Arts Commission reviews upcoming public calls for art
+DESCRIPTION:Olympia Arts Commission - Arts Commission reviews upcoming public calls for art\n\nBrief: https://thecorcoran.github.io/Ledger/briefs/brief-olympia-event-7279-item-101931.html\n\nDates change; confirm on the official agenda.
+URL:https://thecorcoran.github.io/Ledger/briefs/brief-olympia-event-7279-item-101931.html
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ledger-file-26-0678-meeting@lorettas-ledger.local
+DTSTAMP:20261014T081357Z
+DTSTART;TZID=America/Los_Angeles:20260910T170000
+DTEND;TZID=America/Los_Angeles:20260910T190000
+SUMMARY:Public Meeting: Arts Commission weighs TCMedia Meet & Greet
+DESCRIPTION:Olympia Arts Commission - Arts Commission weighs TCMedia Meet & Greet\n\nBrief: https://thecorcoran.github.io/Ledger/briefs/brief-olympia-event-7279-item-101932.html\n\nDates change; confirm on the official agenda.
+URL:https://thecorcoran.github.io/Ledger/briefs/brief-olympia-event-7279-item-101932.html
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ledger-file-26-0679-meeting@lorettas-ledger.local
+DTSTAMP:20261014T081357Z
+DTSTART;TZID=America/Los_Angeles:20260917T170000
+DTEND;TZID=America/Los_Angeles:20260917T190000
+SUMMARY:Public Meeting: Parks Committee weighs Parks Capital Facilities Plan recommendation
+DESCRIPTION:Olympia Parks and Recreation Advisory Committee - Parks Committee weighs Parks Capital Facilities Plan recommendation\n\nBrief: https://thecorcoran.github.io/Ledger/briefs/brief-olympia-event-7243-item-102001.html\n\nDates change; confirm on the official agenda.
+URL:https://thecorcoran.github.io/Ledger/briefs/brief-olympia-event-7243-item-102001.html
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ledger-file-26-0683-meeting@lorettas-ledger.local
+DTSTAMP:20261014T081357Z
+DTSTART;TZID=America/Los_Angeles:20260914T170000
+DTEND;TZID=America/Los_Angeles:20260914T190000
+SUMMARY:Public Meeting: Equity Commission weighs Joint Meeting of Regional Equity Advisory Boards
+DESCRIPTION:Olympia Social Justice & Equity Commission - Equity Commission weighs Joint Meeting of Regional Equity Advisory Boards\n\nBrief: https://thecorcoran.github.io/Ledger/briefs/brief-olympia-event-7251-item-101944.html\n\nDates change; confirm on the official agenda.
+URL:https://thecorcoran.github.io/Ledger/briefs/brief-olympia-event-7251-item-101944.html
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ledger-file-26-0686-meeting@lorettas-ledger.local
+DTSTAMP:20261014T081357Z
+DTSTART;TZID=America/Los_Angeles:20260915T173000
+DTEND;TZID=America/Los_Angeles:20260915T200000
+SUMMARY:Public Meeting: City Council reviews draft 2027-2032 Capital Facilities Plan Briefing
+DESCRIPTION:Olympia City Council - City Council reviews draft 2027-2032 Capital Facilities Plan Briefing\n\nBrief: https://thecorcoran.github.io/Ledger/briefs/brief-olympia-event-7127-item-102065.html\n\nDates change; confirm on the official agenda.
+URL:https://thecorcoran.github.io/Ledger/briefs/brief-olympia-event-7127-item-102065.html
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ledger-file-26-0688-meeting@lorettas-ledger.local
+DTSTAMP:20261014T081357Z
+DTSTART;TZID=America/Los_Angeles:20260915T173000
+DTEND;TZID=America/Los_Angeles:20260915T200000
+SUMMARY:Public Meeting: City Council approves grant request for Harbor Pines housing
+DESCRIPTION:Olympia City Council - City Council approves grant request for Harbor Pines housing\n\nBrief: https://thecorcoran.github.io/Ledger/briefs/brief-olympia-event-7127-item-102053.html\n\nDates change; confirm on the official agenda.
+URL:https://thecorcoran.github.io/Ledger/briefs/brief-olympia-event-7127-item-102053.html
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ledger-file-26-0689-meeting@lorettas-ledger.local
+DTSTAMP:20261014T081357Z
+DTSTART;TZID=America/Los_Angeles:20260915T173000
+DTEND;TZID=America/Los_Angeles:20260915T200000
+SUMMARY:Public Meeting: City Council reviews 2027 budget Update
+DESCRIPTION:Olympia City Council - City Council reviews 2027 budget Update\n\nBrief: https://thecorcoran.github.io/Ledger/briefs/brief-olympia-event-7127-item-102054.html\n\nDates change; confirm on the official agenda.
+URL:https://thecorcoran.github.io/Ledger/briefs/brief-olympia-event-7127-item-102054.html
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ledger-file-26-0690-meeting@lorettas-ledger.local
+DTSTAMP:20261014T081357Z
+DTSTART;TZID=America/Los_Angeles:20260915T173000
+DTEND;TZID=America/Los_Angeles:20260915T200000
+SUMMARY:Public Meeting: City Council approves 2026 Percival Plinth Project Peoples’ Choice Award
+DESCRIPTION:Olympia City Council - City Council approves 2026 Percival Plinth Project Peoples’ Choice Award\n\nBrief: https://thecorcoran.github.io/Ledger/briefs/brief-olympia-event-7127-item-102066.html\n\nDates change; confirm on the official agenda.
+URL:https://thecorcoran.github.io/Ledger/briefs/brief-olympia-event-7127-item-102066.html
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ledger-file-26-0693-meeting@lorettas-ledger.local
+DTSTAMP:20261014T081357Z
+DTSTART;TZID=America/Los_Angeles:20261006T173000
+DTEND;TZID=America/Los_Angeles:20261006T200000
+SUMMARY:Public Meeting: City Council approves contract changes for Quince Street Tiny Home Village
+DESCRIPTION:Olympia City Council - City Council approves contract changes for Quince Street Tiny Home Village\n\nBrief: https://thecorcoran.github.io/Ledger/briefs/brief-olympia-event-7131-item-102417.html\n\nDates change; confirm on the official agenda.
+URL:https://thecorcoran.github.io/Ledger/briefs/brief-olympia-event-7131-item-102417.html
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ledger-file-26-0694-meeting@lorettas-ledger.local
+DTSTAMP:20261014T081357Z
+DTSTART;TZID=America/Los_Angeles:20261006T173000
+DTEND;TZID=America/Los_Angeles:20261006T200000
+SUMMARY:Public Meeting: City Council approves funding changes for Franz Anderson Tiny Home Village
+DESCRIPTION:Olympia City Council - City Council approves funding changes for Franz Anderson Tiny Home Village\n\nBrief: https://thecorcoran.github.io/Ledger/briefs/brief-olympia-event-7131-item-102418.html\n\nDates change; confirm on the official agenda.
+URL:https://thecorcoran.github.io/Ledger/briefs/brief-olympia-event-7131-item-102418.html
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ledger-file-26-0697-meeting@lorettas-ledger.local
+DTSTAMP:20261014T081357Z
+DTSTART;TZID=America/Los_Angeles:20260915T173000
+DTEND;TZID=America/Los_Angeles:20260915T200000
+SUMMARY:Public Meeting: City Council approves vehicle repair agreement with state Enterprise Services
+DESCRIPTION:Olympia City Council - City Council approves vehicle repair agreement with state Enterprise Services\n\nBrief: https://thecorcoran.github.io/Ledger/briefs/brief-olympia-event-7127-item-102055.html\n\nDates change; confirm on the official agenda.
+URL:https://thecorcoran.github.io/Ledger/briefs/brief-olympia-event-7127-item-102055.html
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ledger-file-26-0698-meeting@lorettas-ledger.local
+DTSTAMP:20261014T081357Z
+DTSTART;TZID=America/Los_Angeles:20260918T170000
+DTEND;TZID=America/Los_Angeles:20260918T190000
+SUMMARY:Public Meeting: Land Use Committee reviews development code updates for climate plan
+DESCRIPTION:Olympia Land Use & Environment Committee - Land Use Committee reviews development code updates for climate plan\n\nBrief: https://thecorcoran.github.io/Ledger/briefs/brief-olympia-event-7281-item-102080.html\n\nDates change; confirm on the official agenda.
+URL:https://thecorcoran.github.io/Ledger/briefs/brief-olympia-event-7281-item-102080.html
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ledger-file-26-0700-meeting@lorettas-ledger.local
+DTSTAMP:20261014T081357Z
+DTSTART;TZID=America/Los_Angeles:20260915T173000
+DTEND;TZID=America/Los_Angeles:20260915T200000
+SUMMARY:Public Meeting: City Council backs funding for Deschutes Estuary restoration
+DESCRIPTION:Olympia City Council - City Council backs funding for Deschutes Estuary restoration\n\nBrief: https://thecorcoran.github.io/Ledger/briefs/brief-olympia-event-7127-item-102056.html\n\nDates change; confirm on the official agenda.
+URL:https://thecorcoran.github.io/Ledger/briefs/brief-olympia-event-7127-item-102056.html
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ledger-file-26-0702-meeting@lorettas-ledger.local
+DTSTAMP:20261014T081357Z
+DTSTART;TZID=America/Los_Angeles:20260915T173000
+DTEND;TZID=America/Los_Angeles:20260915T200000
+SUMMARY:Public Meeting: City Council approves honorary Kato Street name on Cherry Street
+DESCRIPTION:Olympia City Council - City Council approves honorary Kato Street name on Cherry Street\n\nBrief: https://thecorcoran.github.io/Ledger/briefs/brief-olympia-event-7127-item-102067.html\n\nDates change; confirm on the official agenda.
+URL:https://thecorcoran.github.io/Ledger/briefs/brief-olympia-event-7127-item-102067.html
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ledger-file-26-0703-meeting@lorettas-ledger.local
+DTSTAMP:20261014T081357Z
+DTSTART;TZID=America/Los_Angeles:20260915T173000
+DTEND;TZID=America/Los_Angeles:20260915T200000
+SUMMARY:Public Meeting: City Council approves a Right-Of-Way Use Agreement with Olympia Computer LLC
+DESCRIPTION:Olympia City Council - City Council approves a Right-Of-Way Use Agreement with Olympia Computer LLC\n\nBrief: https://thecorcoran.github.io/Ledger/briefs/brief-olympia-event-7127-item-102057.html\n\nDates change; confirm on the official agenda.
+URL:https://thecorcoran.github.io/Ledger/briefs/brief-olympia-event-7127-item-102057.html
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ledger-file-26-0704-meeting@lorettas-ledger.local
+DTSTAMP:20261014T081357Z
+DTSTART;TZID=America/Los_Angeles:20260915T173000
+DTEND;TZID=America/Los_Angeles:20260915T200000
+SUMMARY:Public Meeting: City Council approves appointments to Olympia Youth Council
+DESCRIPTION:Olympia City Council - City Council approves appointments to Olympia Youth Council\n\nBrief: https://thecorcoran.github.io/Ledger/briefs/brief-olympia-event-7127-item-102058.html\n\nDates change; confirm on the official agenda.
+URL:https://thecorcoran.github.io/Ledger/briefs/brief-olympia-event-7127-item-102058.html
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ledger-file-26-0706-meeting@lorettas-ledger.local
+DTSTAMP:20261014T081357Z
+DTSTART;TZID=America/Los_Angeles:20260918T170000
+DTEND;TZID=America/Los_Angeles:20260918T190000
+SUMMARY:Public Meeting: Land Use Committee reviews middle housing utility and street rules
+DESCRIPTION:Olympia Land Use & Environment Committee - Land Use Committee reviews middle housing utility and street rules\n\nBrief: https://thecorcoran.github.io/Ledger/briefs/brief-olympia-event-7281-item-102081.html\n\nDates change; confirm on the official agenda.
+URL:https://thecorcoran.github.io/Ledger/briefs/brief-olympia-event-7281-item-102081.html
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ledger-file-26-0707-meeting@lorettas-ledger.local
+DTSTAMP:20261014T081357Z
+DTSTART;TZID=America/Los_Angeles:20260921T170000
+DTEND;TZID=America/Los_Angeles:20260921T190000
+SUMMARY:Public Meeting: Finance Committee weighs 2027 utility rates and building fees
+DESCRIPTION:Olympia Finance Committee - Finance Committee weighs 2027 utility rates and building fees\n\nBrief: https://thecorcoran.github.io/Ledger/briefs/brief-olympia-event-7167-item-102216.html\n\nDates change; confirm on the official agenda.
+URL:https://thecorcoran.github.io/Ledger/briefs/brief-olympia-event-7167-item-102216.html
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ledger-file-26-0713-meeting@lorettas-ledger.local
+DTSTAMP:20261014T081357Z
+DTSTART;TZID=America/Los_Angeles:20260916T170000
+DTEND;TZID=America/Los_Angeles:20260916T190000
+SUMMARY:Public Meeting: Bike & Walk Committee reviews sidewalk repair policy
+DESCRIPTION:Olympia Bicycle and Pedestrian Advisory Committee - Bike & Walk Committee reviews sidewalk repair policy\n\nBrief: https://thecorcoran.github.io/Ledger/briefs/brief-olympia-event-6899-item-102017.html\n\nDates change; confirm on the official agenda.
+URL:https://thecorcoran.github.io/Ledger/briefs/brief-olympia-event-6899-item-102017.html
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ledger-file-26-0714-meeting@lorettas-ledger.local
+DTSTAMP:20261014T081357Z
+DTSTART;TZID=America/Los_Angeles:20260916T170000
+DTEND;TZID=America/Los_Angeles:20260916T190000
+SUMMARY:Public Meeting: Bike & Walk Committee reviews draft 2027-2032 Capital Facilities Plan
+DESCRIPTION:Olympia Bicycle and Pedestrian Advisory Committee - Bike & Walk Committee reviews draft 2027-2032 Capital Facilities Plan\n\nBrief: https://thecorcoran.github.io/Ledger/briefs/brief-olympia-event-6899-item-102015.html\n\nDates change; confirm on the official agenda.
+URL:https://thecorcoran.github.io/Ledger/briefs/brief-olympia-event-6899-item-102015.html
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ledger-file-26-0715-meeting@lorettas-ledger.local
+DTSTAMP:20261014T081357Z
+DTSTART;TZID=America/Los_Angeles:20260916T170000
+DTEND;TZID=America/Los_Angeles:20260916T190000
+SUMMARY:Public Meeting: Bike & Walk Committee weighs Decision on questions for new committee member applications
+DESCRIPTION:Olympia Bicycle and Pedestrian Advisory Committee - Bike & Walk Committee weighs Decision on questions for new committee member applications\n\nBrief: https://thecorcoran.github.io/Ledger/briefs/brief-olympia-event-6899-item-102016.html\n\nDates change; confirm on the official agenda.
+URL:https://thecorcoran.github.io/Ledger/briefs/brief-olympia-event-6899-item-102016.html
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ledger-file-26-0719-meeting@lorettas-ledger.local
+DTSTAMP:20261014T081357Z
+DTSTART;TZID=America/Los_Angeles:20260914T170000
+DTEND;TZID=America/Los_Angeles:20260914T190000
+SUMMARY:Public Meeting: Disability Board approves Case #26-9 Personal Care Products
+DESCRIPTION:Olympia LEOFF I Disability Board - Disability Board approves Case #26-9 Personal Care Products\n\nBrief: https://thecorcoran.github.io/Ledger/briefs/brief-olympia-event-7287-item-102093.html\n\nDates change; confirm on the official agenda.
+URL:https://thecorcoran.github.io/Ledger/briefs/brief-olympia-event-7287-item-102093.html
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ledger-file-26-0722-meeting@lorettas-ledger.local
+DTSTAMP:20261014T081357Z
+DTSTART;TZID=America/Los_Angeles:20260922T173000
+DTEND;TZID=America/Los_Angeles:20260922T200000
+SUMMARY:Public Meeting: City Council reviews Artesian Commons Discussion
+DESCRIPTION:Olympia City Council - City Council reviews Artesian Commons Discussion\n\nBrief: https://thecorcoran.github.io/Ledger/briefs/brief-olympia-event-7129-item-102192.html\n\nDates change; confirm on the official agenda.
+URL:https://thecorcoran.github.io/Ledger/briefs/brief-olympia-event-7129-item-102192.html
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ledger-file-26-0724-meeting@lorettas-ledger.local
+DTSTAMP:20261014T081357Z
+DTSTART;TZID=America/Los_Angeles:20260915T173000
+DTEND;TZID=America/Los_Angeles:20260915T200000
+SUMMARY:Public Meeting: City Council opposes Puget Sound Energy 30% rate increase
+DESCRIPTION:Olympia City Council - City Council opposes Puget Sound Energy 30% rate increase\n\nBrief: https://thecorcoran.github.io/Ledger/briefs/brief-olympia-event-7127-item-102099.html\n\nDates change; confirm on the official agenda.
+URL:https://thecorcoran.github.io/Ledger/briefs/brief-olympia-event-7127-item-102099.html
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ledger-file-26-0725-meeting@lorettas-ledger.local
+DTSTAMP:20261014T081357Z
+DTSTART;TZID=America/Los_Angeles:20260923T170000
+DTEND;TZID=America/Los_Angeles:20260923T190000
+SUMMARY:Public Meeting: Public Safety Committee reviews Public Safety Update
+DESCRIPTION:Olympia Community Livability and Public Safety Committee - Public Safety Committee reviews Public Safety Update\n\nBrief: https://thecorcoran.github.io/Ledger/briefs/brief-olympia-event-7155-item-102229.html\n\nDates change; confirm on the official agenda.
+URL:https://thecorcoran.github.io/Ledger/briefs/brief-olympia-event-7155-item-102229.html
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ledger-file-26-0727-hearing@lorettas-ledger.local
+DTSTAMP:20261014T081357Z
+DTSTART;TZID=America/Los_Angeles:20260921T180000
+DTEND;TZID=America/Los_Angeles:20260921T200000
+SUMMARY:Public Hearing: Planning Commission holds hearing on 2027-2032 capital facilities plan
+DESCRIPTION:Olympia Planning Commission - Planning Commission holds hearing on 2027-2032 capital facilities plan\n\nBrief: https://thecorcoran.github.io/Ledger/briefs/brief-olympia-event-7065-item-102109.html\n\nDates change; confirm on the official agenda.
+URL:https://thecorcoran.github.io/Ledger/briefs/brief-olympia-event-7065-item-102109.html
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ledger-file-26-0728-meeting@lorettas-ledger.local
+DTSTAMP:20261014T081357Z
+DTSTART;TZID=America/Los_Angeles:20260923T170000
+DTEND;TZID=America/Los_Angeles:20260923T190000
+SUMMARY:Public Meeting: Public Safety Committee reviews upcoming public calls for art
+DESCRIPTION:Olympia Community Livability and Public Safety Committee - Public Safety Committee reviews upcoming public calls for art\n\nBrief: https://thecorcoran.github.io/Ledger/briefs/brief-olympia-event-7155-item-102227.html\n\nDates change; confirm on the official agenda.
+URL:https://thecorcoran.github.io/Ledger/briefs/brief-olympia-event-7155-item-102227.html
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ledger-file-26-0729-meeting@lorettas-ledger.local
+DTSTAMP:20261014T081357Z
+DTSTART;TZID=America/Los_Angeles:20260921T170000
+DTEND;TZID=America/Los_Angeles:20260921T190000
+SUMMARY:Public Meeting: Finance Committee reviews 2027 Proposed Budget Update
+DESCRIPTION:Olympia Finance Committee - Finance Committee reviews 2027 Proposed Budget Update\n\nBrief: https://thecorcoran.github.io/Ledger/briefs/brief-olympia-event-7167-item-102217.html\n\nDates change; confirm on the official agenda.
+URL:https://thecorcoran.github.io/Ledger/briefs/brief-olympia-event-7167-item-102217.html
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ledger-file-26-0730-meeting@lorettas-ledger.local
+DTSTAMP:20261014T081357Z
+DTSTART;TZID=America/Los_Angeles:20260922T173000
+DTEND;TZID=America/Los_Angeles:20260922T200000
+SUMMARY:Public Meeting: Inspire Olympia Cultural Access Program Improvements and Updates Discussion
+DESCRIPTION:Olympia City Council - Inspire Olympia Cultural Access Program Improvements and Updates Discussion\n\nBrief: https://thecorcoran.github.io/Ledger/briefs/brief-olympia-event-7129-item-102191.html\n\nDates change; confirm on the official agenda.
+URL:https://thecorcoran.github.io/Ledger/briefs/brief-olympia-event-7129-item-102191.html
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ledger-file-26-0733-meeting@lorettas-ledger.local
+DTSTAMP:20261014T081357Z
+DTSTART;TZID=America/Los_Angeles:20261007T170000
+DTEND;TZID=America/Los_Angeles:20261007T190000
+SUMMARY:Public Meeting: Park District Committee reviews annual report on 2025 park funding compliance
+DESCRIPTION:Olympia Metropolitan Park District Advisory Committee - Park District Committee reviews annual report on 2025 park funding compliance\n\nBrief: https://thecorcoran.github.io/Ledger/briefs/brief-olympia-event-7218-item-102314.html\n\nDates change; confirm on the official agenda.
+URL:https://thecorcoran.github.io/Ledger/briefs/brief-olympia-event-7218-item-102314.html
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ledger-file-26-0735-meeting@lorettas-ledger.local
+DTSTAMP:20261014T081357Z
+DTSTART;TZID=America/Los_Angeles:20260923T170000
+DTEND;TZID=America/Los_Angeles:20260923T190000
+SUMMARY:Public Meeting: Public Safety Committee weighs Council Appointed Advisory Body Recommendations
+DESCRIPTION:Olympia Community Livability and Public Safety Committee - Public Safety Committee weighs Council Appointed Advisory Body Recommendations\n\nBrief: https://thecorcoran.github.io/Ledger/briefs/brief-olympia-event-7155-item-102228.html\n\nDates change; confirm on the official agenda.
+URL:https://thecorcoran.github.io/Ledger/briefs/brief-olympia-event-7155-item-102228.html
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ledger-file-26-0736-meeting@lorettas-ledger.local
+DTSTAMP:20261014T081357Z
+DTSTART;TZID=America/Los_Angeles:20260922T180000
+DTEND;TZID=America/Los_Angeles:20260922T200000
+SUMMARY:Public Meeting: Capital Facilities Plan 2027-2032 Financial Plan Comment Letter Discussion
+DESCRIPTION:Olympia Planning Commission - Capital Facilities Plan 2027-2032 Financial Plan Comment Letter Discussion\n\nBrief: https://thecorcoran.github.io/Ledger/briefs/brief-olympia-event-7288-item-102255.html\n\nDates change; confirm on the official agenda.
+URL:https://thecorcoran.github.io/Ledger/briefs/brief-olympia-event-7288-item-102255.html
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ledger-file-26-0740-meeting@lorettas-ledger.local
+DTSTAMP:20261014T081357Z
+DTSTART;TZID=America/Los_Angeles:20260923T170000
+DTEND;TZID=America/Los_Angeles:20260923T190000
+SUMMARY:Public Meeting: Salary Commission approves 2026 City Council salary schedule
+DESCRIPTION:Olympia Salary Commission - Salary Commission approves 2026 City Council salary schedule\n\nBrief: https://thecorcoran.github.io/Ledger/briefs/brief-olympia-event-7289-item-102135.html\n\nDates change; confirm on the official agenda.
+URL:https://thecorcoran.github.io/Ledger/briefs/brief-olympia-event-7289-item-102135.html
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ledger-file-26-0742-meeting@lorettas-ledger.local
+DTSTAMP:20261014T081357Z
+DTSTART;TZID=America/Los_Angeles:20260923T170000
+DTEND;TZID=America/Los_Angeles:20260923T190000
+SUMMARY:Public Meeting: Heritage Commission weighs Upcoming Event Plans and Recaps
+DESCRIPTION:Olympia Heritage Commission - Heritage Commission weighs Upcoming Event Plans and Recaps\n\nBrief: https://thecorcoran.github.io/Ledger/briefs/brief-olympia-event-7084-item-102150.html\n\nDates change; confirm on the official agenda.
+URL:https://thecorcoran.github.io/Ledger/briefs/brief-olympia-event-7084-item-102150.html
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ledger-file-26-0743-meeting@lorettas-ledger.local
+DTSTAMP:20261014T081357Z
+DTSTART;TZID=America/Los_Angeles:20260923T170000
+DTEND;TZID=America/Los_Angeles:20260923T190000
+SUMMARY:Public Meeting: Heritage Commission weighs Committee Reassignments
+DESCRIPTION:Olympia Heritage Commission - Heritage Commission weighs Committee Reassignments\n\nBrief: https://thecorcoran.github.io/Ledger/briefs/brief-olympia-event-7084-item-102151.html\n\nDates change; confirm on the official agenda.
+URL:https://thecorcoran.github.io/Ledger/briefs/brief-olympia-event-7084-item-102151.html
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ledger-file-26-0744-meeting@lorettas-ledger.local
+DTSTAMP:20261014T081357Z
+DTSTART;TZID=America/Los_Angeles:20260922T173000
+DTEND;TZID=America/Los_Angeles:20260922T200000
+SUMMARY:Public Meeting: City Council reviews Workers’ Affordability & Protections Discussion
+DESCRIPTION:Olympia City Council - City Council reviews Workers’ Affordability & Protections Discussion\n\nBrief: https://thecorcoran.github.io/Ledger/briefs/brief-olympia-event-7129-item-102190.html\n\nDates change; confirm on the official agenda.
+URL:https://thecorcoran.github.io/Ledger/briefs/brief-olympia-event-7129-item-102190.html
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ledger-file-26-0747-meeting@lorettas-ledger.local
+DTSTAMP:20261014T081357Z
+DTSTART;TZID=America/Los_Angeles:20260924T170000
+DTEND;TZID=America/Los_Angeles:20260924T190000
+SUMMARY:Public Meeting: Policing Board reviews 2026 Police Auditor semi-annual report
+DESCRIPTION:Olympia Community Policing Board - Policing Board reviews 2026 Police Auditor semi-annual report\n\nBrief: https://thecorcoran.github.io/Ledger/briefs/brief-olympia-event-7266-item-102239.html\n\nDates change; confirm on the official agenda.
+URL:https://thecorcoran.github.io/Ledger/briefs/brief-olympia-event-7266-item-102239.html
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ledger-file-26-0751-meeting@lorettas-ledger.local
+DTSTAMP:20261014T081357Z
+DTSTART;TZID=America/Los_Angeles:20261001T170000
+DTEND;TZID=America/Los_Angeles:20261001T190000
+SUMMARY:Public Meeting: Utility Committee reviews Utility update for LOTT Clean Water Alliance
+DESCRIPTION:Olympia Utility Advisory Committee - Utility Committee reviews Utility update for LOTT Clean Water Alliance\n\nBrief: https://thecorcoran.github.io/Ledger/briefs/brief-olympia-event-7191-item-102275.html\n\nDates change; confirm on the official agenda.
+URL:https://thecorcoran.github.io/Ledger/briefs/brief-olympia-event-7191-item-102275.html
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ledger-file-26-0753-meeting@lorettas-ledger.local
+DTSTAMP:20261014T081357Z
+DTSTART;TZID=America/Los_Angeles:20261001T170000
+DTEND;TZID=America/Los_Angeles:20261001T190000
+SUMMARY:Public Meeting: Utility Committee reviews draft 2027 utility budget and rates
+DESCRIPTION:Olympia Utility Advisory Committee - Utility Committee reviews draft 2027 utility budget and rates\n\nBrief: https://thecorcoran.github.io/Ledger/briefs/brief-olympia-event-7191-item-102277.html\n\nDates change; confirm on the official agenda.
+URL:https://thecorcoran.github.io/Ledger/briefs/brief-olympia-event-7191-item-102277.html
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ledger-file-26-0758-meeting@lorettas-ledger.local
+DTSTAMP:20261014T081357Z
+DTSTART;TZID=America/Los_Angeles:20261007T170000
+DTEND;TZID=America/Los_Angeles:20261007T190000
+SUMMARY:Public Meeting: Park District Committee weighs 2027 draft Budget Preview
+DESCRIPTION:Olympia Metropolitan Park District Advisory Committee - Park District Committee weighs 2027 draft Budget Preview\n\nBrief: https://thecorcoran.github.io/Ledger/briefs/brief-olympia-event-7218-item-102313.html\n\nDates change; confirm on the official agenda.
+URL:https://thecorcoran.github.io/Ledger/briefs/brief-olympia-event-7218-item-102313.html
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ledger-file-26-0760-meeting@lorettas-ledger.local
+DTSTAMP:20261014T081357Z
+DTSTART;TZID=America/Los_Angeles:20261006T173000
+DTEND;TZID=America/Los_Angeles:20261006T200000
+SUMMARY:Public Meeting: City Council approves bid for Yelm Highway Community Park construction
+DESCRIPTION:Olympia City Council - City Council approves bid for Yelm Highway Community Park construction\n\nBrief: https://thecorcoran.github.io/Ledger/briefs/brief-olympia-event-7131-item-102419.html\n\nDates change; confirm on the official agenda.
+URL:https://thecorcoran.github.io/Ledger/briefs/brief-olympia-event-7131-item-102419.html
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ledger-file-26-0761-meeting@lorettas-ledger.local
+DTSTAMP:20261014T081357Z
+DTSTART;TZID=America/Los_Angeles:20261006T173000
+DTEND;TZID=America/Los_Angeles:20261006T200000
+SUMMARY:Public Meeting: City Council approves school bus funding for cultural access trips
+DESCRIPTION:Olympia City Council - City Council approves school bus funding for cultural access trips\n\nBrief: https://thecorcoran.github.io/Ledger/briefs/brief-olympia-event-7131-item-102420.html\n\nDates change; confirm on the official agenda.
+URL:https://thecorcoran.github.io/Ledger/briefs/brief-olympia-event-7131-item-102420.html
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ledger-file-26-0762-meeting@lorettas-ledger.local
+DTSTAMP:20261014T081357Z
+DTSTART;TZID=America/Los_Angeles:20261006T173000
+DTEND;TZID=America/Los_Angeles:20261006T200000
+SUMMARY:Public Meeting: City Council approves federal grant for local housing and community aid
+DESCRIPTION:Olympia City Council - City Council approves federal grant for local housing and community aid\n\nBrief: https://thecorcoran.github.io/Ledger/briefs/brief-olympia-event-7131-item-102421.html\n\nDates change; confirm on the official agenda.
+URL:https://thecorcoran.github.io/Ledger/briefs/brief-olympia-event-7131-item-102421.html
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ledger-file-26-0764-meeting@lorettas-ledger.local
+DTSTAMP:20261014T081357Z
+DTSTART;TZID=America/Los_Angeles:20261006T173000
+DTEND;TZID=America/Los_Angeles:20261006T200000
+SUMMARY:Public Meeting: City Council approves bid for water main seismic valves
+DESCRIPTION:Olympia City Council - City Council approves bid for water main seismic valves\n\nBrief: https://thecorcoran.github.io/Ledger/briefs/brief-olympia-event-7131-item-102422.html\n\nDates change; confirm on the official agenda.
+URL:https://thecorcoran.github.io/Ledger/briefs/brief-olympia-event-7131-item-102422.html
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ledger-file-26-0765-meeting@lorettas-ledger.local
+DTSTAMP:20261014T081357Z
+DTSTART;TZID=America/Los_Angeles:20261006T173000
+DTEND;TZID=America/Los_Angeles:20261006T200000
+SUMMARY:Public Meeting: City Council reviews 2027 dedicated tax and housing budgets
+DESCRIPTION:Olympia City Council - City Council reviews 2027 dedicated tax and housing budgets\n\nBrief: https://thecorcoran.github.io/Ledger/briefs/brief-olympia-event-7131-item-102423.html\n\nDates change; confirm on the official agenda.
+URL:https://thecorcoran.github.io/Ledger/briefs/brief-olympia-event-7131-item-102423.html
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ledger-file-26-0766-meeting@lorettas-ledger.local
+DTSTAMP:20261014T081357Z
+DTSTART;TZID=America/Los_Angeles:20261006T173000
+DTEND;TZID=America/Los_Angeles:20261006T200000
+SUMMARY:Public Meeting: City Council weighs 2027 utility rates and building fees
+DESCRIPTION:Olympia City Council - City Council weighs 2027 utility rates and building fees\n\nBrief: https://thecorcoran.github.io/Ledger/briefs/brief-olympia-event-7131-item-102424.html\n\nDates change; confirm on the official agenda.
+URL:https://thecorcoran.github.io/Ledger/briefs/brief-olympia-event-7131-item-102424.html
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ledger-file-26-0773-meeting@lorettas-ledger.local
+DTSTAMP:20261014T081357Z
+DTSTART;TZID=America/Los_Angeles:20261006T173000
+DTEND;TZID=America/Los_Angeles:20261006T200000
+SUMMARY:Public Meeting: City Council approves contract for Hands On Children's Museum expansion
+DESCRIPTION:Olympia City Council - City Council approves contract for Hands On Children's Museum expansion\n\nBrief: https://thecorcoran.github.io/Ledger/briefs/brief-olympia-event-7131-item-102427.html\n\nDates change; confirm on the official agenda.
+URL:https://thecorcoran.github.io/Ledger/briefs/brief-olympia-event-7131-item-102427.html
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ledger-file-26-0774-meeting@lorettas-ledger.local
+DTSTAMP:20261014T081357Z
+DTSTART;TZID=America/Los_Angeles:20261006T173000
+DTEND;TZID=America/Los_Angeles:20261006T200000
+SUMMARY:Public Meeting: City Council approves lease for city garbage truck
+DESCRIPTION:Olympia City Council - City Council approves lease for city garbage truck\n\nBrief: https://thecorcoran.github.io/Ledger/briefs/brief-olympia-event-7131-item-102428.html\n\nDates change; confirm on the official agenda.
+URL:https://thecorcoran.github.io/Ledger/briefs/brief-olympia-event-7131-item-102428.html
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ledger-file-26-0776-meeting@lorettas-ledger.local
+DTSTAMP:20261014T081357Z
+DTSTART;TZID=America/Los_Angeles:20261006T173000
+DTEND;TZID=America/Los_Angeles:20261006T200000
+SUMMARY:Public Meeting: City Council weighs funding for school visits to OlyAHA Museum
+DESCRIPTION:Olympia City Council - City Council weighs funding for school visits to OlyAHA Museum\n\nBrief: https://thecorcoran.github.io/Ledger/briefs/brief-olympia-event-7131-item-102440.html\n\nDates change; confirm on the official agenda.
+URL:https://thecorcoran.github.io/Ledger/briefs/brief-olympia-event-7131-item-102440.html
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ledger-file-26-0779-meeting@lorettas-ledger.local
+DTSTAMP:20261014T081357Z
+DTSTART;TZID=America/Los_Angeles:20261008T170000
+DTEND;TZID=America/Los_Angeles:20261008T190000
+SUMMARY:Public Meeting: Cultural Access Board weighs City Council Study Session Outcome
+DESCRIPTION:Olympia Cultural Access Program Advisory Board - Cultural Access Board weighs City Council Study Session Outcome\n\nBrief: https://thecorcoran.github.io/Ledger/briefs/brief-olympia-event-7293-item-102341.html\n\nDates change; confirm on the official agenda.
+URL:https://thecorcoran.github.io/Ledger/briefs/brief-olympia-event-7293-item-102341.html
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ledger-file-26-0781-meeting@lorettas-ledger.local
+DTSTAMP:20261014T081357Z
+DTSTART;TZID=America/Los_Angeles:20261006T173000
+DTEND;TZID=America/Los_Angeles:20261006T200000
+SUMMARY:Public Meeting: City Council backs Timberland library levy lid lift
+DESCRIPTION:Olympia City Council - City Council backs Timberland library levy lid lift\n\nBrief: https://thecorcoran.github.io/Ledger/briefs/brief-olympia-event-7131-item-102436.html\n\nDates change; confirm on the official agenda.
+URL:https://thecorcoran.github.io/Ledger/briefs/brief-olympia-event-7131-item-102436.html
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ledger-file-26-0782-meeting@lorettas-ledger.local
+DTSTAMP:20261014T081357Z
+DTSTART;TZID=America/Los_Angeles:20261008T170000
+DTEND;TZID=America/Los_Angeles:20261008T190000
+SUMMARY:Public Meeting: Cultural Access Board weighs Recruitment Subcommittee
+DESCRIPTION:Olympia Cultural Access Program Advisory Board - Cultural Access Board weighs Recruitment Subcommittee\n\nBrief: https://thecorcoran.github.io/Ledger/briefs/brief-olympia-event-7293-item-102340.html\n\nDates change; confirm on the official agenda.
+URL:https://thecorcoran.github.io/Ledger/briefs/brief-olympia-event-7293-item-102340.html
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ledger-file-26-0783-meeting@lorettas-ledger.local
+DTSTAMP:20261014T081357Z
+DTSTART;TZID=America/Los_Angeles:20261008T170000
+DTEND;TZID=America/Los_Angeles:20261008T190000
+SUMMARY:Public Meeting: Cultural Access Board weighs Inspire Olympia 2027 Budget
+DESCRIPTION:Olympia Cultural Access Program Advisory Board - Cultural Access Board weighs Inspire Olympia 2027 Budget\n\nBrief: https://thecorcoran.github.io/Ledger/briefs/brief-olympia-event-7293-item-102342.html\n\nDates change; confirm on the official agenda.
+URL:https://thecorcoran.github.io/Ledger/briefs/brief-olympia-event-7293-item-102342.html
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ledger-file-26-0784-meeting@lorettas-ledger.local
+DTSTAMP:20261014T081357Z
+DTSTART;TZID=America/Los_Angeles:20261010T170000
+DTEND;TZID=America/Los_Angeles:20261010T190000
+SUMMARY:Public Meeting: Equity Commission approves Equity Commission work plan update
+DESCRIPTION:Olympia Social Justice & Equity Commission - Equity Commission approves Equity Commission work plan update\n\nBrief: https://thecorcoran.github.io/Ledger/briefs/brief-olympia-event-7283-item-102361.html\n\nDates change; confirm on the official agenda.
+URL:https://thecorcoran.github.io/Ledger/briefs/brief-olympia-event-7283-item-102361.html
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ledger-file-26-0788-meeting@lorettas-ledger.local
+DTSTAMP:20261014T081357Z
+DTSTART;TZID=America/Los_Angeles:20261006T173000
+DTEND;TZID=America/Los_Angeles:20261006T200000
+SUMMARY:Public Meeting: City Council weighs funding for downtown seasonal lights
+DESCRIPTION:Olympia City Council - City Council weighs funding for downtown seasonal lights\n\nBrief: https://thecorcoran.github.io/Ledger/briefs/brief-olympia-event-7131-item-102441.html\n\nDates change; confirm on the official agenda.
+URL:https://thecorcoran.github.io/Ledger/briefs/brief-olympia-event-7131-item-102441.html
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ledger-file-26-0789-meeting@lorettas-ledger.local
+DTSTAMP:20261014T081357Z
+DTSTART;TZID=America/Los_Angeles:20261013T173000
+DTEND;TZID=America/Los_Angeles:20261013T200000
+SUMMARY:Public Meeting: City Council reviews One Community Plan Update
+DESCRIPTION:Olympia City Council - City Council reviews One Community Plan Update\n\nBrief: https://thecorcoran.github.io/Ledger/briefs/brief-olympia-event-7132-item-102498.html\n\nDates change; confirm on the official agenda.
+URL:https://thecorcoran.github.io/Ledger/briefs/brief-olympia-event-7132-item-102498.html
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ledger-file-26-0790-meeting@lorettas-ledger.local
+DTSTAMP:20261014T081357Z
+DTSTART;TZID=America/Los_Angeles:20261007T170000
+DTEND;TZID=America/Los_Angeles:20261007T190000
+SUMMARY:Public Meeting: Parking & Business Board reviews PBIA Phase 2 Discussion
+DESCRIPTION:Olympia PBIA Advisory Board - Parking & Business Board reviews PBIA Phase 2 Discussion\n\nBrief: https://thecorcoran.github.io/Ledger/briefs/brief-olympia-event-7033-item-102458.html\n\nDates change; confirm on the official agenda.
+URL:https://thecorcoran.github.io/Ledger/briefs/brief-olympia-event-7033-item-102458.html
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ledger-file-26-0793-meeting@lorettas-ledger.local
+DTSTAMP:20261014T081357Z
+DTSTART;TZID=America/Los_Angeles:20261013T173000
+DTEND;TZID=America/Los_Angeles:20261013T200000
+SUMMARY:Public Meeting: City Council reviews community events permit rules and resources
+DESCRIPTION:Olympia City Council - City Council reviews community events permit rules and resources\n\nBrief: https://thecorcoran.github.io/Ledger/briefs/brief-olympia-event-7132-item-102499.html\n\nDates change; confirm on the official agenda.
+URL:https://thecorcoran.github.io/Ledger/briefs/brief-olympia-event-7132-item-102499.html
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ledger-file-26-0796-meeting@lorettas-ledger.local
+DTSTAMP:20261014T081357Z
+DTSTART;TZID=America/Los_Angeles:20261015T170000
+DTEND;TZID=America/Los_Angeles:20261015T190000
+SUMMARY:Public Meeting: Parks Committee reviews Recreation Program - Summer Camp Briefing
+DESCRIPTION:Olympia Parks and Recreation Advisory Committee - Parks Committee reviews Recreation Program - Summer Camp Briefing\n\nBrief: https://thecorcoran.github.io/Ledger/briefs/brief-olympia-event-7244-item-102477.html\n\nDates change; confirm on the official agenda.
+URL:https://thecorcoran.github.io/Ledger/briefs/brief-olympia-event-7244-item-102477.html
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ledger-file-26-0798-meeting@lorettas-ledger.local
+DTSTAMP:20261014T081357Z
+DTSTART;TZID=America/Los_Angeles:20261015T170000
+DTEND;TZID=America/Los_Angeles:20261015T190000
+SUMMARY:Public Meeting: Parks Committee approves Parks Committee work plan update
+DESCRIPTION:Olympia Parks and Recreation Advisory Committee - Parks Committee approves Parks Committee work plan update\n\nBrief: https://thecorcoran.github.io/Ledger/briefs/brief-olympia-event-7244-item-102476.html\n\nDates change; confirm on the official agenda.
+URL:https://thecorcoran.github.io/Ledger/briefs/brief-olympia-event-7244-item-102476.html
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ledger-file-26-0800-meeting@lorettas-ledger.local
+DTSTAMP:20261014T081357Z
+DTSTART;TZID=America/Los_Angeles:20261015T170000
+DTEND;TZID=America/Los_Angeles:20261015T190000
+SUMMARY:Public Meeting: Lodging Tax Committee reviews 2027 lodging tax tourism grant proposals
+DESCRIPTION:Olympia Lodging Tax Advisory Committee - Lodging Tax Committee reviews 2027 lodging tax tourism grant proposals\n\nBrief: https://thecorcoran.github.io/Ledger/briefs/brief-olympia-event-7269-item-102516.html\n\nDates change; confirm on the official agenda.
+URL:https://thecorcoran.github.io/Ledger/briefs/brief-olympia-event-7269-item-102516.html
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ledger-file-26-0801-meeting@lorettas-ledger.local
+DTSTAMP:20261014T081357Z
+DTSTART;TZID=America/Los_Angeles:20261019T180000
+DTEND;TZID=America/Los_Angeles:20261019T200000
+SUMMARY:Public Meeting: Planning Commission weighs Discuss the Urban Forest Management Plan
+DESCRIPTION:Olympia Planning Commission - Planning Commission weighs Discuss the Urban Forest Management Plan\n\nBrief: https://thecorcoran.github.io/Ledger/briefs/brief-olympia-event-7067-item-102543.html\n\nDates change; confirm on the official agenda.
+URL:https://thecorcoran.github.io/Ledger/briefs/brief-olympia-event-7067-item-102543.html
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ledger-omc-chapter-16-60-meeting@lorettas-ledger.local
+DTSTAMP:20261014T081357Z
+DTSTART;TZID=America/Los_Angeles:20260918T170000
+DTEND;TZID=America/Los_Angeles:20260918T190000
+SUMMARY:Public Meeting: Land Use Committee reviews tree protection rules
+DESCRIPTION:Olympia Land Use & Environment Committee - Land Use Committee reviews tree protection rules\n\nBrief: https://thecorcoran.github.io/Ledger/briefs/brief-olympia-event-7281-item-102079.html\n\nDates change; confirm on the official agenda.
+URL:https://thecorcoran.github.io/Ledger/briefs/brief-olympia-event-7281-item-102079.html
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ledger-omc-chapter-18-04-meeting@lorettas-ledger.local
+DTSTAMP:20261014T081357Z
+DTSTART;TZID=America/Los_Angeles:20260918T170000
+DTEND;TZID=America/Los_Angeles:20260918T190000
+SUMMARY:Public Meeting: Land Use Committee weighs rule changes for home-based businesses
+DESCRIPTION:Olympia Land Use & Environment Committee - Land Use Committee weighs rule changes for home-based businesses\n\nBrief: https://thecorcoran.github.io/Ledger/briefs/brief-olympia-event-7281-item-102082.html\n\nDates change; confirm on the official agenda.
+URL:https://thecorcoran.github.io/Ledger/briefs/brief-olympia-event-7281-item-102082.html
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ledger-omc-chapter-18-38-hearing@lorettas-ledger.local
+DTSTAMP:20261014T081357Z
+DTSTART;TZID=America/Los_Angeles:20261019T180000
+DTEND;TZID=America/Los_Angeles:20261019T200000
+SUMMARY:Public Hearing: Planning Commission weighs changes to minimum parking rules
+DESCRIPTION:Olympia Planning Commission - Planning Commission weighs changes to minimum parking rules\n\nBrief: https://thecorcoran.github.io/Ledger/briefs/brief-olympia-event-7067-item-102544.html\n\nDates change; confirm on the official agenda.
+URL:https://thecorcoran.github.io/Ledger/briefs/brief-olympia-event-7067-item-102544.html
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ledger-omc-title-18-cao-hearing@lorettas-ledger.local
+DTSTAMP:20261014T081357Z
+DTSTART;TZID=America/Los_Angeles:20261005T180000
+DTEND;TZID=America/Los_Angeles:20261005T200000
+SUMMARY:Public Hearing: Planning Commission holds hearing on critical area land rules
+DESCRIPTION:Olympia Planning Commission - Planning Commission holds hearing on critical area land rules\n\nBrief: https://thecorcoran.github.io/Ledger/briefs/brief-olympia-event-7066-item-102326.html\n\nDates change; confirm on the official agenda.
+URL:https://thecorcoran.github.io/Ledger/briefs/brief-olympia-event-7066-item-102326.html
+STATUS:CONFIRMED
+END:VEVENT
+END:VCALENDAR

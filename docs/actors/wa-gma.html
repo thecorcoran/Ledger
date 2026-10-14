@@ -459,7 +459,7 @@
             <p><a href="https://app.leg.wa.gov/rcw/default.aspx?cite=36.70A" target="_blank" rel="noopener">Official Public Site &rarr;</a></p>
         </div>
 
-        <h2 class="section-label">Documented Local Briefs Touched (1)</h2>
+        <h2 class="section-label">Documented Local Briefs Touched (3)</h2>
         <p style="font-size: 13px; color: var(--ink-muted);">This table records formal statutory, advisory, financial, or regulatory references in official agenda files.</p>
 
         <table class="ledger-table">
@@ -475,6 +475,22 @@
             <tbody>
                 
             <tr>
+                <td>Oct 7, 2026</td>
+                <td>Planning Commission</td>
+                <td><a href="../briefs/brief-thurston-pc-2026-10-07-media-35332.html"><strong>Planning Commission weighs draft rules for fish and wildlife habitat</strong></a></td>
+                <td>unknown</td>
+                <td><a href="https://www.thurstoncountywa.gov/media/35332" target="_blank" rel="noopener">Official Source Record &rarr;</a></td>
+            </tr>
+            
+            <tr>
+                <td>Oct 7, 2026</td>
+                <td>Planning Commission</td>
+                <td><a href="../briefs/brief-thurston-pc-2026-10-07-media-35331.html"><strong>Planning Commission weighs draft rules for local wetlands</strong></a></td>
+                <td>unknown</td>
+                <td><a href="https://www.thurstoncountywa.gov/media/35331" target="_blank" rel="noopener">Official Source Record &rarr;</a></td>
+            </tr>
+            
+            <tr>
                 <td>Sep 28, 2026</td>
                 <td>Hearing Examiner</td>
                 <td><a href="../briefs/brief-olympia-event-6984-item-102122.html"><strong>Hearing Examiner holds hearing on Springwood Garden subdivision</strong></a></td>
@@ -487,7 +503,7 @@
         
     </div>
     <footer class="broadsheet-footer">
-        Loretta's Ledger &bull; Documented Public Record for Thurston County and City of Olympia &bull; Strictly Factual &bull; <a href="../glossary.html">Glossary</a> &bull; <a href="../reading/">Further Reading</a>
+        Loretta's Ledger &bull; Documented Public Record for Thurston County and City of Olympia &bull; Strictly Factual &bull; <a href="../how-to-take-part.html">How to Take Part</a> &bull; <a href="../calendar.html">Calendar</a> &bull; <a href="../glossary.html">Glossary</a> &bull; <a href="../reading/">Further Reading</a>
     </footer>
     <script>
     function getBriefShareUrl(btn) {
@@ -539,6 +555,38 @@
                 url: url
             }).catch(function(e) {});
         }
+    }
+
+    function copyContactAddress(btn, addr) {
+        navigator.clipboard.writeText(addr).then(function() {
+            var old = btn.innerHTML;
+            btn.innerHTML = "✓ Copied Address!";
+            setTimeout(function() { btn.innerHTML = old; }, 2200);
+        }).catch(function() {
+            prompt("Copy address:", addr);
+        });
+    }
+
+    function copyDraftText(btn) {
+        var draft = btn.getAttribute("data-draft") || "";
+        navigator.clipboard.writeText(draft).then(function() {
+            var old = btn.innerHTML;
+            btn.innerHTML = "✓ Copied Draft!";
+            setTimeout(function() { btn.innerHTML = old; }, 2200);
+        }).catch(function() {
+            prompt("Copy draft text:", draft);
+        });
+    }
+
+    function copyCalendarLink(btn) {
+        var url = btn.getAttribute("data-url") || "";
+        navigator.clipboard.writeText(url).then(function() {
+            var old = btn.innerHTML;
+            btn.innerHTML = "✓ Copied Calendar Link!";
+            setTimeout(function() { btn.innerHTML = old; }, 2200);
+        }).catch(function() {
+            prompt("Copy calendar link:", url);
+        });
     }
 
     document.addEventListener("DOMContentLoaded", function() {

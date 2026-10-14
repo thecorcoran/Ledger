@@ -16,10 +16,38 @@ contacts:
     phone: "(360) 867-2685"
     email: "phss_boards@co.thurston.wa.us"
     portal_url: "https://www.thurstoncountywa.gov/departments/public-health-and-social-services/board-health"
-    comment_info: "Submit written comments by email to phss_boards@co.thurston.wa.us or appear at Room 110 of the Atrium, 3000 Pacific Ave. SE, Olympia, WA."
+    comment_info: "Submit written comments by email to phss_boards@co.thurston.wa.us or appear at Room 110 of the Atrium, 3000 Pacific Ave. SE, Olympia, WA up to 2 hours before the meeting."
     address: "3000 Pacific Ave SE, Suite 225, Olympia, WA 98501"
     source_url: "https://www.thurstoncountywa.gov/media/35264"
     last_verified: "2026-10-13"
+    meeting_schedule: "Meets 2nd Tuesday of each month at 3:30 PM, Room 110 of The Atrium, 3000 Pacific Ave SE, Olympia, WA."
+    comment_rules: "Written comments accepted by email to phss_boards@co.thurston.wa.us or mail up to 2 hours before meeting time. Oral testimony taken during public comment and hearings."
+    agenda_request_rules: "Agenda items are scheduled by the Public Health Director, Health Officer, or Board members. Contact the Board of Health Clerk to inquire."
+    members:
+      - name: "Carolina Mejia"
+        role: "County Commissioner, District 1"
+      - name: "Gary Edwards"
+        role: "County Commissioner, District 2"
+      - name: "Tye Menser"
+        role: "County Commissioner, District 3"
+      - name: "Wayne Fournier"
+        role: "County Commissioner, District 4"
+      - name: "Emily Clouse"
+        role: "County Commissioner, District 5"
+      - name: "David Heywood"
+        role: "Appointed Community Member"
+      - name: "Lynn Nelson"
+        role: "Appointed Community Member"
+      - name: "Beth Harvey"
+        role: "Appointed Health Care Provider"
+    clerk_name: "Melanie Bruno"
+    clerk_title: "Interim Board of Health Clerk"
+    clerk_email: "phss_boards@co.thurston.wa.us"
+    clerk_phone: "(360) 867-2685"
+    staff_name: "Environmental Health Division"
+    staff_department: "Public Health & Social Services"
+    staff_email: "phss_boards@co.thurston.wa.us"
+    staff_phone: "(360) 867-2685"
 
   thurston_bocc:
     jurisdiction: thurston
@@ -33,7 +61,29 @@ contacts:
     comment_info: "Written comments may be submitted online via portal or emailed to the Clerk of the Board up to 2 hours before scheduled hearings."
     address: "3000 Pacific Ave SE, Olympia, WA 98501"
     source_url: "https://www.thurstoncountywa.gov/departments/board-county-commissioners"
-    last_verified: "2026-10-09"
+    last_verified: "2026-10-13"
+    meeting_schedule: "Meets Tuesdays at 2:00 PM for regular business and public hearings (Room 110 of The Atrium, 3000 Pacific Ave SE, Olympia, WA). Work sessions Tuesday mornings at 9:00 AM."
+    comment_rules: "Public comment taken at 2:00 PM meetings in person or via Zoom. Written comments submitted via portal or email to Clerk of the Board up to 2 hours before the meeting."
+    agenda_request_rules: "Agenda items must be sponsored by a County Commissioner, County Manager, or department director. Citizens can request an item by contacting commissioners or during general public comment."
+    members:
+      - name: "Carolina Mejia"
+        role: "County Commissioner, District 1"
+      - name: "Gary Edwards"
+        role: "County Commissioner, District 2"
+      - name: "Tye Menser"
+        role: "County Commissioner, District 3"
+      - name: "Wayne Fournier"
+        role: "County Commissioner, District 4"
+      - name: "Emily Clouse"
+        role: "County Commissioner, District 5"
+    clerk_name: "Amy Davis"
+    clerk_title: "Clerk of the Board"
+    clerk_email: null
+    clerk_phone: "(360) 786-5440"
+    staff_name: "County Manager's Office"
+    staff_department: "Thurston County Administration"
+    staff_email: null
+    staff_phone: "(360) 786-5440"
 
   thurston_planning_commission:
     jurisdiction: thurston
@@ -47,7 +97,21 @@ contacts:
     comment_info: "Written comments may be submitted to staff for distribution to the Planning Commission prior to work sessions and public hearings."
     address: "3000 Pacific Ave SE, Olympia, WA 98501"
     source_url: "https://www.thurstoncountywa.gov/departments/community-planning-and-economic-development/community-planning/planning-commission"
-    last_verified: "2026-10-09"
+    last_verified: "2026-10-13"
+    meeting_schedule: "Meets 1st and 3rd Wednesdays at 6:30 PM (Room 110 of The Atrium, 3000 Pacific Ave SE, Olympia, WA)."
+    comment_rules: "Written comments submitted to CPED staff liaison prior to hearings/work sessions. Oral testimony heard during formal public hearings."
+    agenda_request_rules: "Follows the official Thurston County Comprehensive Plan and Development Code Docket established annually by the Board of County Commissioners. Private docket requests must be submitted during the annual amendment cycle."
+    members:
+      - name: "Thurston Planning Commissioners (9 Appointed Members)"
+        role: "Citizen Planning Commissioners"
+    clerk_name: "Planning Commission Secretary"
+    clerk_title: "CPED Administrative Staff"
+    clerk_email: null
+    clerk_phone: "(360) 786-5490"
+    staff_name: "Community Planning & Economic Development"
+    staff_department: "CPED Planning Division"
+    staff_email: null
+    staff_phone: "(360) 786-5490"
 
   thurston_cd:
     jurisdiction: thurston
@@ -61,7 +125,7 @@ contacts:
     comment_info: "Direct inquiries regarding voluntary farm planning, rates, and district conservation programs."
     address: "2918 Ferguson St SW, Ste A, Tumwater, WA 98512"
     source_url: "https://www.thurstoncd.com"
-    last_verified: "2026-10-09"
+    last_verified: "2026-10-13"
 
   olympia_council:
     jurisdiction: olympia
@@ -75,7 +139,96 @@ contacts:
     comment_info: "Submit public comments online or via email by 4:00 PM on the day of the council meeting, or register for live Zoom/in-person testimony."
     address: "601 4th Ave E, Olympia, WA 98501"
     source_url: "https://www.olympiawa.gov/government/city_council/contact_the_city_council.php"
-    last_verified: "2026-10-09"
+    last_verified: "2026-10-13"
+    meeting_schedule: "Meets Tuesdays at 5:30 PM or 7:00 PM, Council Chambers, Olympia City Hall, 601 4th Ave E, Olympia, WA. Study sessions on 1st/3rd Tuesdays; business meetings on 2nd/4th Tuesdays."
+    comment_rules: "Public comment period held during Tuesday meetings. Written comments submitted to citycouncil@olympiawa.gov or via portal by 4:00 PM on meeting day. Live Zoom/in-person testimony requires sign-up before 4:00 PM."
+    agenda_request_rules: "Agenda items are set by the Mayor and City Manager in consultation with Councilmembers. Public requests can be submitted in writing to the Mayor, Council, or City Clerk."
+    members:
+      - name: "Dontae Payne"
+        role: "Mayor"
+        email: "dpayne@olympiawa.gov"
+      - name: "Yēn Huỳnh"
+        role: "Mayor Pro Tem"
+        email: "yhuynh@olympiawa.gov"
+      - name: "Dani Madrone"
+        role: "Councilmember"
+        email: "dmadrone@olympiawa.gov"
+      - name: "Clark Gilman"
+        role: "Councilmember"
+        email: "cgilman@olympiawa.gov"
+      - name: "Jim Cooper"
+        role: "Councilmember"
+        email: "jcooper@olympiawa.gov"
+      - name: "Lisa Parshley"
+        role: "Councilmember"
+        email: "lparshle@olympiawa.gov"
+      - name: "Robert Vanderpool"
+        role: "Councilmember"
+        email: "rvanderp@olympiawa.gov"
+    clerk_name: "Sean Krier"
+    clerk_title: "City Clerk"
+    clerk_email: "citycouncil@olympiawa.gov"
+    clerk_phone: "(360) 753-8325"
+    staff_name: "City Manager's Office"
+    staff_department: "Executive Administration"
+    staff_email: "citycouncil@olympiawa.gov"
+    staff_phone: "(360) 753-8325"
+
+  olympia_planning_commission:
+    jurisdiction: olympia
+    entity_name: "Olympia Planning Commission"
+    role: "Advisory Citizen Commission on Comprehensive Plan and Land Use Regulations"
+    contact_name: "Community Planning & Development"
+    contact_title: "Staff Liaison"
+    phone: "(360) 753-8314"
+    email: "cpdinfo@olympiawa.gov"
+    portal_url: "https://www.olympiawa.gov/government/advisory_committees/planning_commission.php"
+    comment_info: "Written comments submitted to cpdinfo@olympiawa.gov or City Clerk by 4:00 PM on meeting day. Oral testimony taken during public hearings."
+    address: "601 4th Ave E, Olympia, WA 98501"
+    source_url: "https://www.olympiawa.gov/government/advisory_committees/planning_commission.php"
+    last_verified: "2026-10-13"
+    meeting_schedule: "Meets 1st and 3rd Mondays at 6:00 PM, Council Chambers, Olympia City Hall, 601 4th Ave E, Olympia, WA."
+    comment_rules: "Written comments submitted to cpdinfo@olympiawa.gov or City Clerk by 4:00 PM on meeting day. Oral testimony taken during public hearings."
+    agenda_request_rules: "Work program is established by City Council through the Comprehensive Plan Docket. Citizens propose amendments during the annual Comprehensive Plan cycle."
+    members:
+      - name: "Olympia Planning Commissioners (9 Appointed Members)"
+        role: "Citizen Planning Commissioners"
+    clerk_name: "City Clerk's Office"
+    clerk_title: "City Clerk Liaison"
+    clerk_email: "cityclerk@olympiawa.gov"
+    clerk_phone: "(360) 753-8325"
+    staff_name: "Community Planning & Development"
+    staff_department: "CPD Planning Division"
+    staff_email: "cpdinfo@olympiawa.gov"
+    staff_phone: "(360) 753-8314"
+
+  olympia_committees:
+    jurisdiction: olympia
+    entity_name: "Olympia Advisory Committees and Boards"
+    role: "Council Advisory Committees (Parks, Land Use, Utility, Finance, Equity, Heritage)"
+    contact_name: "City Clerk's Office"
+    contact_title: "Committee Coordination"
+    phone: "(360) 753-8325"
+    email: "cityclerk@olympiawa.gov"
+    portal_url: "https://www.olympiawa.gov/government/advisory_committees/index.php"
+    comment_info: "Written comments sent to committee staff liaison or City Clerk at least 24 hours prior to scheduled meetings."
+    address: "601 4th Ave E, Olympia, WA 98501"
+    source_url: "https://www.olympiawa.gov/government/advisory_committees/index.php"
+    last_verified: "2026-10-13"
+    meeting_schedule: "Meets monthly or bi-monthly (Parks: 3rd Thu 5:30 PM; Land Use: 4th Thu 4:00 PM; Finance: 2nd Tue 2:00 PM; Utility: 2nd Thu 4:00 PM)."
+    comment_rules: "Brief public comment allowed at opening of regular meetings. Written comments sent to committee staff liaison or City Clerk at least 24 hours prior."
+    agenda_request_rules: "Items arise from City Council referrals or committee annual work programs. Inquire with staff liaison or committee chair."
+    members:
+      - name: "Appointed Advisory Committee Members"
+        role: "Citizen Advisory Committee Members"
+    clerk_name: "City Clerk's Office"
+    clerk_title: "City Clerk Staff"
+    clerk_email: "cityclerk@olympiawa.gov"
+    clerk_phone: "(360) 753-8325"
+    staff_name: "Staff Liaisons by Department"
+    staff_department: "City of Olympia Administration"
+    staff_email: "cityclerk@olympiawa.gov"
+    staff_phone: "(360) 753-8325"
 
   wa_legislature_dist22:
     jurisdiction: state
@@ -89,7 +242,7 @@ contacts:
     comment_info: "Contact state lawmakers regarding state statutes, mandates, and state agency funding."
     address: "Legislative Building, PO Box 40482, Olympia, WA 98504"
     source_url: "https://leg.wa.gov"
-    last_verified: "2026-10-09"
+    last_verified: "2026-10-13"
 
   wa_legislature_dist35:
     jurisdiction: state
@@ -103,7 +256,7 @@ contacts:
     comment_info: "Contact state lawmakers representing rural Thurston County."
     address: "Legislative Building, PO Box 40482, Olympia, WA 98504"
     source_url: "https://leg.wa.gov"
-    last_verified: "2026-10-09"
+    last_verified: "2026-10-13"
 
   wa_scc:
     jurisdiction: state
@@ -117,7 +270,7 @@ contacts:
     comment_info: "Oversees RCW 89.08 and statewide conservation district support programs."
     address: "PO Box 47721, Olympia, WA 98504"
     source_url: "https://scc.wa.gov"
-    last_verified: "2026-10-09"
+    last_verified: "2026-10-13"
 
   wa_doh:
     jurisdiction: state
@@ -131,7 +284,7 @@ contacts:
     comment_info: "Sets standards for public and Group B drinking water systems."
     address: "PO Box 47822, Olympia, WA 98504"
     source_url: "https://doh.wa.gov"
-    last_verified: "2026-10-09"
+    last_verified: "2026-10-13"
 
   wa_ecology:
     jurisdiction: state
@@ -145,7 +298,7 @@ contacts:
     comment_info: "Oversees Shoreline Management Act and wetlands guidance."
     address: "PO Box 47775, Olympia, WA 98504"
     source_url: "https://ecology.wa.gov"
-    last_verified: "2026-10-09"
+    last_verified: "2026-10-13"
 
   wa_commerce:
     jurisdiction: state
@@ -159,7 +312,7 @@ contacts:
     comment_info: "Administers RCW 36.70A Growth Management Act compliance and reviews."
     address: "1011 Plum St SE, Olympia, WA 98504"
     source_url: "https://www.commerce.wa.gov"
-    last_verified: "2026-10-09"
+    last_verified: "2026-10-13"
 
   hud_seattle:
     jurisdiction: federal
@@ -173,5 +326,4 @@ contacts:
     comment_info: "Administers federal Community Development Block Grants (CDBG)."
     address: "909 First Avenue, Suite 200, Seattle, WA 98104"
     source_url: "https://www.hud.gov"
-    last_verified: "2026-10-09"
-
+    last_verified: "2026-10-13"

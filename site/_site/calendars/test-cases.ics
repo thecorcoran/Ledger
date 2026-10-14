@@ -1,0 +1,117 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Loretta's Ledger//Policy Tracker Calendar//EN
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+X-WR-CALNAME:Loretta's Ledger — Precedent Test Cases
+X-WR-CALDESC:Key precedent-setting policy hearings and comment deadlines flagged as test cases. Dates change; confirm on the official agenda. Updated 2026-10-12.
+X-WR-TIMEZONE:America/Los_Angeles
+BEGIN:VTIMEZONE
+TZID:America/Los_Angeles
+X-LIC-LOCATION:America/Los_Angeles
+BEGIN:DAYLIGHT
+TZOFFSETFROM:-0800
+TZOFFSETTO:-0700
+TZNAME:PDT
+DTSTART:19700308T020000
+RRULE:FREQ=YEARLY;BYMONTH=3;BYDAY=2SU
+END:DAYLIGHT
+BEGIN:STANDARD
+TZOFFSETFROM:-0700
+TZOFFSETTO:-0800
+TZNAME:PST
+DTSTART:19701101T020000
+RRULE:FREQ=YEARLY;BYMONTH=11;BYDAY=1SU
+END:STANDARD
+END:VTIMEZONE
+BEGIN:VEVENT
+UID:ledger-case-25-0980-hearing@lorettas-ledger.local
+DTSTAMP:20261014T081357Z
+DTSTART;TZID=America/Los_Angeles:20260928T100000
+DTEND;TZID=America/Los_Angeles:20260928T120000
+SUMMARY:Public Hearing: Hearing Examiner holds hearing on Springwood Garden subdivision
+DESCRIPTION:Olympia Hearing Examiner - Hearing Examiner holds hearing on Springwood Garden subdivision\n\nBrief: https://thecorcoran.github.io/Ledger/briefs/brief-olympia-event-6984-item-102122.html\n\nDates change; confirm on the official agenda.
+URL:https://thecorcoran.github.io/Ledger/briefs/brief-olympia-event-6984-item-102122.html
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ledger-case-25-1692-hearing@lorettas-ledger.local
+DTSTAMP:20261014T081357Z
+DTSTART;TZID=America/Los_Angeles:20260928T100000
+DTEND;TZID=America/Los_Angeles:20260928T120000
+SUMMARY:Public Hearing: Hearing Examiner holds hearing on West Bay Marina replacement
+DESCRIPTION:Olympia Hearing Examiner - Hearing Examiner holds hearing on West Bay Marina replacement\n\nBrief: https://thecorcoran.github.io/Ledger/briefs/brief-olympia-event-6984-item-102121.html\n\nDates change; confirm on the official agenda.
+URL:https://thecorcoran.github.io/Ledger/briefs/brief-olympia-event-6984-item-102121.html
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ledger-sanitary-code-article-iii-hearing@lorettas-ledger.local
+DTSTAMP:20261014T081357Z
+DTSTART;TZID=America/Los_Angeles:20261013T153000
+DTEND;TZID=America/Los_Angeles:20261013T170000
+SUMMARY:Public Hearing: Health Board weighs updates to county drinking water code
+DESCRIPTION:Thurston County Board of Health - Health Board weighs updates to county drinking water code\n\nBrief: https://thecorcoran.github.io/Ledger/briefs/brief-thurston-bocc-2026-10-13-9809f687c7.html\n\nDates change; confirm on the official agenda.
+URL:https://thecorcoran.github.io/Ledger/briefs/brief-thurston-bocc-2026-10-13-9809f687c7.html
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ledger-sanitary-code-article-iii-comment-deadline@lorettas-ledger.local
+DTSTAMP:20261014T081357Z
+DTSTART;TZID=America/Los_Angeles:20261013T170000
+DTEND;TZID=America/Los_Angeles:20261013T173000
+SUMMARY:Comment Deadline: Health Board weighs updates to county drinking water code
+DESCRIPTION:Written comment deadline for Health Board weighs updates to county drinking water code.\n\nReview details and submission contacts: https://thecorcoran.github.io/Ledger/briefs/brief-thurston-bocc-2026-10-13-9809f687c7.html\n\nDates change; confirm on the official agenda.
+URL:https://thecorcoran.github.io/Ledger/briefs/brief-thurston-bocc-2026-10-13-9809f687c7.html
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:Reminder: Comment deadline tomorrow for Health Board weighs updates to county drinking water code
+TRIGGER:-P1D
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:ledger-tcc-chapter-24-25-meeting@lorettas-ledger.local
+DTSTAMP:20261014T081357Z
+DTSTART;TZID=America/Los_Angeles:20261007T183000
+DTEND;TZID=America/Los_Angeles:20261007T203000
+SUMMARY:Public Meeting: Planning Commission weighs draft rules for fish and wildlife habitat
+DESCRIPTION:Thurston County Planning Commission - Planning Commission weighs draft rules for fish and wildlife habitat\n\nBrief: https://thecorcoran.github.io/Ledger/briefs/brief-thurston-pc-2026-10-07-media-35332.html\n\nDates change; confirm on the official agenda.
+URL:https://thecorcoran.github.io/Ledger/briefs/brief-thurston-pc-2026-10-07-media-35332.html
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ledger-tcc-chapter-24-30-meeting@lorettas-ledger.local
+DTSTAMP:20261014T081357Z
+DTSTART;TZID=America/Los_Angeles:20261007T183000
+DTEND;TZID=America/Los_Angeles:20261007T203000
+SUMMARY:Public Meeting: Planning Commission weighs draft rules for local wetlands
+DESCRIPTION:Thurston County Planning Commission - Planning Commission weighs draft rules for local wetlands\n\nBrief: https://thecorcoran.github.io/Ledger/briefs/brief-thurston-pc-2026-10-07-media-35331.html\n\nDates change; confirm on the official agenda.
+URL:https://thecorcoran.github.io/Ledger/briefs/brief-thurston-pc-2026-10-07-media-35331.html
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ledger-tcd-rate-adjustment-ordinance-hearing@lorettas-ledger.local
+DTSTAMP:20261014T081357Z
+DTSTART;TZID=America/Los_Angeles:20261020T140000
+DTEND;TZID=America/Los_Angeles:20261020T153000
+SUMMARY:Public Hearing: County weighs new rates to fund Thurston Conservation District
+DESCRIPTION:Thurston County County Commissioners - County weighs new rates to fund Thurston Conservation District\n\nBrief: https://thecorcoran.github.io/Ledger/briefs/brief-thurston-bocc-2026-10-20-6123bedc0c.html\n\nDates change; confirm on the official agenda.
+URL:https://thecorcoran.github.io/Ledger/briefs/brief-thurston-bocc-2026-10-20-6123bedc0c.html
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ledger-tcd-rate-adjustment-ordinance-comment-deadline@lorettas-ledger.local
+DTSTAMP:20261014T081357Z
+DTSTART;TZID=America/Los_Angeles:20261020T170000
+DTEND;TZID=America/Los_Angeles:20261020T173000
+SUMMARY:Comment Deadline: County weighs new rates to fund Thurston Conservation District
+DESCRIPTION:Written comment deadline for County weighs new rates to fund Thurston Conservation District.\n\nReview details and submission contacts: https://thecorcoran.github.io/Ledger/briefs/brief-thurston-bocc-2026-10-20-6123bedc0c.html\n\nDates change; confirm on the official agenda.
+URL:https://thecorcoran.github.io/Ledger/briefs/brief-thurston-bocc-2026-10-20-6123bedc0c.html
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:Reminder: Comment deadline tomorrow for County weighs new rates to fund Thurston Conservation District
+TRIGGER:-P1D
+END:VALARM
+END:VEVENT
+END:VCALENDAR

@@ -25,6 +25,9 @@ from datetime import datetime, timedelta
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 
+import yaml
+
+from pipeline.calendar import build_and_export_calendars
 from pipeline.db import DEFAULT_DB_PATH, get_db_connection
 from pipeline.titles import (
     classify_item_tier,
@@ -195,6 +198,7 @@ SITE_SRC_DIR = ROOT_DIR / "site" / "src"
 SITE_OUT_DIR = ROOT_DIR / "site" / "_site"
 DOCS_DIR = ROOT_DIR / "docs"
 BRIEFS_DIR = ROOT_DIR / "briefs"
+CONFIG_DIR = ROOT_DIR / "config"
 
 
 def ensure_directories():
@@ -807,7 +811,7 @@ def get_base_html_page(
         {content}
     </div>
     <footer class="broadsheet-footer">
-        Loretta's Ledger &bull; Documented Public Record for Thurston County and City of Olympia &bull; Strictly Factual &bull; <a href="{root_prefix}glossary.html">Glossary</a> &bull; <a href="{root_prefix}reading/">Further Reading</a>
+        Loretta's Ledger &bull; Documented Public Record for Thurston County and City of Olympia &bull; Strictly Factual &bull; <a href="{root_prefix}how-to-take-part.html">How to Take Part</a> &bull; <a href="{root_prefix}calendar.html">Calendar</a> &bull; <a href="{root_prefix}glossary.html">Glossary</a> &bull; <a href="{root_prefix}reading/">Further Reading</a>
     </footer>
     <script>
     function getBriefShareUrl(btn) {{
@@ -859,6 +863,38 @@ def get_base_html_page(
                 url: url
             }}).catch(function(e) {{}});
         }}
+    }}
+
+    function copyContactAddress(btn, addr) {{
+        navigator.clipboard.writeText(addr).then(function() {{
+            var old = btn.innerHTML;
+            btn.innerHTML = "✓ Copied Address!";
+            setTimeout(function() {{ btn.innerHTML = old; }}, 2200);
+        }}).catch(function() {{
+            prompt("Copy address:", addr);
+        }});
+    }}
+
+    function copyDraftText(btn) {{
+        var draft = btn.getAttribute("data-draft") || "";
+        navigator.clipboard.writeText(draft).then(function() {{
+            var old = btn.innerHTML;
+            btn.innerHTML = "✓ Copied Draft!";
+            setTimeout(function() {{ btn.innerHTML = old; }}, 2200);
+        }}).catch(function() {{
+            prompt("Copy draft text:", draft);
+        }});
+    }}
+
+    function copyCalendarLink(btn) {{
+        var url = btn.getAttribute("data-url") || "";
+        navigator.clipboard.writeText(url).then(function() {{
+            var old = btn.innerHTML;
+            btn.innerHTML = "✓ Copied Calendar Link!";
+            setTimeout(function() {{ btn.innerHTML = old; }}, 2200);
+        }}).catch(function() {{
+            prompt("Copy calendar link:", url);
+        }});
     }}
 
     document.addEventListener("DOMContentLoaded", function() {{
@@ -1178,6 +1214,623 @@ def load_matter_qa_html(matter_id: Optional[str], item_id: str, brief_title: str
     """
 
 
+def load_contacts_config(path: Optional[Path] = None) -> Dict[str, Any]:
+    """Loads verified contacts directory from config/contacts.yaml."""
+    cfg_path = path or (CONFIG_DIR / "contacts.yaml")
+    if cfg_path.exists():
+        try:
+            with open(cfg_path, "r", encoding="utf-8") as f:
+                return yaml.safe_load(f) or {}
+        except Exception as e:
+            logger.warning(f"Failed to load contacts config from {cfg_path}: {e}")
+    return {}
+
+
+def resolve_contact_entity(item: Dict[str, Any], contacts_data: Dict[str, Any]) -> Tuple[str, Dict[str, Any]]:
+    """Resolves the verified government body and contacts entry for a given agenda item or matter."""
+    contacts_map = contacts_data.get("contacts", {})
+    raw_title = (item.get("title") or item.get("display_title") or "").lower()
+    body_label = (item.get("full_body_label") or item.get("body") or "").lower()
+    jur = (item.get("jurisdiction") or "").lower()
+    source_id = (item.get("source_id") or "").lower()
+
+    combined = f"{raw_title} {body_label} {source_id}"
+
+    if "board of health" in combined or "boh" in combined or "article iii" in combined or "drinking water" in combined:
+        return "thurston_boh", contacts_map.get("thurston_boh", {})
+    if "conservation district" in combined:
+        return "thurston_cd", contacts_map.get("thurston_cd", {})
+    if "planning commission" in combined:
+        if jur == "olympia" or "olympia" in combined:
+            return "olympia_planning_commission", contacts_map.get("olympia_planning_commission", {})
+        return "thurston_planning_commission", contacts_map.get("thurston_planning_commission", {})
+    if ("committee" in combined or "board" in combined) and (jur == "olympia" or "olympia" in combined):
+        return "olympia_committees", contacts_map.get("olympia_committees", {})
+    if jur == "olympia" or "olympia" in combined:
+        return "olympia_council", contacts_map.get("olympia_council", {})
+    return "thurston_bocc", contacts_map.get("thurston_bocc", {})
+
+
+def extract_brief_gap_questions(md_text: str) -> List[str]:
+    """Extracts questions and documented gap items from ## For Staff and ## Questions sections."""
+    if not md_text:
+        return []
+    questions: List[str] = []
+
+    def clean_md_inline(s: str) -> str:
+        s = re.sub(r"\[([^\]]+)\]\([^\)]+\)", r"\1", s)
+        s = re.sub(r"[*_`]", "", s)
+        return s.strip()
+
+    m_staff = re.search(r"## For Staff\n(.*?)(?=\n## |\Z)", md_text, re.DOTALL)
+    if m_staff:
+        for line in m_staff.group(1).splitlines():
+            line = line.strip()
+            if line.startswith(("-", "*", "1.", "2.", "3.", "4.", "5.")):
+                val = re.sub(r"^[-*\d\.]+\s*", "", line)
+                cleaned = clean_md_inline(val)
+                if cleaned and cleaned not in questions:
+                    questions.append(cleaned)
+
+    m_q = re.search(r"## Questions\n(.*?)(?=\n## |\Z)", md_text, re.DOTALL)
+    if m_q:
+        for line in m_q.group(1).splitlines():
+            line = line.strip()
+            if line.startswith(("-", "*", "1.", "2.", "3.", "4.", "5.")):
+                val = re.sub(r"^[-*\d\.]+\s*", "", line)
+                cleaned = clean_md_inline(val)
+                if cleaned and cleaned not in questions:
+                    questions.append(cleaned)
+
+    return questions
+
+
+def extract_brief_possible_asks(md_text: str) -> List[str]:
+    """Extracts possible asks from ## What Would Make It Better or ## What to Do."""
+    if not md_text:
+        return []
+    asks: List[str] = []
+
+    def clean_md_inline(s: str) -> str:
+        s = re.sub(r"\[([^\]]+)\]\([^\)]+\)", r"\1", s)
+        s = re.sub(r"[*_`]", "", s)
+        return s.strip()
+
+    m_better = re.search(r"## What Would Make It Better\n(.*?)(?=\n## |\Z)", md_text, re.DOTALL)
+    if m_better:
+        for line in m_better.group(1).splitlines():
+            line = line.strip()
+            if line.startswith(("-", "*", "1.", "2.", "3.")):
+                val = re.sub(r"^[-*\d\.]+\s*", "", line)
+                cleaned = clean_md_inline(val)
+                if cleaned and cleaned not in asks:
+                    asks.append(cleaned)
+
+    if not asks:
+        m_todo = re.search(r"## What to Do\n(.*?)(?=\n## |\Z)", md_text, re.DOTALL)
+        if m_todo:
+            for line in m_todo.group(1).splitlines():
+                line = line.strip()
+                if "possible ask" in line.lower() or "suggested ask" in line.lower():
+                    val = re.sub(r"^[-*\d\.]+\s*", "", line)
+                    cleaned = clean_md_inline(val)
+                    if cleaned and cleaned not in asks:
+                        asks.append(cleaned)
+
+    return asks
+
+
+def build_brief_contacts_html(it: Dict[str, Any], contacts_data: Dict[str, Any], md_source: str = "", today_str: str = "2026-10-13") -> str:
+    """Builds two-group verified contact component for briefs:
+    Group A: 'Ask staff a question' (for facts and process)
+    Group B: 'Tell officials what you think' (for opinions and requests)
+    Note C: Official record submission with clerk and portal link.
+    """
+    plain_title = it.get("display_title") or clean_agenda_title(it.get("title") or "Policy Matter")
+    meeting_date_raw = (it.get("meeting_date") or "")[:10]
+    jur = (it.get("jurisdiction") or "thurston").lower()
+    area_name = "an Olympia" if jur == "olympia" else "a Thurston County"
+
+    if meeting_date_raw == today_str[:10]:
+        dt_display = f"today ({format_short_date(meeting_date_raw)})"
+    elif meeting_date_raw:
+        dt_display = format_short_date(meeting_date_raw)
+    else:
+        dt_display = "the upcoming meeting"
+
+    _, entity = resolve_contact_entity(it, contacts_data)
+    if not entity:
+        return ""
+
+    entity_name = entity.get("entity_name") or "Local Deciding Body"
+    portal_url = entity.get("portal_url") or "#"
+    source_url = entity.get("source_url") or entity.get("portal_url") or "#"
+    last_verified = format_short_date(entity.get("last_verified") or "2026-10-13")
+
+    # Documented deadline
+    raw_deadline = it.get("comment_deadline")
+    if raw_deadline and str(raw_deadline).strip():
+        deadline_text = html.escape(str(raw_deadline).strip())
+    else:
+        deadline_text = "Check the agenda"
+
+    # --- Group A: Ask staff a question ---
+    staff_contacts = []
+    
+    staff_name = entity.get("staff_name") or entity.get("contact_name")
+    staff_dept = entity.get("staff_department") or entity.get("department") or entity_name
+    staff_email = entity.get("staff_email") or entity.get("email")
+    staff_phone = entity.get("staff_phone") or entity.get("phone")
+    if staff_name or staff_email:
+        staff_contacts.append({
+            "name": staff_name or staff_dept,
+            "role": f"Staff Liaison, {staff_dept}" if staff_name else staff_dept,
+            "email": staff_email,
+            "phone": staff_phone,
+        })
+
+    clerk_name = entity.get("clerk_name") or entity.get("contact_name")
+    clerk_title = entity.get("clerk_title") or entity.get("contact_title") or "Clerk"
+    clerk_email = entity.get("clerk_email") or entity.get("email")
+    clerk_phone = entity.get("clerk_phone") or entity.get("phone")
+    if clerk_name and (not staff_contacts or clerk_name != staff_contacts[0].get("name")):
+        staff_contacts.append({
+            "name": clerk_name,
+            "role": clerk_title,
+            "email": clerk_email,
+            "phone": clerk_phone,
+        })
+
+    staff_cards_html = []
+    for c in staff_contacts:
+        c_name = c["name"]
+        c_role = c["role"]
+        c_email = c["email"]
+        c_phone = c["phone"]
+
+        subj_str = f"Question on {plain_title} ({dt_display})"
+        body_str = (
+            f"Hello {c_name},\n\n"
+            f"I'm a resident of ___ reading the packet for {plain_title} on {dt_display}. "
+            f"I couldn't find where it says ___.\n\n"
+            f"Could you point me to the section?\n\n"
+            f"Thank you,\n"
+        )
+        draft_str = (
+            f"Subject: {subj_str}\n"
+            f"To: {c_email or '(Use official portal)'}\n\n"
+            f"Hello {c_name},\n\n"
+            f"I'm a resident of ___ reading the packet for {plain_title} on {dt_display}. "
+            f"I couldn't find where it says ___.\n\n"
+            f"Could you point me to the section?\n\n"
+            f"Thank you,\n"
+            f"[Your Name]\n"
+            f"[Your phone or address, optional]\n"
+        )
+
+        mailto_link = f"mailto:{c_email}?subject={urllib.parse.quote(subj_str)}&body={urllib.parse.quote(body_str)}" if c_email else portal_url
+        write_btn = f'<a href="{mailto_link}" class="btn-brief" style="font-size: 12px; padding: 4px 10px;">Write</a>' if c_email else f'<a href="{portal_url}" target="_blank" rel="noopener" class="btn-brief" style="font-size: 12px; padding: 4px 10px;">Official Page &rarr;</a>'
+        copy_addr_btn = f'<button type="button" class="btn-secondary" onclick="copyContactAddress(this, \'{html.escape(c_email)}\')" style="font-size: 12px; padding: 4px 10px;">Copy address</button>' if c_email else ""
+        copy_draft_btn = f'<button type="button" class="btn-secondary" onclick="copyDraftText(this)" data-draft="{html.escape(draft_str)}" style="font-size: 12px; padding: 4px 10px;">Copy a starting draft</button>'
+
+        phone_info = f" &bull; {c_phone}" if c_phone else ""
+        email_info = f" &bull; <code>{html.escape(c_email)}</code>" if c_email else ""
+
+        staff_cards_html.append(f"""
+        <div style="background: var(--surface); border: 1px solid var(--rule); padding: 12px 14px; margin-bottom: 10px;">
+            <div style="font-size: 14px; font-weight: 700; color: var(--ink);">{html.escape(c_name)} <span style="font-weight: 400; font-size: 13px; color: var(--ink-muted);">({html.escape(c_role)})</span></div>
+            <div style="font-size: 12px; color: var(--ink-muted); margin: 2px 0 8px 0;">{phone_info}{email_info}</div>
+            <div style="display: flex; gap: 6px; flex-wrap: wrap; align-items: center;">
+                {write_btn}
+                {copy_addr_btn}
+                {copy_draft_btn}
+            </div>
+        </div>
+        """)
+
+    gap_questions = extract_brief_gap_questions(md_source)
+    gap_box_html = ""
+    if gap_questions:
+        items_li = "".join(f"<li style='margin-bottom: 6px;'>{html.escape(q)}</li>" for q in gap_questions)
+        gap_box_html = f"""
+        <div style="margin-top: 12px; padding: 12px 14px; background: #fffcf8; border: 1px solid var(--rule); border-left: 3px solid var(--oxblood); font-size: 13px;">
+            <div style="font-weight: 700; color: var(--oxblood); margin-bottom: 6px;">Questions from this brief to ask staff <span style="font-weight: 400; color: var(--ink-muted);">(optional &mdash; keep, change, or delete; not inserted into email automatically)</span>:</div>
+            <ul style="margin: 0 0 0 18px; padding: 0;">
+                {items_li}
+            </ul>
+        </div>
+        """
+
+    # --- Group B: Tell officials what you think ---
+    members = entity.get("members") or []
+    possible_asks = extract_brief_possible_asks(md_source)
+    asks_box_html = ""
+    if possible_asks:
+        asks_li = "".join(f"<li style='margin-bottom: 6px;'>{html.escape(a)}</li>" for a in possible_asks)
+        asks_box_html = f"""
+        <div style="margin-bottom: 14px; padding: 12px 14px; background: #fffcf8; border: 1px solid var(--rule); border-left: 3px solid var(--oxblood); font-size: 13px;">
+            <div style="font-weight: 700; color: var(--oxblood); margin-bottom: 6px;">Possible asks from this brief <span style="font-weight: 400; color: var(--ink-muted);">(for reference only &mdash; not inserted into email automatically)</span>:</div>
+            <ul style="margin: 0 0 0 18px; padding: 0;">
+                {asks_li}
+            </ul>
+        </div>
+        """
+
+    officials_cards_html = []
+    if members:
+        for m in members:
+            m_name = m.get("name") or "Deciding Member"
+            m_role = m.get("role") or "Elected / Appointed Member"
+            m_email = m.get("email") or entity.get("email")
+
+            subj_str = f"{plain_title}: from {area_name} resident"
+            body_str = (
+                f"Hello {m_name},\n\n"
+                f"I'm writing about {plain_title} on the {dt_display} agenda.\n\n"
+                f"I'm concerned about ___ because ___.\n\n"
+                f"I'd ask that ___.\n\n"
+                f"Thank you for your service.\n"
+            )
+            draft_str = (
+                f"Subject: {subj_str}\n"
+                f"To: {m_email or '(Use official portal)'}\n\n"
+                f"Hello {m_name},\n\n"
+                f"I'm writing about {plain_title} on the {dt_display} agenda.\n\n"
+                f"I'm concerned about ___ because ___.\n\n"
+                f"I'd ask that ___.\n\n"
+                f"Thank you for your service.\n\n"
+                f"[Your Name]\n"
+                f"[Your address or neighborhood]\n"
+            )
+
+            mailto_link = f"mailto:{m_email}?subject={urllib.parse.quote(subj_str)}&body={urllib.parse.quote(body_str)}" if m_email else portal_url
+            write_btn = f'<a href="{mailto_link}" class="btn-brief" style="font-size: 12px; padding: 4px 10px;">Write</a>' if m_email else f'<a href="{portal_url}" target="_blank" rel="noopener" class="btn-brief" style="font-size: 12px; padding: 4px 10px;">Member Directory &rarr;</a>'
+            copy_addr_btn = f'<button type="button" class="btn-secondary" onclick="copyContactAddress(this, \'{html.escape(m_email)}\')" style="font-size: 12px; padding: 4px 10px;">Copy address</button>' if m_email else ""
+            copy_draft_btn = f'<button type="button" class="btn-secondary" onclick="copyDraftText(this)" data-draft="{html.escape(draft_str)}" style="font-size: 12px; padding: 4px 10px;">Copy a starting draft</button>'
+
+            officials_cards_html.append(f"""
+            <div style="background: var(--surface); border: 1px solid var(--rule); padding: 10px 14px; margin-bottom: 8px;">
+                <div style="font-size: 14px; font-weight: 700; color: var(--ink);">{html.escape(m_name)} <span style="font-weight: 400; font-size: 13px; color: var(--ink-muted);">({html.escape(m_role)})</span></div>
+                <div style="display: flex; gap: 6px; flex-wrap: wrap; align-items: center; margin-top: 6px;">
+                    {write_btn}
+                    {copy_addr_btn}
+                    {copy_draft_btn}
+                </div>
+            </div>
+            """)
+    else:
+        officials_cards_html.append(f"""
+        <div style="background: var(--surface); border: 1px solid var(--rule); padding: 12px 14px;">
+            <p style="margin: 0 0 8px 0; font-size: 14px;">Deciding body member roster is available on the official directory:</p>
+            <a href="{portal_url}" target="_blank" rel="noopener" class="btn-brief" style="font-size: 12px;">Visit Official Member Directory &rarr;</a>
+        </div>
+        """)
+
+    # --- Note C: Clerk record submission & Comment Deadline ---
+    clerk_info_str = f"{clerk_name}" if clerk_name else "Clerk of the Board"
+    if clerk_email:
+        clerk_info_str += f" ({clerk_email})"
+    elif clerk_phone:
+        clerk_info_str += f" ({clerk_phone})"
+
+    note_c_html = f"""
+    <div style="margin-top: 14px; padding: 12px 14px; background: #f7f5ed; border: 1px solid var(--rule); border-left: 3px solid var(--oxblood); font-size: 13px; line-height: 1.5;">
+        <div><strong>To put your comments in the official record:</strong> Also send them to the clerk ({html.escape(clerk_info_str)}) or use the <a href="{portal_url}" target="_blank" rel="noopener">official comment portal</a>.</div>
+        <div style="margin-top: 6px;"><strong>Comment deadline:</strong> {deadline_text}</div>
+    </div>
+    """
+
+    verification_html = f"""
+    <div style="margin-top: 14px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--ink-faint);">
+        Contacts verified {last_verified} from official public records &bull; <a href="{source_url}" target="_blank" rel="noopener">Official Source</a>
+    </div>
+    """
+
+    return f"""
+    <div class="brief-contacts-container memo-box" style="margin-top: 28px; margin-bottom: 24px; padding: 20px 22px; background: #fdfbf7;">
+        <h2 class="section-label" style="margin-top: 0; font-size: 18px; color: var(--oxblood);">Who Decides &amp; How to Contact Them</h2>
+        
+        <!-- Group A: Ask staff a question -->
+        <div style="margin-bottom: 24px;">
+            <h3 style="margin: 0 0 4px 0; font-size: 16px; font-weight: 700; color: var(--ink);">A. Ask staff a question <span style="font-weight: 400; font-size: 13px; color: var(--ink-muted);">(for facts and process)</span></h3>
+            <p style="margin: 0 0 12px 0; font-size: 13px; color: var(--ink-muted);">Staff wrote and manage the packet documents. They can clarify sections, explain calculations, or point you to attachments.</p>
+            {''.join(staff_cards_html)}
+            {gap_box_html}
+        </div>
+
+        <!-- Group B: Tell officials what you think -->
+        <div style="margin-bottom: 12px;">
+            <h3 style="margin: 0 0 4px 0; font-size: 16px; font-weight: 700; color: var(--ink);">B. Tell officials what you think <span style="font-weight: 400; font-size: 13px; color: var(--ink-muted);">(for opinions and requests)</span></h3>
+            <p style="margin: 0 0 12px 0; font-size: 13px; color: var(--ink-muted);">Elected and appointed officials make the final decision. Tell them what outcome or amendments you want.</p>
+            {asks_box_html}
+            {''.join(officials_cards_html)}
+            {note_c_html}
+        </div>
+
+        {verification_html}
+    </div>
+    """
+
+
+def build_calendar_picker_widget_html(today_str: str = "2026-10-13", root_prefix: str = "") -> str:
+    """Builds interactive calendar feed subscription widget (.ics) with webcal:// links and Google Calendar copy."""
+    return f"""
+    <div class="calendar-picker-widget" style="background: #ffffff; border: 1px solid var(--rule); border-left: 4px solid var(--oxblood); padding: 20px 22px; margin: 24px 0;">
+        <div class="ledger-meta" style="margin-bottom: 6px;">Calendar Feeds (.ics)</div>
+        <h3 style="margin: 0 0 10px 0; font-size: 18px; font-weight: 700; color: var(--ink);">Subscribe to Hearing &amp; Meeting Calendars</h3>
+        
+        <p style="margin: 0 0 16px 0; font-size: 14px; color: var(--ink-muted); line-height: 1.5;">
+            These calendar feeds update automatically whenever a new edition of Loretta's Ledger is published. Event dates and comment deadlines come strictly from official agenda packets and hearing notices; if a deadline is not documented, please confirm on the official agenda.
+        </p>
+
+        <div style="margin-bottom: 16px;">
+            <label for="cal-feed-select" style="font-weight: 600; font-size: 13px; text-transform: uppercase; letter-spacing: 0.05em; display: block; margin-bottom: 6px;">Select Jurisdiction or Feed:</label>
+            <select id="cal-feed-select" onchange="updateCalendarFeedWidget()" style="font-family: var(--font-serif); font-size: 14px; padding: 6px 10px; border: 1px solid var(--rule-dark); background: var(--bg); max-width: 100%;">
+                <option value="all">Everything (All Matters, Hearings, Deadlines)</option>
+                <option value="thurston">Thurston County (Board of Health, BOCC, Planning Commission)</option>
+                <option value="olympia">City of Olympia (City Council, Planning Commission, Committees)</option>
+                <option value="test-cases">Test Cases Only</option>
+            </select>
+        </div>
+
+        <div id="cal-feed-details" style="background: #faf7f0; border: 1px solid var(--rule); padding: 16px 18px; margin-bottom: 12px;">
+            <div id="cal-feed-title" style="font-weight: 700; font-size: 15px; margin-bottom: 4px; color: var(--ink);">Loretta's Ledger — Everything</div>
+            <div id="cal-feed-desc" style="font-size: 13px; color: var(--ink-muted); margin-bottom: 14px;">All public hearings, votes, and documented comment deadlines across Thurston County and the City of Olympia.</div>
+            
+            <div style="display: flex; gap: 8px; flex-wrap: wrap; align-items: center;">
+                <a id="cal-webcal-link" href="webcal://thecorcoran.github.io/Ledger/calendars/all.ics" class="btn-brief" style="font-size: 12px; padding: 6px 12px;">Subscribe in Calendar</a>
+                <button id="cal-copy-btn" type="button" class="btn-secondary" onclick="copyCalendarLink(this)" data-url="https://thecorcoran.github.io/Ledger/calendars/all.ics" style="font-size: 12px; padding: 6px 12px;">Copy Link for Google Calendar</button>
+                <a id="cal-download-link" href="{root_prefix}calendars/all.ics" download style="font-size: 12px; color: var(--oxblood); text-decoration: underline; margin-left: 6px;">Download .ics file</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    var CAL_FEEDS = {{
+        "all": {{
+            "title": "Loretta's Ledger — Everything",
+            "desc": "All public hearings, votes, and documented comment deadlines across Thurston County and the City of Olympia.",
+            "slug": "all"
+        }},
+        "thurston": {{
+            "title": "Loretta's Ledger — Thurston County",
+            "desc": "Public hearings and deadlines for Thurston County Board of Health, Board of County Commissioners, and Planning Commission.",
+            "slug": "thurston"
+        }},
+        "olympia": {{
+            "title": "Loretta's Ledger — City of Olympia",
+            "desc": "Public hearings and deadlines for Olympia City Council, Planning Commission, and advisory committees.",
+            "slug": "olympia"
+        }},
+        "test-cases": {{
+            "title": "Loretta's Ledger — Test Cases",
+            "desc": "Tracked policy matters designated as test cases for reader verification and public interest.",
+            "slug": "test-cases"
+        }}
+    }};
+
+    function updateCalendarFeedWidget() {{
+        var sel = document.getElementById("cal-feed-select");
+        var key = sel ? sel.value : "all";
+        var feed = CAL_FEEDS[key] || CAL_FEEDS["all"];
+        var titleEl = document.getElementById("cal-feed-title");
+        var descEl = document.getElementById("cal-feed-desc");
+        var webcalEl = document.getElementById("cal-webcal-link");
+        var copyBtn = document.getElementById("cal-copy-btn");
+        var dlLink = document.getElementById("cal-download-link");
+
+        if (titleEl) titleEl.innerText = feed.title;
+        if (descEl) descEl.innerText = feed.desc;
+        var httpUrl = "https://thecorcoran.github.io/Ledger/calendars/" + feed.slug + ".ics";
+        var webcalUrl = "webcal://thecorcoran.github.io/Ledger/calendars/" + feed.slug + ".ics";
+        if (webcalEl) webcalEl.href = webcalUrl;
+        if (copyBtn) copyBtn.setAttribute("data-url", httpUrl);
+        if (dlLink) dlLink.href = "{root_prefix}calendars/" + feed.slug + ".ics";
+    }}
+    </script>
+    """
+
+
+def build_calendar_page_html(today_str: str = "2026-10-13") -> str:
+    """Builds content for calendar.html."""
+    picker_html = build_calendar_picker_widget_html(today_str=today_str, root_prefix="")
+    return f"""
+    <div class="ledger-meta" style="margin-bottom: 12px;">
+        <a href="index.html">&larr; Home</a> &bull; Community Calendar &bull; Updated {html.escape(format_short_date(today_str))}
+    </div>
+
+    <h1 class="headline-title">Meeting &amp; Hearing Calendar Feeds</h1>
+    
+    <p style="font-size: 17px; line-height: 1.5; color: var(--ink); margin-bottom: 20px;">
+        Track local public hearings, formal votes, and comment deadlines in your personal calendar. Loretta's Ledger publishes static, standards-compliant iCalendar (<code style="font-size: 15px;">.ics</code>) feeds according to RFC 5545 with <code style="font-size: 15px;">America/Los_Angeles</code> time zones.
+    </p>
+
+    {picker_html}
+
+    <h2 class="section-label">Feed Standards &amp; Inclusions</h2>
+    <div style="font-size: 15px; line-height: 1.6; margin-bottom: 24px;">
+        <p><strong>What is included:</strong> Feeds include only briefed matters, scheduled public hearings, and documented written comment deadlines. Routine procedural agenda lines are filtered out so your calendar remains uncluttered.</p>
+        <p><strong>Deadline Reminders:</strong> Comment deadline entries feature an automatic 1-day advance notification reminder (<code style="font-size: 13px;">VALARM</code>).</p>
+        <p><strong>Stable Event IDs:</strong> Each policy matter has a permanent UID. If a meeting time changes or a matter is postponed, your calendar app updates the existing event rather than creating a duplicate.</p>
+        <p><strong>Strict Verification:</strong> All dates and deadlines are taken strictly from published agenda packets and hearing notices. If a deadline is not documented, we do not guess; please confirm on the official agenda.</p>
+    </div>
+
+    <h2 class="section-label">How to Subscribe</h2>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; margin-bottom: 32px;">
+        <div style="background: var(--surface); border: 1px solid var(--rule); padding: 16px;">
+            <h3 style="margin: 0 0 6px 0; font-size: 15px; font-weight: 700;">Apple Calendar (Mac / iOS)</h3>
+            <p style="font-size: 13px; color: var(--ink-muted); margin: 0;">Click the "Subscribe in Calendar" button above or open Calendar &rarr; File &rarr; New Calendar Subscription and paste the calendar address.</p>
+        </div>
+        <div style="background: var(--surface); border: 1px solid var(--rule); padding: 16px;">
+            <h3 style="margin: 0 0 6px 0; font-size: 15px; font-weight: 700;">Google Calendar</h3>
+            <p style="font-size: 13px; color: var(--ink-muted); margin: 0;">Click "Copy Link for Google Calendar" above, then open Google Calendar on the web &rarr; Other calendars (+) &rarr; From URL, and paste the link.</p>
+        </div>
+        <div style="background: var(--surface); border: 1px solid var(--rule); padding: 16px;">
+            <h3 style="margin: 0 0 6px 0; font-size: 15px; font-weight: 700;">Microsoft Outlook</h3>
+            <p style="font-size: 13px; color: var(--ink-muted); margin: 0;">In Outlook Calendar, select Add Calendar &rarr; Subscribe from web, paste the link, and choose your preferred refresh interval.</p>
+        </div>
+    </div>
+
+    <div class="memo-box" style="margin-top: 24px; background: #faf7f0;">
+        <div style="font-weight: 700; margin-bottom: 4px;">Looking for advice on testifying or submitting written comment?</div>
+        <div style="font-size: 14px; color: var(--ink-muted); margin-bottom: 8px;">Review our step-by-step participation guide covering comment cutoffs, agenda requests, and email drafting.</div>
+        <a href="how-to-take-part.html" class="btn-secondary">Read How to Take Part &rarr;</a>
+    </div>
+    """
+
+
+def build_how_to_take_part_html(contacts_data: Dict[str, Any], today_str: str = "2026-10-13") -> str:
+    """Builds content for how-to-take-part.html based on user guidance and verified contacts."""
+    contacts_map = contacts_data.get("contacts", {})
+    bodies_order = [
+        ("olympia_council", "Olympia City Council"),
+        ("olympia_planning_commission", "Olympia Planning Commission"),
+        ("olympia_committees", "Olympia advisory committees and boards"),
+        ("thurston_bocc", "Thurston County Board of County Commissioners"),
+        ("thurston_planning_commission", "Thurston County Planning Commission"),
+        ("thurston_boh", "Thurston County Board of Health"),
+    ]
+
+    body_cards_html = []
+    for key, fallback_title in bodies_order:
+        b = contacts_map.get(key, {})
+        b_name = b.get("entity_name") or fallback_title
+        b_role = b.get("role") or "Local Deciding Body"
+        b_schedule = b.get("meeting_schedule") or "Check official calendar"
+        b_comment = b.get("comment_rules") or b.get("comment_info") or "See official agenda packet for comment guidelines."
+        b_agenda = b.get("agenda_request_rules") or "Contact the clerk or department staff to request agenda placement."
+        
+        # Contact string
+        c_name = b.get("contact_name") or b.get("clerk_name") or "Clerk's Office"
+        c_title = b.get("contact_title") or b.get("clerk_title") or ""
+        c_email = b.get("email") or b.get("clerk_email")
+        c_phone = b.get("phone") or b.get("clerk_phone")
+        
+        parts = [c_name]
+        if c_title:
+            parts.append(f"({c_title})")
+        contact_str = " ".join(parts)
+        if c_email:
+            contact_str += f" &bull; <a href='mailto:{c_email}'>{c_email}</a>"
+        if c_phone:
+            contact_str += f" &bull; {c_phone}"
+            
+        b_source = b.get("source_url") or b.get("portal_url") or "#"
+        b_verified = format_short_date(b.get("last_verified") or "2026-10-13")
+
+        body_cards_html.append(f"""
+        <div class="memo-box" style="margin-bottom: 16px; background: var(--surface); padding: 18px 20px; border-left: 4px solid var(--oxblood);">
+            <h3 style="margin: 0 0 2px 0; font-size: 17px; font-weight: 700; color: var(--ink);">{html.escape(b_name)}</h3>
+            <div style="font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--ink-muted); margin-bottom: 12px;">{html.escape(b_role)}</div>
+            
+            <div style="font-size: 14px; margin-bottom: 8px;"><strong>When it meets:</strong> {html.escape(b_schedule)}</div>
+            <div style="font-size: 14px; margin-bottom: 8px;"><strong>How it takes comment:</strong> {html.escape(b_comment)}</div>
+            <div style="font-size: 14px; margin-bottom: 8px;"><strong>How to request an agenda item:</strong> {html.escape(b_agenda)}</div>
+            <div style="font-size: 14px; margin-bottom: 10px;"><strong>Contact:</strong> {contact_str}</div>
+            
+            <div style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--ink-faint); border-top: 1px solid var(--rule); padding-top: 8px;">
+                Last checked: {b_verified} &bull; <a href="{b_source}" target="_blank" rel="noopener">Official Source</a>
+            </div>
+        </div>
+        """)
+
+    picker_html = build_calendar_picker_widget_html(today_str=today_str, root_prefix="")
+
+    return f"""
+    <div class="ledger-meta" style="margin-bottom: 12px;">
+        <a href="index.html">&larr; Home</a> &bull; Public Participation Guide &bull; Updated {html.escape(format_short_date(today_str))}
+    </div>
+
+    <h1 class="headline-title">How to Take Part</h1>
+    
+    <p style="font-size: 18px; line-height: 1.55; color: var(--ink); margin-bottom: 28px; border-bottom: 1px solid var(--rule); padding-bottom: 16px;">
+        You don't need to be an expert to speak up about a local decision. This page covers four things: how to comment on something already scheduled, how to ask for something to be added to an agenda, how to write to staff and to officials, and how to keep track of the dates.
+    </p>
+
+    <!-- Section 1 -->
+    <h2 class="section-label">1. Commenting on an item that is already scheduled</h2>
+    <div style="font-size: 15px; line-height: 1.6; margin-bottom: 24px;">
+        <p>Every brief on this site lists who decides, the meeting date, and the comment deadline when the documents give one. Most bodies take comment in one or more of these ways:</p>
+        <ul class="ledger-list">
+            <li><strong>In writing</strong>, by email or an online form, usually due before the meeting. Some cutoffs are as short as two hours before it starts.</li>
+            <li><strong>In person</strong> at the meeting.</li>
+            <li><strong>By video call</strong>, often with a sign-up that closes before the meeting.</li>
+        </ul>
+        <p>Written comments sent to the clerk or through the official portal go into the record the decision-makers receive. An email sent only to one official may not. When it matters, send it both ways.</p>
+        <p>Deadlines and rules change. Each brief links to the official agenda, and that is the final word.</p>
+    </div>
+
+    <!-- Section 2 -->
+    <h2 class="section-label">2. Asking for something to be added to an agenda</h2>
+    <div style="font-size: 15px; line-height: 1.6; margin-bottom: 20px;">
+        <p>Commenting on a scheduled item is different from asking a body to take something up. Agenda requests usually go to a chair, a mayor, a council member, a commissioner, or a clerk, and often need to be made weeks ahead. The rules differ by body.</p>
+        <p>Below is a short guide for each body we follow. Each entry shows when it meets, how it takes comment, how to ask for an agenda item, who to contact, and the date we last checked.</p>
+    </div>
+
+    {''.join(body_cards_html)}
+
+    <p style="font-size: 13px; color: var(--ink-muted); margin-top: -6px; margin-bottom: 28px;">If a body's rules aren't posted anywhere we can find, we say so and point you to its clerk.</p>
+
+    <!-- Section 3 -->
+    <h2 class="section-label">3. Writing to staff and writing to officials</h2>
+    <div style="font-size: 15px; line-height: 1.6; margin-bottom: 24px;">
+        <p>These are two different kinds of email, and mixing them up is the most common reason a message doesn't land.</p>
+        <p><strong>Staff answer questions.</strong> They wrote or manage the documents, and they can tell you what a section means, where something is, or how a process works. They don't decide the matter, and it isn't fair to ask them to take a side.</p>
+        <p><strong>Officials make decisions.</strong> Council members, commissioners, and board members are the people to tell what you think and what you'd like them to do.</p>
+        
+        <h3 class="subsection-label" style="margin-top: 24px; font-size: 17px;">Writing to staff: asking a question</h3>
+        <ul class="ledger-list">
+            <li>Look in the packet first. If you can't find your answer, say so: <em>"I looked in the packet and couldn't find&hellip;"</em></li>
+            <li>Put the item and date in the subject line.</li>
+            <li>In the first two sentences, say who you are (a resident, and where), which item, and what you're asking.</li>
+            <li>Ask one specific question, ideally one that can be answered in a few lines or with a section number.</li>
+            <li>Keep it to about 100 to 150 words.</li>
+            <li>Write early, so an answer can arrive before the hearing.</li>
+        </ul>
+
+        <div style="background: #ffffff; border: 1px solid var(--rule); border-left: 4px solid var(--oxblood); padding: 16px 20px; margin: 14px 0 24px 0; font-size: 14px; font-style: italic;">
+            <div style="font-style: normal; font-weight: 700; color: var(--oxblood); margin-bottom: 8px;">Example starting draft for staff:</div>
+            <strong>Subject:</strong> Question about [item] ([meeting date])<br><br>
+            Hello [name],<br><br>
+            I'm a resident of [area] reading the packet for [item] on [date]. I couldn't find where it says [what you're looking for]. Could you point me to the section?<br><br>
+            Thank you,<br>
+            [Your name]<br>
+            [Your phone or address, optional]
+        </div>
+
+        <h3 class="subsection-label" style="margin-top: 24px; font-size: 17px;">Writing to officials: telling them what you think</h3>
+        <ul class="ledger-list">
+            <li>Put the item, date, and your position in the subject line: <em>"[Item]: support,"</em> <em>"[Item]: oppose,"</em> or <em>"[Item]: from a resident of [area]."</em></li>
+            <li>State your conclusion in the first sentence: what you're asking them to do (vote yes, vote no, amend, hold a hearing, take more time).</li>
+            <li>Give two or three reasons, grounded in your experience or in the packet. Numbers and specific sections help; general accusations don't.</li>
+            <li>If you have an alternative, say what it is: <em>"Instead of X, please consider Y."</em></li>
+            <li>Thank them for their service, even if you disagree with them.</li>
+            <li>Keep it to about 200 to 300 words.</li>
+        </ul>
+
+        <div style="background: #ffffff; border: 1px solid var(--rule); border-left: 4px solid var(--oxblood); padding: 16px 20px; margin: 14px 0 24px 0; font-size: 14px; font-style: italic;">
+            <div style="font-style: normal; font-weight: 700; color: var(--oxblood); margin-bottom: 8px;">Example starting draft for officials:</div>
+            <strong>Subject:</strong> [Item]: from a [city or area] resident<br><br>
+            Hello [name],<br><br>
+            I'm writing about [item] on the [date] agenda.<br><br>
+            I'm concerned about [specific provision] because [one clear reason].<br><br>
+            I'd ask that you [specific request, such as: amend section X to&hellip;, ask staff for&hellip;, or vote no on&hellip;].<br><br>
+            Thank you for your service to our community.<br><br>
+            [Your name]<br>
+            [Your address or neighborhood &mdash; officials pay closest attention to their own constituents]
+        </div>
+    </div>
+
+    <!-- Section 4 -->
+    <h2 class="section-label">4. Keeping track of the dates</h2>
+    <div style="font-size: 15px; line-height: 1.6;">
+        <p>Subscribe to our static calendar feeds to stay informed about upcoming public hearings, votes, and comment deadlines in your personal calendar.</p>
+    </div>
+
+    {picker_html}
+    """
+
+
 def export_site_content(
     conn,
     out_dirs: Optional[List[Path]] = None,
@@ -1207,6 +1860,7 @@ def export_site_content(
                 old_html.unlink()
 
     stats = {"matters": 0, "briefs": 0, "actors": 0, "test_cases": 0}
+    contacts_data = load_contacts_config()
 
     today_dt = datetime.strptime(today_str[:10], "%Y-%m-%d").date()
     seven_days_ago_str = (today_dt - timedelta(days=7)).strftime("%Y-%m-%d")
@@ -1324,6 +1978,15 @@ def export_site_content(
             else:
                 html_body_with_share = top_share_html + html_body
 
+            # Insert two-group verified contact component into brief
+            contacts_section_html = build_brief_contacts_html(it, contacts_data, md_source=md_source, today_str=today_str)
+            if "<p><strong>Verified Contacts</strong>" in html_body_with_share:
+                html_body_with_contacts = html_body_with_share.split("<p><strong>Verified Contacts</strong>")[0] + contacts_section_html
+            elif "<p><strong>Verified Contacts:" in html_body_with_share:
+                html_body_with_contacts = html_body_with_share.split("<p><strong>Verified Contacts:")[0] + contacts_section_html
+            else:
+                html_body_with_contacts = html_body_with_share + contacts_section_html
+
             timeline_html = build_item_timeline_html(conn, it, it["dedupe_key"], matter=m_rec)
             back_bar = f"""
             <div class="ledger-meta" style="margin-bottom: 12px;">
@@ -1331,7 +1994,7 @@ def export_site_content(
             </div>
             """
             qa_section_html = load_matter_qa_html(m_rec["id"] if m_rec else None, it["id"], it["display_title"])
-            full_brief_html = back_bar + html_body_with_share + bottom_share_html + qa_section_html + timeline_html
+            full_brief_html = back_bar + html_body_with_contacts + bottom_share_html + qa_section_html + timeline_html
             page_html = get_base_html_page(
                 it["display_title"],
                 full_brief_html,
@@ -1467,9 +2130,21 @@ def export_site_content(
         """)
 
     home_content = f"""
-    <p style="font-size: 17px; color: var(--ink); margin-bottom: 28px; border-bottom: 1px solid var(--rule); padding-bottom: 14px;">
+    <p style="font-size: 17px; color: var(--ink); margin-bottom: 24px; border-bottom: 1px solid var(--rule); padding-bottom: 14px;">
         Loretta's Ledger reads Olympia and Thurston County public meeting packets to state plainly what is being decided, who is shaping it, and how residents can weigh in.
     </p>
+
+    <div class="memo-box" style="margin: 0 0 28px 0; background: #faf7f0; border-left: 4px solid var(--oxblood); padding: 14px 18px;">
+        <div class="ledger-meta" style="margin-bottom: 4px;">Public Participation Guide</div>
+        <div style="font-weight: 700; font-size: 16px; margin-bottom: 4px; color: var(--ink);">How to Take Part in Local Decisions</div>
+        <p style="margin: 0 0 10px 0; font-size: 14px; color: var(--ink-muted);">
+            You don't need to be an expert to speak up. Learn how to comment on items already scheduled, how to request a topic on a future agenda, how to write to staff versus elected officials, and subscribe to meeting calendars.
+        </p>
+        <div style="display: flex; gap: 12px; align-items: baseline; flex-wrap: wrap;">
+            <a href="how-to-take-part.html" class="btn-secondary" style="font-size: 12px;">How to Take Part Guide &rarr;</a>
+            <a href="calendar.html" style="font-size: 13px; color: var(--oxblood); text-decoration: underline;">Subscribe to Calendar Feeds (.ics) &rarr;</a>
+        </div>
+    </div>
 
     <h2 class="section-label" style="margin-top: 0;">Worth Your Attention</h2>
     <div>
@@ -1996,13 +2671,18 @@ def export_site_content(
     reading_md_text = reading_md_path.read_text(encoding="utf-8") if reading_md_path.exists() else "# Further Reading\n"
     reading_content = markdown_to_html(reading_md_text)
 
-    # Write canonical pages (Home | Briefs | Who's in the Room | Principles | About + Glossary + Further Reading)
+    how_to_content = build_how_to_take_part_html(contacts_data, today_str=today_str)
+    calendar_content = build_calendar_page_html(today_str=today_str)
+
+    # Write canonical pages (Home | Briefs | Who's in the Room | Principles | About + How to Take Part + Calendar + Glossary + Further Reading)
     pages_to_write = [
         ("index.html", "Home", home_content, "home"),
         ("briefs.html", "Briefs", briefs_index_content, "briefs"),
         ("actors.html", "Who's in the Room", actors_content, "actors"),
         ("principles.html", "Principles", principles_content, "principles"),
         ("about.html", "Why This Exists", about_content, "about"),
+        ("how-to-take-part.html", "How to Take Part in Local Decisions", how_to_content, ""),
+        ("calendar.html", "Meeting & Hearing Calendar Feeds", calendar_content, ""),
         ("glossary.html", "Glossary", glossary_content, ""),
         ("reading.html", "Further Reading", reading_content, ""),
     ]
@@ -2012,6 +2692,11 @@ def export_site_content(
         for out_base in target_dirs:
             with open(out_base / filename, "w", encoding="utf-8") as f:
                 f.write(page_html)
+
+    # Build and export static RFC 5545 iCalendar (.ics) feeds
+    cal_stats = build_and_export_calendars(conn, target_dirs, today_str=today_str)
+    stats["calendar_events"] = cal_stats.get("events_extracted", 0)
+    stats["calendar_feeds"] = cal_stats.get("feeds_generated", 0)
 
     # Write /reading/index.html for clean /reading/ URL
     reading_dir_html = get_base_html_page("Further Reading", reading_content, active_nav="", root_prefix="../")

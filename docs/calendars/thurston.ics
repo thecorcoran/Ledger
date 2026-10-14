@@ -1,0 +1,337 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Loretta's Ledger//Policy Tracker Calendar//EN
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+X-WR-CALNAME:Loretta's Ledger — Thurston County
+X-WR-CALDESC:Public hearings, commissioner votes, and comment deadlines for Thurston County. Dates change; confirm on the official agenda. Updated 2026-10-12.
+X-WR-TIMEZONE:America/Los_Angeles
+BEGIN:VTIMEZONE
+TZID:America/Los_Angeles
+X-LIC-LOCATION:America/Los_Angeles
+BEGIN:DAYLIGHT
+TZOFFSETFROM:-0800
+TZOFFSETTO:-0700
+TZNAME:PDT
+DTSTART:19700308T020000
+RRULE:FREQ=YEARLY;BYMONTH=3;BYDAY=2SU
+END:DAYLIGHT
+BEGIN:STANDARD
+TZOFFSETFROM:-0700
+TZOFFSETTO:-0800
+TZNAME:PST
+DTSTART:19701101T020000
+RRULE:FREQ=YEARLY;BYMONTH=11;BYDAY=1SU
+END:STANDARD
+END:VTIMEZONE
+BEGIN:VEVENT
+UID:ledger-2026-county-road-standards-hearing@lorettas-ledger.local
+DTSTAMP:20261014T081357Z
+DTSTART;TZID=America/Los_Angeles:20260915T140000
+DTEND;TZID=America/Los_Angeles:20260915T153000
+SUMMARY:Public Hearing: County holds hearing on 2026 county road standards
+DESCRIPTION:Thurston County County Commissioners - County holds hearing on 2026 county road standards\n\nBrief: https://thecorcoran.github.io/Ledger/briefs/brief-thurston-bocc-2026-09-15-b207016ba4.html\n\nDates change; confirm on the official agenda.
+URL:https://thecorcoran.github.io/Ledger/briefs/brief-thurston-bocc-2026-09-15-b207016ba4.html
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ledger-2026-county-road-standards-comment-deadline@lorettas-ledger.local
+DTSTAMP:20261014T081357Z
+DTSTART;TZID=America/Los_Angeles:20260915T170000
+DTEND;TZID=America/Los_Angeles:20260915T173000
+SUMMARY:Comment Deadline: County holds hearing on 2026 county road standards
+DESCRIPTION:Written comment deadline for County holds hearing on 2026 county road standards.\n\nReview details and submission contacts: https://thecorcoran.github.io/Ledger/briefs/brief-thurston-bocc-2026-09-15-b207016ba4.html\n\nDates change; confirm on the official agenda.
+URL:https://thecorcoran.github.io/Ledger/briefs/brief-thurston-bocc-2026-09-15-b207016ba4.html
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:Reminder: Comment deadline tomorrow for County holds hearing on 2026 county road standards
+TRIGGER:-P1D
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:ledger-2027-2032-county-tip-hearing@lorettas-ledger.local
+DTSTAMP:20261014T081357Z
+DTSTART;TZID=America/Los_Angeles:20261006T140000
+DTEND;TZID=America/Los_Angeles:20261006T153000
+SUMMARY:Public Hearing: County holds hearing on six-year road and transit plan
+DESCRIPTION:Thurston County County Commissioners - County holds hearing on six-year road and transit plan\n\nBrief: https://thecorcoran.github.io/Ledger/briefs/brief-thurston-bocc-2026-10-06-a0a7e4f88d.html\n\nDates change; confirm on the official agenda.
+URL:https://thecorcoran.github.io/Ledger/briefs/brief-thurston-bocc-2026-10-06-a0a7e4f88d.html
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ledger-2027-2032-county-tip-comment-deadline@lorettas-ledger.local
+DTSTAMP:20261014T081357Z
+DTSTART;TZID=America/Los_Angeles:20261006T170000
+DTEND;TZID=America/Los_Angeles:20261006T173000
+SUMMARY:Comment Deadline: County holds hearing on six-year road and transit plan
+DESCRIPTION:Written comment deadline for County holds hearing on six-year road and transit plan.\n\nReview details and submission contacts: https://thecorcoran.github.io/Ledger/briefs/brief-thurston-bocc-2026-10-06-a0a7e4f88d.html\n\nDates change; confirm on the official agenda.
+URL:https://thecorcoran.github.io/Ledger/briefs/brief-thurston-bocc-2026-10-06-a0a7e4f88d.html
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:Reminder: Comment deadline tomorrow for County holds hearing on six-year road and transit plan
+TRIGGER:-P1D
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:ledger-baldwin-open-space-application-meeting@lorettas-ledger.local
+DTSTAMP:20261014T081357Z
+DTSTART;TZID=America/Los_Angeles:20260902T183000
+DTEND;TZID=America/Los_Angeles:20260902T203000
+SUMMARY:Public Meeting: Planning Commission reviews Baldwin open space tax application
+DESCRIPTION:Thurston County Planning Commission - Planning Commission reviews Baldwin open space tax application\n\nBrief: https://thecorcoran.github.io/Ledger/briefs/brief-thurston-pc-2026-09-02-media-34926.html\n\nDates change; confirm on the official agenda.
+URL:https://thecorcoran.github.io/Ledger/briefs/brief-thurston-pc-2026-09-02-media-34926.html
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ledger-county-road-speed-limit-ordinance-hearing@lorettas-ledger.local
+DTSTAMP:20261014T081357Z
+DTSTART;TZID=America/Los_Angeles:20261006T140000
+DTEND;TZID=America/Los_Angeles:20261006T153000
+SUMMARY:Public Hearing: County holds hearing on county road speed limits
+DESCRIPTION:Thurston County County Commissioners - County holds hearing on county road speed limits\n\nBrief: https://thecorcoran.github.io/Ledger/briefs/brief-thurston-bocc-2026-10-06-1d812203e0.html\n\nDates change; confirm on the official agenda.
+URL:https://thecorcoran.github.io/Ledger/briefs/brief-thurston-bocc-2026-10-06-1d812203e0.html
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ledger-county-road-speed-limit-ordinance-comment-deadline@lorettas-ledger.local
+DTSTAMP:20261014T081357Z
+DTSTART;TZID=America/Los_Angeles:20261006T170000
+DTEND;TZID=America/Los_Angeles:20261006T173000
+SUMMARY:Comment Deadline: County holds hearing on county road speed limits
+DESCRIPTION:Written comment deadline for County holds hearing on county road speed limits.\n\nReview details and submission contacts: https://thecorcoran.github.io/Ledger/briefs/brief-thurston-bocc-2026-10-06-1d812203e0.html\n\nDates change; confirm on the official agenda.
+URL:https://thecorcoran.github.io/Ledger/briefs/brief-thurston-bocc-2026-10-06-1d812203e0.html
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:Reminder: Comment deadline tomorrow for County holds hearing on county road speed limits
+TRIGGER:-P1D
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:ledger-detention-facilities-moratorium-hearing@lorettas-ledger.local
+DTSTAMP:20261014T081357Z
+DTSTART;TZID=America/Los_Angeles:20260805T140000
+DTEND;TZID=America/Los_Angeles:20260805T153000
+SUMMARY:Public Hearing: County holds hearing on pause for detention facilities
+DESCRIPTION:Thurston County County Commissioners - County holds hearing on pause for detention facilities\n\nBrief: https://thecorcoran.github.io/Ledger/briefs/brief-thurston-bocc-2026-08-05-18f44d5240.html\n\nDates change; confirm on the official agenda.
+URL:https://thecorcoran.github.io/Ledger/briefs/brief-thurston-bocc-2026-08-05-18f44d5240.html
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ledger-detention-facilities-moratorium-comment-deadline@lorettas-ledger.local
+DTSTAMP:20261014T081357Z
+DTSTART;TZID=America/Los_Angeles:20260805T170000
+DTEND;TZID=America/Los_Angeles:20260805T173000
+SUMMARY:Comment Deadline: County holds hearing on pause for detention facilities
+DESCRIPTION:Written comment deadline for County holds hearing on pause for detention facilities.\n\nReview details and submission contacts: https://thecorcoran.github.io/Ledger/briefs/brief-thurston-bocc-2026-08-05-18f44d5240.html\n\nDates change; confirm on the official agenda.
+URL:https://thecorcoran.github.io/Ledger/briefs/brief-thurston-bocc-2026-08-05-18f44d5240.html
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:Reminder: Comment deadline tomorrow for County holds hearing on pause for detention facilities
+TRIGGER:-P1D
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:ledger-grand-mound-193rd-rezone-meeting@lorettas-ledger.local
+DTSTAMP:20261014T081357Z
+DTSTART;TZID=America/Los_Angeles:20260916T183000
+DTEND;TZID=America/Los_Angeles:20260916T203000
+SUMMARY:Public Meeting: Planning Commission reviews Grand Mound 193rd land use and zone change
+DESCRIPTION:Thurston County Planning Commission - Planning Commission reviews Grand Mound 193rd land use and zone change\n\nBrief: https://thecorcoran.github.io/Ledger/briefs/brief-thurston-pc-2026-09-16-media-34943.html\n\nDates change; confirm on the official agenda.
+URL:https://thecorcoran.github.io/Ledger/briefs/brief-thurston-pc-2026-09-16-media-34943.html
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ledger-sanitary-code-article-iii-hearing@lorettas-ledger.local
+DTSTAMP:20261014T081357Z
+DTSTART;TZID=America/Los_Angeles:20261013T153000
+DTEND;TZID=America/Los_Angeles:20261013T170000
+SUMMARY:Public Hearing: Health Board weighs updates to county drinking water code
+DESCRIPTION:Thurston County Board of Health - Health Board weighs updates to county drinking water code\n\nBrief: https://thecorcoran.github.io/Ledger/briefs/brief-thurston-bocc-2026-10-13-9809f687c7.html\n\nDates change; confirm on the official agenda.
+URL:https://thecorcoran.github.io/Ledger/briefs/brief-thurston-bocc-2026-10-13-9809f687c7.html
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ledger-sanitary-code-article-iii-comment-deadline@lorettas-ledger.local
+DTSTAMP:20261014T081357Z
+DTSTART;TZID=America/Los_Angeles:20261013T170000
+DTEND;TZID=America/Los_Angeles:20261013T173000
+SUMMARY:Comment Deadline: Health Board weighs updates to county drinking water code
+DESCRIPTION:Written comment deadline for Health Board weighs updates to county drinking water code.\n\nReview details and submission contacts: https://thecorcoran.github.io/Ledger/briefs/brief-thurston-bocc-2026-10-13-9809f687c7.html\n\nDates change; confirm on the official agenda.
+URL:https://thecorcoran.github.io/Ledger/briefs/brief-thurston-bocc-2026-10-13-9809f687c7.html
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:Reminder: Comment deadline tomorrow for Health Board weighs updates to county drinking water code
+TRIGGER:-P1D
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:ledger-south-thurston-economic-initiative-meeting@lorettas-ledger.local
+DTSTAMP:20261014T081357Z
+DTSTART;TZID=America/Los_Angeles:20260918T140000
+DTEND;TZID=America/Los_Angeles:20260918T153000
+SUMMARY:Public Meeting: County reviews South Thurston Economic Development Initiative
+DESCRIPTION:Thurston County County Commissioners - County reviews South Thurston Economic Development Initiative\n\nBrief: https://thecorcoran.github.io/Ledger/briefs/brief-thurston-bocc-2026-09-18-c1ab5b9ce2.html\n\nDates change; confirm on the official agenda.
+URL:https://thecorcoran.github.io/Ledger/briefs/brief-thurston-bocc-2026-09-18-c1ab5b9ce2.html
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ledger-south-thurston-economic-initiative-comment-deadline@lorettas-ledger.local
+DTSTAMP:20261014T081357Z
+DTSTART;TZID=America/Los_Angeles:20260918T170000
+DTEND;TZID=America/Los_Angeles:20260918T173000
+SUMMARY:Comment Deadline: County reviews South Thurston Economic Development Initiative
+DESCRIPTION:Written comment deadline for County reviews South Thurston Economic Development Initiative.\n\nReview details and submission contacts: https://thecorcoran.github.io/Ledger/briefs/brief-thurston-bocc-2026-09-18-c1ab5b9ce2.html\n\nDates change; confirm on the official agenda.
+URL:https://thecorcoran.github.io/Ledger/briefs/brief-thurston-bocc-2026-09-18-c1ab5b9ce2.html
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:Reminder: Comment deadline tomorrow for County reviews South Thurston Economic Development Initiative
+TRIGGER:-P1D
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:ledger-tcc-chapter-2-03-hearing@lorettas-ledger.local
+DTSTAMP:20261014T081357Z
+DTSTART;TZID=America/Los_Angeles:20261006T140000
+DTEND;TZID=America/Los_Angeles:20261006T153000
+SUMMARY:Public Hearing: County holds hearing on Title 2 conduct rules for county buildings
+DESCRIPTION:Thurston County County Commissioners - County holds hearing on Title 2 conduct rules for county buildings\n\nBrief: https://thecorcoran.github.io/Ledger/briefs/brief-thurston-bocc-2026-10-06-f644d79284.html\n\nDates change; confirm on the official agenda.
+URL:https://thecorcoran.github.io/Ledger/briefs/brief-thurston-bocc-2026-10-06-f644d79284.html
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ledger-tcc-chapter-2-03-comment-deadline@lorettas-ledger.local
+DTSTAMP:20261014T081357Z
+DTSTART;TZID=America/Los_Angeles:20261006T170000
+DTEND;TZID=America/Los_Angeles:20261006T173000
+SUMMARY:Comment Deadline: County holds hearing on Title 2 conduct rules for county buildings
+DESCRIPTION:Written comment deadline for County holds hearing on Title 2 conduct rules for county buildings.\n\nReview details and submission contacts: https://thecorcoran.github.io/Ledger/briefs/brief-thurston-bocc-2026-10-06-f644d79284.html\n\nDates change; confirm on the official agenda.
+URL:https://thecorcoran.github.io/Ledger/briefs/brief-thurston-bocc-2026-10-06-f644d79284.html
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:Reminder: Comment deadline tomorrow for County holds hearing on Title 2 conduct rules for county buildings
+TRIGGER:-P1D
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:ledger-tcc-chapter-24-20-meeting@lorettas-ledger.local
+DTSTAMP:20261014T081357Z
+DTSTART;TZID=America/Los_Angeles:20260715T183000
+DTEND;TZID=America/Los_Angeles:20260715T203000
+SUMMARY:Public Meeting: Planning Commission reviews rules for flood areas
+DESCRIPTION:Thurston County Planning Commission - Planning Commission reviews rules for flood areas\n\nBrief: https://thecorcoran.github.io/Ledger/briefs/brief-thurston-pc-2026-07-15-media-33952.html\n\nDates change; confirm on the official agenda.
+URL:https://thecorcoran.github.io/Ledger/briefs/brief-thurston-pc-2026-07-15-media-33952.html
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ledger-tcc-chapter-24-25-meeting@lorettas-ledger.local
+DTSTAMP:20261014T081357Z
+DTSTART;TZID=America/Los_Angeles:20261007T183000
+DTEND;TZID=America/Los_Angeles:20261007T203000
+SUMMARY:Public Meeting: Planning Commission weighs draft rules for fish and wildlife habitat
+DESCRIPTION:Thurston County Planning Commission - Planning Commission weighs draft rules for fish and wildlife habitat\n\nBrief: https://thecorcoran.github.io/Ledger/briefs/brief-thurston-pc-2026-10-07-media-35332.html\n\nDates change; confirm on the official agenda.
+URL:https://thecorcoran.github.io/Ledger/briefs/brief-thurston-pc-2026-10-07-media-35332.html
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ledger-tcc-chapter-24-30-meeting@lorettas-ledger.local
+DTSTAMP:20261014T081357Z
+DTSTART;TZID=America/Los_Angeles:20261007T183000
+DTEND;TZID=America/Los_Angeles:20261007T203000
+SUMMARY:Public Meeting: Planning Commission weighs draft rules for local wetlands
+DESCRIPTION:Thurston County Planning Commission - Planning Commission weighs draft rules for local wetlands\n\nBrief: https://thecorcoran.github.io/Ledger/briefs/brief-thurston-pc-2026-10-07-media-35331.html\n\nDates change; confirm on the official agenda.
+URL:https://thecorcoran.github.io/Ledger/briefs/brief-thurston-pc-2026-10-07-media-35331.html
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ledger-tcc-development-code-new-uses-standards-meeting@lorettas-ledger.local
+DTSTAMP:20261014T081357Z
+DTSTART;TZID=America/Los_Angeles:20260902T183000
+DTEND;TZID=America/Los_Angeles:20260902T203000
+SUMMARY:Public Meeting: Planning Commission weighs New Uses & Standards
+DESCRIPTION:Thurston County Planning Commission - Planning Commission weighs New Uses & Standards\n\nBrief: https://thecorcoran.github.io/Ledger/briefs/brief-thurston-pc-2026-09-02-media-34665.html\n\nDates change; confirm on the official agenda.
+URL:https://thecorcoran.github.io/Ledger/briefs/brief-thurston-pc-2026-09-02-media-34665.html
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ledger-tcd-rate-adjustment-ordinance-hearing@lorettas-ledger.local
+DTSTAMP:20261014T081357Z
+DTSTART;TZID=America/Los_Angeles:20261020T140000
+DTEND;TZID=America/Los_Angeles:20261020T153000
+SUMMARY:Public Hearing: County weighs new rates to fund Thurston Conservation District
+DESCRIPTION:Thurston County County Commissioners - County weighs new rates to fund Thurston Conservation District\n\nBrief: https://thecorcoran.github.io/Ledger/briefs/brief-thurston-bocc-2026-10-20-6123bedc0c.html\n\nDates change; confirm on the official agenda.
+URL:https://thecorcoran.github.io/Ledger/briefs/brief-thurston-bocc-2026-10-20-6123bedc0c.html
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ledger-tcd-rate-adjustment-ordinance-comment-deadline@lorettas-ledger.local
+DTSTAMP:20261014T081357Z
+DTSTART;TZID=America/Los_Angeles:20261020T170000
+DTEND;TZID=America/Los_Angeles:20261020T173000
+SUMMARY:Comment Deadline: County weighs new rates to fund Thurston Conservation District
+DESCRIPTION:Written comment deadline for County weighs new rates to fund Thurston Conservation District.\n\nReview details and submission contacts: https://thecorcoran.github.io/Ledger/briefs/brief-thurston-bocc-2026-10-20-6123bedc0c.html\n\nDates change; confirm on the official agenda.
+URL:https://thecorcoran.github.io/Ledger/briefs/brief-thurston-bocc-2026-10-20-6123bedc0c.html
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:Reminder: Comment deadline tomorrow for County weighs new rates to fund Thurston Conservation District
+TRIGGER:-P1D
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:ledger-thurston-county-commissioner-working-lands-fa-meeting@lorettas-ledger.local
+DTSTAMP:20261014T081357Z
+DTSTART;TZID=America/Los_Angeles:20261005T140000
+DTEND;TZID=America/Los_Angeles:20261005T153000
+SUMMARY:Public Meeting: County Commissioners join Working Lands Farm Tour
+DESCRIPTION:Thurston County County Commissioners - County Commissioners join Working Lands Farm Tour\n\nBrief: https://thecorcoran.github.io/Ledger/briefs/brief-thurston-bocc-2026-10-05-3db1478e76.html\n\nDates change; confirm on the official agenda.
+URL:https://thecorcoran.github.io/Ledger/briefs/brief-thurston-bocc-2026-10-05-3db1478e76.html
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ledger-thurston-county-commissioner-working-lands-fa-comment-deadline@lorettas-ledger.local
+DTSTAMP:20261014T081357Z
+DTSTART;TZID=America/Los_Angeles:20261005T170000
+DTEND;TZID=America/Los_Angeles:20261005T173000
+SUMMARY:Comment Deadline: County Commissioners join Working Lands Farm Tour
+DESCRIPTION:Written comment deadline for County Commissioners join Working Lands Farm Tour.\n\nReview details and submission contacts: https://thecorcoran.github.io/Ledger/briefs/brief-thurston-bocc-2026-10-05-3db1478e76.html\n\nDates change; confirm on the official agenda.
+URL:https://thecorcoran.github.io/Ledger/briefs/brief-thurston-bocc-2026-10-05-3db1478e76.html
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:Reminder: Comment deadline tomorrow for County Commissioners join Working Lands Farm Tour
+TRIGGER:-P1D
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:ledger-yelm-rainier-tenino-trail-transfer-hearing@lorettas-ledger.local
+DTSTAMP:20261014T081357Z
+DTSTART;TZID=America/Los_Angeles:20261020T140000
+DTEND;TZID=America/Los_Angeles:20261020T153000
+SUMMARY:Public Hearing: County holds hearing on transferring part of Yelm-Rainier Tenino Trail
+DESCRIPTION:Thurston County County Commissioners - County holds hearing on transferring part of Yelm-Rainier Tenino Trail\n\nBrief: https://thecorcoran.github.io/Ledger/briefs/brief-thurston-bocc-2026-10-20-bac13684ae.html\n\nDates change; confirm on the official agenda.
+URL:https://thecorcoran.github.io/Ledger/briefs/brief-thurston-bocc-2026-10-20-bac13684ae.html
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:ledger-yelm-rainier-tenino-trail-transfer-comment-deadline@lorettas-ledger.local
+DTSTAMP:20261014T081357Z
+DTSTART;TZID=America/Los_Angeles:20261020T170000
+DTEND;TZID=America/Los_Angeles:20261020T173000
+SUMMARY:Comment Deadline: County holds hearing on transferring part of Yelm-Rainier Tenino Trail
+DESCRIPTION:Written comment deadline for County holds hearing on transferring part of Yelm-Rainier Tenino Trail.\n\nReview details and submission contacts: https://thecorcoran.github.io/Ledger/briefs/brief-thurston-bocc-2026-10-20-bac13684ae.html\n\nDates change; confirm on the official agenda.
+URL:https://thecorcoran.github.io/Ledger/briefs/brief-thurston-bocc-2026-10-20-bac13684ae.html
+STATUS:CONFIRMED
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:Reminder: Comment deadline tomorrow for County holds hearing on transferring part of Yelm-Rainier Tenino Trail
+TRIGGER:-P1D
+END:VALARM
+END:VEVENT
+END:VCALENDAR

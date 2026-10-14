@@ -1,0 +1,50 @@
+# Loretta's Ledger — Calendar Feeds Configuration
+# Feeds are generated as static .ics files at build time.
+# Event types included: hearing, vote, comment_deadline.
+# Rule: Include only briefed matters and hearings, never raw procedural agenda lines.
+
+timezone: "America/Los_Angeles"
+domain: "lorettas-ledger.local"
+base_url: "https://thecorcoran.github.io/Ledger"
+
+feeds:
+  all:
+    slug: "all"
+    filename: "all.ics"
+    title: "Loretta's Ledger — Everything"
+    description: "Public hearings, votes, and comment deadlines across Thurston County and the City of Olympia. Dates change; confirm on the official agenda."
+    filter:
+      jurisdiction: null
+      is_test_case: null
+      topic: null
+
+  olympia:
+    slug: "olympia"
+    filename: "olympia.ics"
+    title: "Loretta's Ledger — City of Olympia"
+    description: "Public hearings, city council votes, and comment deadlines for the City of Olympia. Dates change; confirm on the official agenda."
+    filter:
+      jurisdiction: "olympia"
+      is_test_case: null
+      topic: null
+
+  thurston:
+    slug: "thurston"
+    filename: "thurston.ics"
+    title: "Loretta's Ledger — Thurston County"
+    description: "Public hearings, commissioner votes, and comment deadlines for Thurston County. Dates change; confirm on the official agenda."
+    filter:
+      jurisdiction: "thurston"
+      is_test_case: null
+      topic: null
+
+  test_cases:
+    slug: "test-cases"
+    filename: "test-cases.ics"
+    title: "Loretta's Ledger — Precedent Test Cases"
+    description: "Key precedent-setting policy hearings and comment deadlines flagged as test cases. Dates change; confirm on the official agenda."
+    filter:
+      jurisdiction: null
+      is_test_case: true
+      topic: null
+
