@@ -26,7 +26,7 @@ END:STANDARD
 END:VTIMEZONE
 BEGIN:VEVENT
 UID:ledger-case-25-0980-hearing@lorettas-ledger.local
-DTSTAMP:20261014T081357Z
+DTSTAMP:20261024T091741Z
 DTSTART;TZID=America/Los_Angeles:20260928T100000
 DTEND;TZID=America/Los_Angeles:20260928T120000
 SUMMARY:Public Hearing: Hearing Examiner holds hearing on Springwood Garden subdivision
@@ -36,7 +36,7 @@ STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
 UID:ledger-case-25-1692-hearing@lorettas-ledger.local
-DTSTAMP:20261014T081357Z
+DTSTAMP:20261024T091741Z
 DTSTART;TZID=America/Los_Angeles:20260928T100000
 DTEND;TZID=America/Los_Angeles:20260928T120000
 SUMMARY:Public Hearing: Hearing Examiner holds hearing on West Bay Marina replacement
@@ -45,8 +45,18 @@ URL:https://thecorcoran.github.io/Ledger/briefs/brief-olympia-event-6984-item-10
 STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
+UID:ledger-file-26-0794-meeting@lorettas-ledger.local
+DTSTAMP:20261024T091741Z
+DTSTART;TZID=America/Los_Angeles:20261022T170000
+DTEND;TZID=America/Los_Angeles:20261022T190000
+SUMMARY:Public Meeting: Land Use Committee reviews Critical Areas new law Periodic Update Recommendation
+DESCRIPTION:Olympia Land Use & Environment Committee - Land Use Committee reviews Critical Areas new law Periodic Update Recommendation\n\nBrief: https://thecorcoran.github.io/Ledger/briefs/brief-olympia-event-7179-item-102570.html\n\nDates change; confirm on the official agenda.
+URL:https://thecorcoran.github.io/Ledger/briefs/brief-olympia-event-7179-item-102570.html
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
 UID:ledger-sanitary-code-article-iii-hearing@lorettas-ledger.local
-DTSTAMP:20261014T081357Z
+DTSTAMP:20261024T091741Z
 DTSTART;TZID=America/Los_Angeles:20261013T153000
 DTEND;TZID=America/Los_Angeles:20261013T170000
 SUMMARY:Public Hearing: Health Board weighs updates to county drinking water code
@@ -56,7 +66,7 @@ STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
 UID:ledger-sanitary-code-article-iii-comment-deadline@lorettas-ledger.local
-DTSTAMP:20261014T081357Z
+DTSTAMP:20261024T091741Z
 DTSTART;TZID=America/Los_Angeles:20261013T170000
 DTEND;TZID=America/Los_Angeles:20261013T173000
 SUMMARY:Comment Deadline: Health Board weighs updates to county drinking water code
@@ -71,7 +81,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:ledger-tcc-chapter-24-25-meeting@lorettas-ledger.local
-DTSTAMP:20261014T081357Z
+DTSTAMP:20261024T091741Z
 DTSTART;TZID=America/Los_Angeles:20261007T183000
 DTEND;TZID=America/Los_Angeles:20261007T203000
 SUMMARY:Public Meeting: Planning Commission weighs draft rules for fish and wildlife habitat
@@ -81,7 +91,7 @@ STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
 UID:ledger-tcc-chapter-24-30-meeting@lorettas-ledger.local
-DTSTAMP:20261014T081357Z
+DTSTAMP:20261024T091741Z
 DTSTART;TZID=America/Los_Angeles:20261007T183000
 DTEND;TZID=America/Los_Angeles:20261007T203000
 SUMMARY:Public Meeting: Planning Commission weighs draft rules for local wetlands
@@ -91,7 +101,7 @@ STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
 UID:ledger-tcd-rate-adjustment-ordinance-hearing@lorettas-ledger.local
-DTSTAMP:20261014T081357Z
+DTSTAMP:20261024T091741Z
 DTSTART;TZID=America/Los_Angeles:20261020T140000
 DTEND;TZID=America/Los_Angeles:20261020T153000
 SUMMARY:Public Hearing: County weighs new rates to fund Thurston Conservation District
@@ -101,7 +111,7 @@ STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
 UID:ledger-tcd-rate-adjustment-ordinance-comment-deadline@lorettas-ledger.local
-DTSTAMP:20261014T081357Z
+DTSTAMP:20261024T091741Z
 DTSTART;TZID=America/Los_Angeles:20261020T170000
 DTEND;TZID=America/Los_Angeles:20261020T173000
 SUMMARY:Comment Deadline: County weighs new rates to fund Thurston Conservation District
