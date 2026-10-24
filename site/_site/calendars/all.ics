@@ -26,7 +26,7 @@ END:STANDARD
 END:VTIMEZONE
 BEGIN:VEVENT
 UID:ledger-case-25-0980-hearing@lorettas-ledger.local
-DTSTAMP:20261024T091741Z
+DTSTAMP:20261024T092143Z
 DTSTART;TZID=America/Los_Angeles:20260928T100000
 DTEND;TZID=America/Los_Angeles:20260928T120000
 SUMMARY:Public Hearing: Hearing Examiner holds hearing on Springwood Garden subdivision
@@ -36,7 +36,7 @@ STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
 UID:ledger-case-25-1692-hearing@lorettas-ledger.local
-DTSTAMP:20261024T091741Z
+DTSTAMP:20261024T092143Z
 DTSTART;TZID=America/Los_Angeles:20260928T100000
 DTEND;TZID=America/Los_Angeles:20260928T120000
 SUMMARY:Public Hearing: Hearing Examiner holds hearing on West Bay Marina replacement
@@ -46,7 +46,7 @@ STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
 UID:ledger-case-26-1865-meeting@lorettas-ledger.local
-DTSTAMP:20261024T091741Z
+DTSTAMP:20261024T092143Z
 DTSTART;TZID=America/Los_Angeles:20260917T170000
 DTEND;TZID=America/Los_Angeles:20260917T190000
 SUMMARY:Public Meeting: Design Review Board reviews Palomino Multifamily project design (Case 26-1865)
@@ -56,7 +56,7 @@ STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
 UID:ledger-case-26-4705-meeting@lorettas-ledger.local
-DTSTAMP:20261024T091741Z
+DTSTAMP:20261024T092143Z
 DTSTART;TZID=America/Los_Angeles:20260909T170000
 DTEND;TZID=America/Los_Angeles:20260909T190000
 SUMMARY:Public Meeting: Site Plan Committee reviews Poplar Street parking lot site plan
@@ -66,7 +66,7 @@ STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
 UID:ledger-case-26-4842-meeting@lorettas-ledger.local
-DTSTAMP:20261024T091741Z
+DTSTAMP:20261024T092143Z
 DTSTART;TZID=America/Los_Angeles:20260917T170000
 DTEND;TZID=America/Los_Angeles:20260917T190000
 SUMMARY:Public Meeting: Design Review Board reviews Police Evidence Facility design (Case 26-4842)
@@ -76,7 +76,7 @@ STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
 UID:ledger-case-26-5119-meeting@lorettas-ledger.local
-DTSTAMP:20261024T091741Z
+DTSTAMP:20261024T092143Z
 DTSTART;TZID=America/Los_Angeles:20260914T170000
 DTEND;TZID=America/Los_Angeles:20260914T190000
 SUMMARY:Public Meeting: Heritage Commission reviews heritage permit for French door installation
@@ -86,7 +86,7 @@ STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
 UID:ledger-case-26-5305-meeting@lorettas-ledger.local
-DTSTAMP:20261024T091741Z
+DTSTAMP:20261024T092143Z
 DTSTART;TZID=America/Los_Angeles:20260930T170000
 DTEND;TZID=America/Los_Angeles:20260930T190000
 SUMMARY:Public Meeting: Site Plan Committee reviews Swantown Boatworks yard expansion plan
@@ -96,7 +96,7 @@ STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
 UID:ledger-case-26-5506-meeting@lorettas-ledger.local
-DTSTAMP:20261024T091741Z
+DTSTAMP:20261024T092143Z
 DTSTART;TZID=America/Los_Angeles:20260930T170000
 DTEND;TZID=America/Los_Angeles:20260930T190000
 SUMMARY:Public Meeting: Site Plan Committee reviews Prospect Street multifamily site plan
@@ -106,7 +106,7 @@ STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
 UID:ledger-case-26-5942-meeting@lorettas-ledger.local
-DTSTAMP:20261024T091741Z
+DTSTAMP:20261024T092143Z
 DTSTART;TZID=America/Los_Angeles:20261021T170000
 DTEND;TZID=America/Los_Angeles:20261021T190000
 SUMMARY:Public Meeting: Site Plan Committee reviews Cooper Point Pharmacy drive-through plan
@@ -116,7 +116,7 @@ STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
 UID:ledger-file-26-0513-meeting@lorettas-ledger.local
-DTSTAMP:20261024T091741Z
+DTSTAMP:20261024T092143Z
 DTSTART;TZID=America/Los_Angeles:20260915T173000
 DTEND;TZID=America/Los_Angeles:20260915T200000
 SUMMARY:Public Meeting: City Council approves reappointing David Brine to regional facilities board
@@ -126,7 +126,7 @@ STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
 UID:ledger-file-26-0595-meeting@lorettas-ledger.local
-DTSTAMP:20261024T091741Z
+DTSTAMP:20261024T092143Z
 DTSTART;TZID=America/Los_Angeles:20261006T173000
 DTEND;TZID=America/Los_Angeles:20261006T200000
 SUMMARY:Public Meeting: City Council approves lease for fire vehicle storage
@@ -136,7 +136,7 @@ STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
 UID:ledger-file-26-0618-meeting@lorettas-ledger.local
-DTSTAMP:20261024T091741Z
+DTSTAMP:20261024T092143Z
 DTSTART;TZID=America/Los_Angeles:20260915T173000
 DTEND;TZID=America/Los_Angeles:20260915T200000
 SUMMARY:Public Meeting: City Council approves fire protection agreement with state Enterprise Services
@@ -146,7 +146,7 @@ STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
 UID:ledger-file-26-0624-meeting@lorettas-ledger.local
-DTSTAMP:20261024T091741Z
+DTSTAMP:20261024T092143Z
 DTSTART;TZID=America/Los_Angeles:20260915T173000
 DTEND;TZID=America/Los_Angeles:20260915T200000
 SUMMARY:Public Meeting: City Council approves fire protection agreement with WaTech
@@ -156,7 +156,7 @@ STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
 UID:ledger-file-26-0630-meeting@lorettas-ledger.local
-DTSTAMP:20261024T091741Z
+DTSTAMP:20261024T092143Z
 DTSTART;TZID=America/Los_Angeles:20260915T173000
 DTEND;TZID=America/Los_Angeles:20260915T200000
 SUMMARY:Public Meeting: City Council approves joint funding for Franz Anderson supportive housing
@@ -166,7 +166,7 @@ STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
 UID:ledger-file-26-0651-meeting@lorettas-ledger.local
-DTSTAMP:20261024T091741Z
+DTSTAMP:20261024T092143Z
 DTSTART;TZID=America/Los_Angeles:20260915T173000
 DTEND;TZID=America/Los_Angeles:20260915T200000
 SUMMARY:Public Meeting: City Council approves state grant for police hiring and training
@@ -176,7 +176,7 @@ STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
 UID:ledger-file-26-0660-meeting@lorettas-ledger.local
-DTSTAMP:20261024T091741Z
+DTSTAMP:20261024T092143Z
 DTSTART;TZID=America/Los_Angeles:20260915T173000
 DTEND;TZID=America/Los_Angeles:20260915T200000
 SUMMARY:Public Meeting: City Council approves grant request for Franz Anderson housing
@@ -186,7 +186,7 @@ STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
 UID:ledger-file-26-0662-meeting@lorettas-ledger.local
-DTSTAMP:20261024T091741Z
+DTSTAMP:20261024T092143Z
 DTSTART;TZID=America/Los_Angeles:20260915T173000
 DTEND;TZID=America/Los_Angeles:20260915T200000
 SUMMARY:Public Meeting: City Council approves land sale agreement with Low Income Housing Institute
@@ -196,7 +196,7 @@ STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
 UID:ledger-file-26-0676-meeting@lorettas-ledger.local
-DTSTAMP:20261024T091741Z
+DTSTAMP:20261024T092143Z
 DTSTART;TZID=America/Los_Angeles:20260910T170000
 DTEND;TZID=America/Los_Angeles:20260910T190000
 SUMMARY:Public Meeting: Arts Commission approves Marj Yung Park Public Art Final Design
@@ -206,7 +206,7 @@ STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
 UID:ledger-file-26-0677-meeting@lorettas-ledger.local
-DTSTAMP:20261024T091741Z
+DTSTAMP:20261024T092143Z
 DTSTART;TZID=America/Los_Angeles:20260910T170000
 DTEND;TZID=America/Los_Angeles:20260910T190000
 SUMMARY:Public Meeting: Arts Commission reviews upcoming public calls for art
@@ -216,7 +216,7 @@ STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
 UID:ledger-file-26-0678-meeting@lorettas-ledger.local
-DTSTAMP:20261024T091741Z
+DTSTAMP:20261024T092143Z
 DTSTART;TZID=America/Los_Angeles:20260910T170000
 DTEND;TZID=America/Los_Angeles:20260910T190000
 SUMMARY:Public Meeting: Arts Commission weighs TCMedia Meet & Greet
@@ -226,7 +226,7 @@ STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
 UID:ledger-file-26-0679-meeting@lorettas-ledger.local
-DTSTAMP:20261024T091741Z
+DTSTAMP:20261024T092143Z
 DTSTART;TZID=America/Los_Angeles:20260917T170000
 DTEND;TZID=America/Los_Angeles:20260917T190000
 SUMMARY:Public Meeting: Parks Committee weighs Parks Capital Facilities Plan recommendation
@@ -236,7 +236,7 @@ STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
 UID:ledger-file-26-0683-meeting@lorettas-ledger.local
-DTSTAMP:20261024T091741Z
+DTSTAMP:20261024T092143Z
 DTSTART;TZID=America/Los_Angeles:20260914T170000
 DTEND;TZID=America/Los_Angeles:20260914T190000
 SUMMARY:Public Meeting: Equity Commission weighs Joint Meeting of Regional Equity Advisory Boards
@@ -246,7 +246,7 @@ STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
 UID:ledger-file-26-0686-meeting@lorettas-ledger.local
-DTSTAMP:20261024T091741Z
+DTSTAMP:20261024T092143Z
 DTSTART;TZID=America/Los_Angeles:20260915T173000
 DTEND;TZID=America/Los_Angeles:20260915T200000
 SUMMARY:Public Meeting: City Council reviews draft 2027-2032 Capital Facilities Plan Briefing
@@ -256,7 +256,7 @@ STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
 UID:ledger-file-26-0688-meeting@lorettas-ledger.local
-DTSTAMP:20261024T091741Z
+DTSTAMP:20261024T092143Z
 DTSTART;TZID=America/Los_Angeles:20260915T173000
 DTEND;TZID=America/Los_Angeles:20260915T200000
 SUMMARY:Public Meeting: City Council approves grant request for Harbor Pines housing
@@ -266,7 +266,7 @@ STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
 UID:ledger-file-26-0689-meeting@lorettas-ledger.local
-DTSTAMP:20261024T091741Z
+DTSTAMP:20261024T092143Z
 DTSTART;TZID=America/Los_Angeles:20260915T173000
 DTEND;TZID=America/Los_Angeles:20260915T200000
 SUMMARY:Public Meeting: City Council reviews 2027 budget Update
@@ -276,7 +276,7 @@ STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
 UID:ledger-file-26-0690-meeting@lorettas-ledger.local
-DTSTAMP:20261024T091741Z
+DTSTAMP:20261024T092143Z
 DTSTART;TZID=America/Los_Angeles:20260915T173000
 DTEND;TZID=America/Los_Angeles:20260915T200000
 SUMMARY:Public Meeting: City Council approves 2026 Percival Plinth Project Peoples’ Choice Award
@@ -286,7 +286,7 @@ STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
 UID:ledger-file-26-0693-meeting@lorettas-ledger.local
-DTSTAMP:20261024T091741Z
+DTSTAMP:20261024T092143Z
 DTSTART;TZID=America/Los_Angeles:20261006T173000
 DTEND;TZID=America/Los_Angeles:20261006T200000
 SUMMARY:Public Meeting: City Council approves contract changes for Quince Street Tiny Home Village
@@ -296,7 +296,7 @@ STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
 UID:ledger-file-26-0694-meeting@lorettas-ledger.local
-DTSTAMP:20261024T091741Z
+DTSTAMP:20261024T092143Z
 DTSTART;TZID=America/Los_Angeles:20261006T173000
 DTEND;TZID=America/Los_Angeles:20261006T200000
 SUMMARY:Public Meeting: City Council approves funding changes for Franz Anderson Tiny Home Village
@@ -306,7 +306,7 @@ STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
 UID:ledger-file-26-0697-meeting@lorettas-ledger.local
-DTSTAMP:20261024T091741Z
+DTSTAMP:20261024T092143Z
 DTSTART;TZID=America/Los_Angeles:20260915T173000
 DTEND;TZID=America/Los_Angeles:20260915T200000
 SUMMARY:Public Meeting: City Council approves vehicle repair agreement with state Enterprise Services
@@ -316,7 +316,7 @@ STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
 UID:ledger-file-26-0698-meeting@lorettas-ledger.local
-DTSTAMP:20261024T091741Z
+DTSTAMP:20261024T092143Z
 DTSTART;TZID=America/Los_Angeles:20260918T170000
 DTEND;TZID=America/Los_Angeles:20260918T190000
 SUMMARY:Public Meeting: Land Use Committee reviews development code updates for climate plan
@@ -326,7 +326,7 @@ STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
 UID:ledger-file-26-0700-meeting@lorettas-ledger.local
-DTSTAMP:20261024T091741Z
+DTSTAMP:20261024T092143Z
 DTSTART;TZID=America/Los_Angeles:20260915T173000
 DTEND;TZID=America/Los_Angeles:20260915T200000
 SUMMARY:Public Meeting: City Council backs funding for Deschutes Estuary restoration
@@ -336,7 +336,7 @@ STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
 UID:ledger-file-26-0702-meeting@lorettas-ledger.local
-DTSTAMP:20261024T091741Z
+DTSTAMP:20261024T092143Z
 DTSTART;TZID=America/Los_Angeles:20260915T173000
 DTEND;TZID=America/Los_Angeles:20260915T200000
 SUMMARY:Public Meeting: City Council approves honorary Kato Street name on Cherry Street
@@ -346,7 +346,7 @@ STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
 UID:ledger-file-26-0703-meeting@lorettas-ledger.local
-DTSTAMP:20261024T091741Z
+DTSTAMP:20261024T092143Z
 DTSTART;TZID=America/Los_Angeles:20260915T173000
 DTEND;TZID=America/Los_Angeles:20260915T200000
 SUMMARY:Public Meeting: City Council approves a Right-Of-Way Use Agreement with Olympia Computer LLC
@@ -356,7 +356,7 @@ STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
 UID:ledger-file-26-0704-meeting@lorettas-ledger.local
-DTSTAMP:20261024T091741Z
+DTSTAMP:20261024T092143Z
 DTSTART;TZID=America/Los_Angeles:20260915T173000
 DTEND;TZID=America/Los_Angeles:20260915T200000
 SUMMARY:Public Meeting: City Council approves appointments to Olympia Youth Council
@@ -366,7 +366,7 @@ STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
 UID:ledger-file-26-0706-meeting@lorettas-ledger.local
-DTSTAMP:20261024T091741Z
+DTSTAMP:20261024T092143Z
 DTSTART;TZID=America/Los_Angeles:20260918T170000
 DTEND;TZID=America/Los_Angeles:20260918T190000
 SUMMARY:Public Meeting: Land Use Committee reviews middle housing utility and street rules
@@ -376,7 +376,7 @@ STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
 UID:ledger-file-26-0707-meeting@lorettas-ledger.local
-DTSTAMP:20261024T091741Z
+DTSTAMP:20261024T092143Z
 DTSTART;TZID=America/Los_Angeles:20260921T170000
 DTEND;TZID=America/Los_Angeles:20260921T190000
 SUMMARY:Public Meeting: Finance Committee weighs 2027 utility rates and building fees
@@ -386,7 +386,7 @@ STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
 UID:ledger-file-26-0713-meeting@lorettas-ledger.local
-DTSTAMP:20261024T091741Z
+DTSTAMP:20261024T092143Z
 DTSTART;TZID=America/Los_Angeles:20260916T170000
 DTEND;TZID=America/Los_Angeles:20260916T190000
 SUMMARY:Public Meeting: Bike & Walk Committee reviews sidewalk repair policy
@@ -396,7 +396,7 @@ STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
 UID:ledger-file-26-0714-meeting@lorettas-ledger.local
-DTSTAMP:20261024T091741Z
+DTSTAMP:20261024T092143Z
 DTSTART;TZID=America/Los_Angeles:20260916T170000
 DTEND;TZID=America/Los_Angeles:20260916T190000
 SUMMARY:Public Meeting: Bike & Walk Committee reviews draft 2027-2032 Capital Facilities Plan
@@ -406,7 +406,7 @@ STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
 UID:ledger-file-26-0715-meeting@lorettas-ledger.local
-DTSTAMP:20261024T091741Z
+DTSTAMP:20261024T092143Z
 DTSTART;TZID=America/Los_Angeles:20260916T170000
 DTEND;TZID=America/Los_Angeles:20260916T190000
 SUMMARY:Public Meeting: Bike & Walk Committee weighs Decision on questions for new committee member applications
@@ -416,7 +416,7 @@ STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
 UID:ledger-file-26-0719-meeting@lorettas-ledger.local
-DTSTAMP:20261024T091741Z
+DTSTAMP:20261024T092143Z
 DTSTART;TZID=America/Los_Angeles:20260914T170000
 DTEND;TZID=America/Los_Angeles:20260914T190000
 SUMMARY:Public Meeting: Disability Board approves Case #26-9 Personal Care Products
@@ -426,7 +426,7 @@ STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
 UID:ledger-file-26-0722-meeting@lorettas-ledger.local
-DTSTAMP:20261024T091741Z
+DTSTAMP:20261024T092143Z
 DTSTART;TZID=America/Los_Angeles:20260922T173000
 DTEND;TZID=America/Los_Angeles:20260922T200000
 SUMMARY:Public Meeting: City Council reviews Artesian Commons Discussion
@@ -436,7 +436,7 @@ STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
 UID:ledger-file-26-0724-meeting@lorettas-ledger.local
-DTSTAMP:20261024T091741Z
+DTSTAMP:20261024T092143Z
 DTSTART;TZID=America/Los_Angeles:20260915T173000
 DTEND;TZID=America/Los_Angeles:20260915T200000
 SUMMARY:Public Meeting: City Council opposes Puget Sound Energy 30% rate increase
@@ -446,7 +446,7 @@ STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
 UID:ledger-file-26-0725-meeting@lorettas-ledger.local
-DTSTAMP:20261024T091741Z
+DTSTAMP:20261024T092143Z
 DTSTART;TZID=America/Los_Angeles:20260923T170000
 DTEND;TZID=America/Los_Angeles:20260923T190000
 SUMMARY:Public Meeting: Public Safety Committee reviews Public Safety Update
@@ -456,7 +456,7 @@ STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
 UID:ledger-file-26-0727-hearing@lorettas-ledger.local
-DTSTAMP:20261024T091741Z
+DTSTAMP:20261024T092143Z
 DTSTART;TZID=America/Los_Angeles:20260921T180000
 DTEND;TZID=America/Los_Angeles:20260921T200000
 SUMMARY:Public Hearing: Planning Commission holds hearing on 2027-2032 capital facilities plan
@@ -466,7 +466,7 @@ STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
 UID:ledger-file-26-0728-meeting@lorettas-ledger.local
-DTSTAMP:20261024T091741Z
+DTSTAMP:20261024T092143Z
 DTSTART;TZID=America/Los_Angeles:20260923T170000
 DTEND;TZID=America/Los_Angeles:20260923T190000
 SUMMARY:Public Meeting: Public Safety Committee reviews upcoming public calls for art
@@ -476,7 +476,7 @@ STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
 UID:ledger-file-26-0729-meeting@lorettas-ledger.local
-DTSTAMP:20261024T091741Z
+DTSTAMP:20261024T092143Z
 DTSTART;TZID=America/Los_Angeles:20260921T170000
 DTEND;TZID=America/Los_Angeles:20260921T190000
 SUMMARY:Public Meeting: Finance Committee reviews 2027 Proposed Budget Update
@@ -486,7 +486,7 @@ STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
 UID:ledger-file-26-0730-meeting@lorettas-ledger.local
-DTSTAMP:20261024T091741Z
+DTSTAMP:20261024T092143Z
 DTSTART;TZID=America/Los_Angeles:20260922T173000
 DTEND;TZID=America/Los_Angeles:20260922T200000
 SUMMARY:Public Meeting: Inspire Olympia Cultural Access Program Improvements and Updates Discussion
@@ -496,7 +496,7 @@ STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
 UID:ledger-file-26-0733-meeting@lorettas-ledger.local
-DTSTAMP:20261024T091741Z
+DTSTAMP:20261024T092143Z
 DTSTART;TZID=America/Los_Angeles:20261007T170000
 DTEND;TZID=America/Los_Angeles:20261007T190000
 SUMMARY:Public Meeting: Park District Committee reviews annual report on 2025 park funding compliance
@@ -506,7 +506,7 @@ STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
 UID:ledger-file-26-0735-meeting@lorettas-ledger.local
-DTSTAMP:20261024T091741Z
+DTSTAMP:20261024T092143Z
 DTSTART;TZID=America/Los_Angeles:20260923T170000
 DTEND;TZID=America/Los_Angeles:20260923T190000
 SUMMARY:Public Meeting: Public Safety Committee weighs Council Appointed Advisory Body Recommendations
@@ -516,7 +516,7 @@ STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
 UID:ledger-file-26-0736-meeting@lorettas-ledger.local
-DTSTAMP:20261024T091741Z
+DTSTAMP:20261024T092143Z
 DTSTART;TZID=America/Los_Angeles:20260922T180000
 DTEND;TZID=America/Los_Angeles:20260922T200000
 SUMMARY:Public Meeting: Capital Facilities Plan 2027-2032 Financial Plan Comment Letter Discussion
@@ -526,7 +526,7 @@ STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
 UID:ledger-file-26-0740-meeting@lorettas-ledger.local
-DTSTAMP:20261024T091741Z
+DTSTAMP:20261024T092143Z
 DTSTART;TZID=America/Los_Angeles:20260923T170000
 DTEND;TZID=America/Los_Angeles:20260923T190000
 SUMMARY:Public Meeting: Salary Commission approves 2026 City Council salary schedule
@@ -536,7 +536,7 @@ STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
 UID:ledger-file-26-0742-meeting@lorettas-ledger.local
-DTSTAMP:20261024T091741Z
+DTSTAMP:20261024T092143Z
 DTSTART;TZID=America/Los_Angeles:20260923T170000
 DTEND;TZID=America/Los_Angeles:20260923T190000
 SUMMARY:Public Meeting: Heritage Commission weighs Upcoming Event Plans and Recaps
@@ -546,7 +546,7 @@ STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
 UID:ledger-file-26-0743-meeting@lorettas-ledger.local
-DTSTAMP:20261024T091741Z
+DTSTAMP:20261024T092143Z
 DTSTART;TZID=America/Los_Angeles:20260923T170000
 DTEND;TZID=America/Los_Angeles:20260923T190000
 SUMMARY:Public Meeting: Heritage Commission weighs Committee Reassignments
@@ -556,7 +556,7 @@ STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
 UID:ledger-file-26-0744-meeting@lorettas-ledger.local
-DTSTAMP:20261024T091741Z
+DTSTAMP:20261024T092143Z
 DTSTART;TZID=America/Los_Angeles:20260922T173000
 DTEND;TZID=America/Los_Angeles:20260922T200000
 SUMMARY:Public Meeting: City Council reviews Workers’ Affordability & Protections Discussion
@@ -566,7 +566,7 @@ STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
 UID:ledger-file-26-0747-meeting@lorettas-ledger.local
-DTSTAMP:20261024T091741Z
+DTSTAMP:20261024T092143Z
 DTSTART;TZID=America/Los_Angeles:20260924T170000
 DTEND;TZID=America/Los_Angeles:20260924T190000
 SUMMARY:Public Meeting: Policing Board reviews 2026 Police Auditor semi-annual report
@@ -576,7 +576,7 @@ STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
 UID:ledger-file-26-0751-meeting@lorettas-ledger.local
-DTSTAMP:20261024T091741Z
+DTSTAMP:20261024T092143Z
 DTSTART;TZID=America/Los_Angeles:20261001T170000
 DTEND;TZID=America/Los_Angeles:20261001T190000
 SUMMARY:Public Meeting: Utility Committee reviews Utility update for LOTT Clean Water Alliance
@@ -586,7 +586,7 @@ STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
 UID:ledger-file-26-0753-meeting@lorettas-ledger.local
-DTSTAMP:20261024T091741Z
+DTSTAMP:20261024T092143Z
 DTSTART;TZID=America/Los_Angeles:20261001T170000
 DTEND;TZID=America/Los_Angeles:20261001T190000
 SUMMARY:Public Meeting: Utility Committee reviews draft 2027 utility budget and rates
@@ -596,7 +596,7 @@ STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
 UID:ledger-file-26-0758-meeting@lorettas-ledger.local
-DTSTAMP:20261024T091741Z
+DTSTAMP:20261024T092143Z
 DTSTART;TZID=America/Los_Angeles:20261007T170000
 DTEND;TZID=America/Los_Angeles:20261007T190000
 SUMMARY:Public Meeting: Park District Committee weighs 2027 draft Budget Preview
@@ -606,7 +606,7 @@ STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
 UID:ledger-file-26-0760-meeting@lorettas-ledger.local
-DTSTAMP:20261024T091741Z
+DTSTAMP:20261024T092143Z
 DTSTART;TZID=America/Los_Angeles:20261006T173000
 DTEND;TZID=America/Los_Angeles:20261006T200000
 SUMMARY:Public Meeting: City Council approves bid for Yelm Highway Community Park construction
@@ -616,7 +616,7 @@ STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
 UID:ledger-file-26-0761-meeting@lorettas-ledger.local
-DTSTAMP:20261024T091741Z
+DTSTAMP:20261024T092143Z
 DTSTART;TZID=America/Los_Angeles:20261006T173000
 DTEND;TZID=America/Los_Angeles:20261006T200000
 SUMMARY:Public Meeting: City Council approves school bus funding for cultural access trips
@@ -626,7 +626,7 @@ STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
 UID:ledger-file-26-0762-meeting@lorettas-ledger.local
-DTSTAMP:20261024T091741Z
+DTSTAMP:20261024T092143Z
 DTSTART;TZID=America/Los_Angeles:20261006T173000
 DTEND;TZID=America/Los_Angeles:20261006T200000
 SUMMARY:Public Meeting: City Council approves federal grant for local housing and community aid
@@ -636,7 +636,7 @@ STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
 UID:ledger-file-26-0764-meeting@lorettas-ledger.local
-DTSTAMP:20261024T091741Z
+DTSTAMP:20261024T092143Z
 DTSTART;TZID=America/Los_Angeles:20261006T173000
 DTEND;TZID=America/Los_Angeles:20261006T200000
 SUMMARY:Public Meeting: City Council approves bid for water main seismic valves
@@ -646,7 +646,7 @@ STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
 UID:ledger-file-26-0765-meeting@lorettas-ledger.local
-DTSTAMP:20261024T091741Z
+DTSTAMP:20261024T092143Z
 DTSTART;TZID=America/Los_Angeles:20261006T173000
 DTEND;TZID=America/Los_Angeles:20261006T200000
 SUMMARY:Public Meeting: City Council reviews 2027 dedicated tax and housing budgets
@@ -656,7 +656,7 @@ STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
 UID:ledger-file-26-0766-meeting@lorettas-ledger.local
-DTSTAMP:20261024T091741Z
+DTSTAMP:20261024T092143Z
 DTSTART;TZID=America/Los_Angeles:20261006T173000
 DTEND;TZID=America/Los_Angeles:20261006T200000
 SUMMARY:Public Meeting: City Council weighs 2027 utility rates and building fees
@@ -666,7 +666,7 @@ STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
 UID:ledger-file-26-0773-meeting@lorettas-ledger.local
-DTSTAMP:20261024T091741Z
+DTSTAMP:20261024T092143Z
 DTSTART;TZID=America/Los_Angeles:20261006T173000
 DTEND;TZID=America/Los_Angeles:20261006T200000
 SUMMARY:Public Meeting: City Council approves contract for Hands On Children's Museum expansion
@@ -676,7 +676,7 @@ STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
 UID:ledger-file-26-0774-meeting@lorettas-ledger.local
-DTSTAMP:20261024T091741Z
+DTSTAMP:20261024T092143Z
 DTSTART;TZID=America/Los_Angeles:20261006T173000
 DTEND;TZID=America/Los_Angeles:20261006T200000
 SUMMARY:Public Meeting: City Council approves lease for city garbage truck
@@ -686,7 +686,7 @@ STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
 UID:ledger-file-26-0775-meeting@lorettas-ledger.local
-DTSTAMP:20261024T091741Z
+DTSTAMP:20261024T092143Z
 DTSTART;TZID=America/Los_Angeles:20261022T170000
 DTEND;TZID=America/Los_Angeles:20261022T190000
 SUMMARY:Public Meeting: Land Use Committee reviews Urban Forest Management Plan Discussion
@@ -696,7 +696,7 @@ STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
 UID:ledger-file-26-0776-meeting@lorettas-ledger.local
-DTSTAMP:20261024T091741Z
+DTSTAMP:20261024T092143Z
 DTSTART;TZID=America/Los_Angeles:20261006T173000
 DTEND;TZID=America/Los_Angeles:20261006T200000
 SUMMARY:Public Meeting: City Council weighs funding for school visits to OlyAHA Museum
@@ -706,7 +706,7 @@ STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
 UID:ledger-file-26-0779-meeting@lorettas-ledger.local
-DTSTAMP:20261024T091741Z
+DTSTAMP:20261024T092143Z
 DTSTART;TZID=America/Los_Angeles:20261008T170000
 DTEND;TZID=America/Los_Angeles:20261008T190000
 SUMMARY:Public Meeting: Cultural Access Board weighs City Council Study Session Outcome
@@ -716,7 +716,7 @@ STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
 UID:ledger-file-26-0781-meeting@lorettas-ledger.local
-DTSTAMP:20261024T091741Z
+DTSTAMP:20261024T092143Z
 DTSTART;TZID=America/Los_Angeles:20261006T173000
 DTEND;TZID=America/Los_Angeles:20261006T200000
 SUMMARY:Public Meeting: City Council backs Timberland library levy lid lift
@@ -726,7 +726,7 @@ STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
 UID:ledger-file-26-0782-meeting@lorettas-ledger.local
-DTSTAMP:20261024T091741Z
+DTSTAMP:20261024T092143Z
 DTSTART;TZID=America/Los_Angeles:20261008T170000
 DTEND;TZID=America/Los_Angeles:20261008T190000
 SUMMARY:Public Meeting: Cultural Access Board weighs Recruitment Subcommittee
@@ -736,7 +736,7 @@ STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
 UID:ledger-file-26-0783-meeting@lorettas-ledger.local
-DTSTAMP:20261024T091741Z
+DTSTAMP:20261024T092143Z
 DTSTART;TZID=America/Los_Angeles:20261008T170000
 DTEND;TZID=America/Los_Angeles:20261008T190000
 SUMMARY:Public Meeting: Cultural Access Board weighs Inspire Olympia 2027 Budget
@@ -746,7 +746,7 @@ STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
 UID:ledger-file-26-0784-meeting@lorettas-ledger.local
-DTSTAMP:20261024T091741Z
+DTSTAMP:20261024T092143Z
 DTSTART;TZID=America/Los_Angeles:20261010T170000
 DTEND;TZID=America/Los_Angeles:20261010T190000
 SUMMARY:Public Meeting: Equity Commission approves Equity Commission work plan update
@@ -756,7 +756,7 @@ STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
 UID:ledger-file-26-0788-meeting@lorettas-ledger.local
-DTSTAMP:20261024T091741Z
+DTSTAMP:20261024T092143Z
 DTSTART;TZID=America/Los_Angeles:20261006T173000
 DTEND;TZID=America/Los_Angeles:20261006T200000
 SUMMARY:Public Meeting: City Council weighs funding for downtown seasonal lights
@@ -766,7 +766,7 @@ STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
 UID:ledger-file-26-0789-meeting@lorettas-ledger.local
-DTSTAMP:20261024T091741Z
+DTSTAMP:20261024T092143Z
 DTSTART;TZID=America/Los_Angeles:20261013T173000
 DTEND;TZID=America/Los_Angeles:20261013T200000
 SUMMARY:Public Meeting: City Council reviews One Community Plan Update
@@ -776,7 +776,7 @@ STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
 UID:ledger-file-26-0790-meeting@lorettas-ledger.local
-DTSTAMP:20261024T091741Z
+DTSTAMP:20261024T092143Z
 DTSTART;TZID=America/Los_Angeles:20261007T170000
 DTEND;TZID=America/Los_Angeles:20261007T190000
 SUMMARY:Public Meeting: Parking & Business Board reviews PBIA Phase 2 Discussion
@@ -786,7 +786,7 @@ STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
 UID:ledger-file-26-0792-meeting@lorettas-ledger.local
-DTSTAMP:20261024T091741Z
+DTSTAMP:20261024T092143Z
 DTSTART;TZID=America/Los_Angeles:20261019T170000
 DTEND;TZID=America/Los_Angeles:20261019T190000
 SUMMARY:Public Meeting: Finance Committee reviews Washington Center for the Performing Arts Annual Report
@@ -796,7 +796,7 @@ STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
 UID:ledger-file-26-0793-meeting@lorettas-ledger.local
-DTSTAMP:20261024T091741Z
+DTSTAMP:20261024T092143Z
 DTSTART;TZID=America/Los_Angeles:20261013T173000
 DTEND;TZID=America/Los_Angeles:20261013T200000
 SUMMARY:Public Meeting: City Council reviews community events permit rules and resources
@@ -806,7 +806,7 @@ STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
 UID:ledger-file-26-0794-meeting@lorettas-ledger.local
-DTSTAMP:20261024T091741Z
+DTSTAMP:20261024T092143Z
 DTSTART;TZID=America/Los_Angeles:20261022T170000
 DTEND;TZID=America/Los_Angeles:20261022T190000
 SUMMARY:Public Meeting: Land Use Committee reviews Critical Areas new law Periodic Update Recommendation
@@ -816,7 +816,7 @@ STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
 UID:ledger-file-26-0796-meeting@lorettas-ledger.local
-DTSTAMP:20261024T091741Z
+DTSTAMP:20261024T092143Z
 DTSTART;TZID=America/Los_Angeles:20261015T170000
 DTEND;TZID=America/Los_Angeles:20261015T190000
 SUMMARY:Public Meeting: Parks Committee reviews Recreation Program - Summer Camp Briefing
@@ -826,7 +826,7 @@ STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
 UID:ledger-file-26-0798-meeting@lorettas-ledger.local
-DTSTAMP:20261024T091741Z
+DTSTAMP:20261024T092143Z
 DTSTART;TZID=America/Los_Angeles:20261015T170000
 DTEND;TZID=America/Los_Angeles:20261015T190000
 SUMMARY:Public Meeting: Parks Committee approves Parks Committee work plan update
@@ -836,7 +836,7 @@ STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
 UID:ledger-file-26-0799-meeting@lorettas-ledger.local
-DTSTAMP:20261024T091741Z
+DTSTAMP:20261024T092143Z
 DTSTART;TZID=America/Los_Angeles:20261027T173000
 DTEND;TZID=America/Los_Angeles:20261027T200000
 SUMMARY:Public Meeting: City Council: the Police Guild Collective Bargaining Agreement Contract Extension
@@ -846,7 +846,7 @@ STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
 UID:ledger-file-26-0800-meeting@lorettas-ledger.local
-DTSTAMP:20261024T091741Z
+DTSTAMP:20261024T092143Z
 DTSTART;TZID=America/Los_Angeles:20261015T170000
 DTEND;TZID=America/Los_Angeles:20261015T190000
 SUMMARY:Public Meeting: Lodging Tax Committee reviews 2027 lodging tax tourism grant proposals
@@ -856,7 +856,7 @@ STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
 UID:ledger-file-26-0801-meeting@lorettas-ledger.local
-DTSTAMP:20261024T091741Z
+DTSTAMP:20261024T092143Z
 DTSTART;TZID=America/Los_Angeles:20261019T180000
 DTEND;TZID=America/Los_Angeles:20261019T200000
 SUMMARY:Public Meeting: Planning Commission weighs Discuss the Urban Forest Management Plan
@@ -866,7 +866,7 @@ STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
 UID:ledger-file-26-0806-meeting@lorettas-ledger.local
-DTSTAMP:20261024T091741Z
+DTSTAMP:20261024T092143Z
 DTSTART;TZID=America/Los_Angeles:20261016T170000
 DTEND;TZID=America/Los_Angeles:20261016T190000
 SUMMARY:Public Meeting: Lodging Tax Committee reviews 2027 lodging tax tourism grant proposals
@@ -876,7 +876,7 @@ STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
 UID:ledger-file-26-0810-meeting@lorettas-ledger.local
-DTSTAMP:20261024T091741Z
+DTSTAMP:20261024T092143Z
 DTSTART;TZID=America/Los_Angeles:20261020T173000
 DTEND;TZID=America/Los_Angeles:20261020T200000
 SUMMARY:Public Meeting: City Council approves the Sunsetting of Three Advisory Boards and Restructure of the...
@@ -886,7 +886,7 @@ STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
 UID:ledger-file-26-0812-meeting@lorettas-ledger.local
-DTSTAMP:20261024T091741Z
+DTSTAMP:20261024T092143Z
 DTSTART;TZID=America/Los_Angeles:20261020T173000
 DTEND;TZID=America/Los_Angeles:20261020T200000
 SUMMARY:Public Meeting: City Council reviews 2027 Budget Update
@@ -896,7 +896,7 @@ STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
 UID:ledger-file-26-0813-hearing@lorettas-ledger.local
-DTSTAMP:20261024T091741Z
+DTSTAMP:20261024T092143Z
 DTSTART;TZID=America/Los_Angeles:20261027T173000
 DTEND;TZID=America/Los_Angeles:20261027T200000
 SUMMARY:Public Hearing: City Council: the Preliminary Capital Facilities Plan, 2027-2032 Financial Plan
@@ -906,7 +906,7 @@ STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
 UID:ledger-file-26-0814-meeting@lorettas-ledger.local
-DTSTAMP:20261024T091741Z
+DTSTAMP:20261024T092143Z
 DTSTART;TZID=America/Los_Angeles:20261020T173000
 DTEND;TZID=America/Los_Angeles:20261020T200000
 SUMMARY:Public Meeting: City Council weighs Closed Session Pursuant to RCW 42.30.140 (4)(b) - Labor Negotiations
@@ -916,7 +916,7 @@ STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
 UID:ledger-file-26-0815-meeting@lorettas-ledger.local
-DTSTAMP:20261024T091741Z
+DTSTAMP:20261024T092143Z
 DTSTART;TZID=America/Los_Angeles:20261020T173000
 DTEND;TZID=America/Los_Angeles:20261020T200000
 SUMMARY:Public Meeting: Executive Session Pursuant to RCW 42.30.110(1)(i); Litigation and Potential Litigation
@@ -926,7 +926,7 @@ STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
 UID:ledger-file-26-0816-meeting@lorettas-ledger.local
-DTSTAMP:20261024T091741Z
+DTSTAMP:20261024T092143Z
 DTSTART;TZID=America/Los_Angeles:20261020T173000
 DTEND;TZID=America/Los_Angeles:20261020T200000
 SUMMARY:Public Meeting: Special Recognition - 45 Year Anniversary Delegation Visit to Sister City Kato, Japan
@@ -936,7 +936,7 @@ STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
 UID:ledger-file-26-0817-meeting@lorettas-ledger.local
-DTSTAMP:20261024T091741Z
+DTSTAMP:20261024T092143Z
 DTSTART;TZID=America/Los_Angeles:20261020T173000
 DTEND;TZID=America/Los_Angeles:20261020T200000
 SUMMARY:Public Meeting: City Council approves 2027 City of Olympia Legislative Agenda
@@ -946,7 +946,7 @@ STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
 UID:ledger-file-26-0820-meeting@lorettas-ledger.local
-DTSTAMP:20261024T091741Z
+DTSTAMP:20261024T092143Z
 DTSTART;TZID=America/Los_Angeles:20261019T170000
 DTEND;TZID=America/Los_Angeles:20261019T190000
 SUMMARY:Public Meeting: Finance Committee reviews 2027 Budget Update
@@ -956,7 +956,7 @@ STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
 UID:ledger-file-26-0821-meeting@lorettas-ledger.local
-DTSTAMP:20261024T091741Z
+DTSTAMP:20261024T092143Z
 DTSTART;TZID=America/Los_Angeles:20261027T173000
 DTEND;TZID=America/Los_Angeles:20261027T200000
 SUMMARY:Public Meeting: City Council approves contract for Hands On Children's Museum expansion
@@ -966,7 +966,7 @@ STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
 UID:ledger-file-26-0822-hearing@lorettas-ledger.local
-DTSTAMP:20261024T091741Z
+DTSTAMP:20261024T092143Z
 DTSTART;TZID=America/Los_Angeles:20261027T173000
 DTEND;TZID=America/Los_Angeles:20261027T200000
 SUMMARY:Public Hearing: City Council holds hearing on the Transportation Improvement Program
@@ -976,7 +976,7 @@ STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
 UID:ledger-file-26-0823-meeting@lorettas-ledger.local
-DTSTAMP:20261024T091741Z
+DTSTAMP:20261024T092143Z
 DTSTART;TZID=America/Los_Angeles:20261027T173000
 DTEND;TZID=America/Los_Angeles:20261027T200000
 SUMMARY:Public Meeting: City Council approves the Washington State Department of Transportation...
@@ -986,7 +986,7 @@ STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
 UID:ledger-file-26-0824-meeting@lorettas-ledger.local
-DTSTAMP:20261024T091741Z
+DTSTAMP:20261024T092143Z
 DTSTART;TZID=America/Los_Angeles:20261019T170000
 DTEND;TZID=America/Los_Angeles:20261019T190000
 SUMMARY:Public Meeting: Finance Committee weighs Budget Snapshot: Property Tax
@@ -996,7 +996,7 @@ STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
 UID:ledger-file-26-0827-meeting@lorettas-ledger.local
-DTSTAMP:20261024T091741Z
+DTSTAMP:20261024T092143Z
 DTSTART;TZID=America/Los_Angeles:20261027T173000
 DTEND;TZID=America/Los_Angeles:20261027T200000
 SUMMARY:Public Meeting: City Council approves an new law Amending new law 7475 (Third Quarter Budget Amendment)
@@ -1006,7 +1006,7 @@ STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
 UID:ledger-file-26-0828-meeting@lorettas-ledger.local
-DTSTAMP:20261024T091741Z
+DTSTAMP:20261024T092143Z
 DTSTART;TZID=America/Los_Angeles:20261022T170000
 DTEND;TZID=America/Los_Angeles:20261022T190000
 SUMMARY:Public Meeting: Lodging Tax Committee reviews 2027 lodging tax tourism grant proposals
@@ -1016,7 +1016,7 @@ STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
 UID:ledger-file-26-0829-meeting@lorettas-ledger.local
-DTSTAMP:20261024T091741Z
+DTSTAMP:20261024T092143Z
 DTSTART;TZID=America/Los_Angeles:20261023T170000
 DTEND;TZID=America/Los_Angeles:20261023T190000
 SUMMARY:Public Meeting: Lodging Tax Committee reviews 2027 lodging tax tourism grant proposals
@@ -1026,7 +1026,7 @@ STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
 UID:ledger-file-26-0832-meeting@lorettas-ledger.local
-DTSTAMP:20261024T091741Z
+DTSTAMP:20261024T092143Z
 DTSTART;TZID=America/Los_Angeles:20261027T170000
 DTEND;TZID=America/Los_Angeles:20261027T190000
 SUMMARY:Public Meeting: Metropolitan Park District Board reviews annual report on 2025 park funding compliance
@@ -1036,7 +1036,7 @@ STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
 UID:ledger-file-26-0833-hearing@lorettas-ledger.local
-DTSTAMP:20261024T091741Z
+DTSTAMP:20261024T092143Z
 DTSTART;TZID=America/Los_Angeles:20261027T170000
 DTEND;TZID=America/Los_Angeles:20261027T190000
 SUMMARY:Public Hearing: the 2027 Preliminary Olympia Metropolitan Park District (OMPD) Budget
@@ -1046,7 +1046,7 @@ STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
 UID:ledger-file-26-0834-hearing@lorettas-ledger.local
-DTSTAMP:20261024T091741Z
+DTSTAMP:20261024T092143Z
 DTSTART;TZID=America/Los_Angeles:20261027T170000
 DTEND;TZID=America/Los_Angeles:20261027T190000
 SUMMARY:Public Hearing: the 2027 Olympia Metropolitan Park District (OMPD) Ad Valorem Tax
@@ -1056,7 +1056,7 @@ STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
 UID:ledger-file-26-0835-meeting@lorettas-ledger.local
-DTSTAMP:20261024T091741Z
+DTSTAMP:20261024T092143Z
 DTSTART;TZID=America/Los_Angeles:20261027T173000
 DTEND;TZID=America/Los_Angeles:20261027T200000
 SUMMARY:Public Meeting: City Council approves Policy Changes to the Inspire Olympia Cultural Access Program
@@ -1066,7 +1066,7 @@ STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
 UID:ledger-file-26-0837-meeting@lorettas-ledger.local
-DTSTAMP:20261024T091741Z
+DTSTAMP:20261024T092143Z
 DTSTART;TZID=America/Los_Angeles:20261021T173000
 DTEND;TZID=America/Los_Angeles:20261021T200000
 SUMMARY:Public Meeting: Youth Council reviews Third Places in Olympia Discussion
@@ -1076,7 +1076,7 @@ STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
 UID:ledger-file-26-0838-meeting@lorettas-ledger.local
-DTSTAMP:20261024T091741Z
+DTSTAMP:20261024T092143Z
 DTSTART;TZID=America/Los_Angeles:20261027T173000
 DTEND;TZID=America/Los_Angeles:20261027T200000
 SUMMARY:Public Meeting: City Council reviews Update on Transition of the Olympia Creative District from the...
@@ -1086,7 +1086,7 @@ STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
 UID:ledger-file-26-0839-meeting@lorettas-ledger.local
-DTSTAMP:20261024T091741Z
+DTSTAMP:20261024T092143Z
 DTSTART;TZID=America/Los_Angeles:20261021T173000
 DTEND;TZID=America/Los_Angeles:20261021T200000
 SUMMARY:Public Meeting: Youth Council: Election and Approval of 2026-2027 Youth Council Leadership Positions
@@ -1096,7 +1096,7 @@ STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
 UID:ledger-file-26-0840-hearing@lorettas-ledger.local
-DTSTAMP:20261024T091741Z
+DTSTAMP:20261024T092143Z
 DTSTART;TZID=America/Los_Angeles:20261027T173000
 DTEND;TZID=America/Los_Angeles:20261027T200000
 SUMMARY:Public Hearing: City Council holds hearing on the 2027 draft budget
@@ -1106,7 +1106,7 @@ STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
 UID:ledger-file-26-0841-meeting@lorettas-ledger.local
-DTSTAMP:20261024T091741Z
+DTSTAMP:20261024T092143Z
 DTSTART;TZID=America/Los_Angeles:20261027T173000
 DTEND;TZID=America/Los_Angeles:20261027T200000
 SUMMARY:Public Meeting: City Council reviews Briefing on the Civilian Police Auditor’s 2026 Semi-Annual Report
@@ -1116,7 +1116,7 @@ STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
 UID:ledger-file-26-0842-meeting@lorettas-ledger.local
-DTSTAMP:20261024T091741Z
+DTSTAMP:20261024T092143Z
 DTSTART;TZID=America/Los_Angeles:20261027T173000
 DTEND;TZID=America/Los_Angeles:20261027T200000
 SUMMARY:Public Meeting: City Council weighs Special Recognition - Water Resources Stewardship Calendar Artists
@@ -1126,7 +1126,7 @@ STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
 UID:ledger-file-26-0845-meeting@lorettas-ledger.local
-DTSTAMP:20261024T091741Z
+DTSTAMP:20261024T092143Z
 DTSTART;TZID=America/Los_Angeles:20261028T170000
 DTEND;TZID=America/Los_Angeles:20261028T190000
 SUMMARY:Public Meeting: Heritage Commission reviews Work Plan Review and Discussion
@@ -1136,7 +1136,7 @@ STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
 UID:ledger-file-26-0846-meeting@lorettas-ledger.local
-DTSTAMP:20261024T091741Z
+DTSTAMP:20261024T092143Z
 DTSTART;TZID=America/Los_Angeles:20261028T170000
 DTEND;TZID=America/Los_Angeles:20261028T190000
 SUMMARY:Public Meeting: Heritage Commission weighs PLACES Conference Recap
@@ -1146,7 +1146,7 @@ STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
 UID:ledger-olympia-board-business-meeting@lorettas-ledger.local
-DTSTAMP:20261024T091741Z
+DTSTAMP:20261024T092143Z
 DTSTART;TZID=America/Los_Angeles:20261027T170000
 DTEND;TZID=America/Los_Angeles:20261027T190000
 SUMMARY:Public Meeting: Metropolitan Park District Board weighs BOARD BUSINESS
@@ -1156,7 +1156,7 @@ STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
 UID:ledger-olympia-first-readings-ordinances-meeting@lorettas-ledger.local
-DTSTAMP:20261024T091741Z
+DTSTAMP:20261024T092143Z
 DTSTART;TZID=America/Los_Angeles:20261027T173000
 DTEND;TZID=America/Los_Angeles:20261027T200000
 SUMMARY:Public Meeting: City Council weighs FIRST READINGS (Ordinances)
@@ -1166,7 +1166,7 @@ STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
 UID:ledger-olympia-second-readings-ordinances-meeting@lorettas-ledger.local
-DTSTAMP:20261024T091741Z
+DTSTAMP:20261024T092143Z
 DTSTART;TZID=America/Los_Angeles:20261027T173000
 DTEND;TZID=America/Los_Angeles:20261027T200000
 SUMMARY:Public Meeting: City Council weighs SECOND READINGS (Ordinances)
@@ -1176,7 +1176,7 @@ STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
 UID:ledger-omc-chapter-16-60-meeting@lorettas-ledger.local
-DTSTAMP:20261024T091741Z
+DTSTAMP:20261024T092143Z
 DTSTART;TZID=America/Los_Angeles:20260918T170000
 DTEND;TZID=America/Los_Angeles:20260918T190000
 SUMMARY:Public Meeting: Land Use Committee reviews tree protection rules
@@ -1186,7 +1186,7 @@ STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
 UID:ledger-omc-chapter-18-04-meeting@lorettas-ledger.local
-DTSTAMP:20261024T091741Z
+DTSTAMP:20261024T092143Z
 DTSTART;TZID=America/Los_Angeles:20260918T170000
 DTEND;TZID=America/Los_Angeles:20260918T190000
 SUMMARY:Public Meeting: Land Use Committee weighs rule changes for home-based businesses
@@ -1196,7 +1196,7 @@ STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
 UID:ledger-omc-chapter-18-38-hearing@lorettas-ledger.local
-DTSTAMP:20261024T091741Z
+DTSTAMP:20261024T092143Z
 DTSTART;TZID=America/Los_Angeles:20261019T180000
 DTEND;TZID=America/Los_Angeles:20261019T200000
 SUMMARY:Public Hearing: Planning Commission weighs changes to minimum parking rules
@@ -1206,7 +1206,7 @@ STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
 UID:ledger-omc-chapter-18-76-meeting@lorettas-ledger.local
-DTSTAMP:20261024T091741Z
+DTSTAMP:20261024T092143Z
 DTSTART;TZID=America/Los_Angeles:20261027T173000
 DTEND;TZID=America/Los_Angeles:20261027T200000
 SUMMARY:Public Meeting: City Council approves an new law Amending Olympia Municipal Code Chapter 2.100....
@@ -1216,7 +1216,7 @@ STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
 UID:ledger-omc-title-18-cao-hearing@lorettas-ledger.local
-DTSTAMP:20261024T091741Z
+DTSTAMP:20261024T092143Z
 DTSTART;TZID=America/Los_Angeles:20261005T180000
 DTEND;TZID=America/Los_Angeles:20261005T200000
 SUMMARY:Public Hearing: Planning Commission holds hearing on critical area land rules
@@ -1226,7 +1226,7 @@ STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
 UID:ledger-2026-county-road-standards-hearing@lorettas-ledger.local
-DTSTAMP:20261024T091741Z
+DTSTAMP:20261024T092143Z
 DTSTART;TZID=America/Los_Angeles:20260915T140000
 DTEND;TZID=America/Los_Angeles:20260915T153000
 SUMMARY:Public Hearing: County holds hearing on 2026 county road standards
@@ -1236,7 +1236,7 @@ STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
 UID:ledger-2026-county-road-standards-comment-deadline@lorettas-ledger.local
-DTSTAMP:20261024T091741Z
+DTSTAMP:20261024T092143Z
 DTSTART;TZID=America/Los_Angeles:20260915T170000
 DTEND;TZID=America/Los_Angeles:20260915T173000
 SUMMARY:Comment Deadline: County holds hearing on 2026 county road standards
@@ -1251,7 +1251,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:ledger-2027-2032-county-tip-hearing@lorettas-ledger.local
-DTSTAMP:20261024T091741Z
+DTSTAMP:20261024T092143Z
 DTSTART;TZID=America/Los_Angeles:20261006T140000
 DTEND;TZID=America/Los_Angeles:20261006T153000
 SUMMARY:Public Hearing: County holds hearing on six-year road and transit plan
@@ -1261,7 +1261,7 @@ STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
 UID:ledger-2027-2032-county-tip-comment-deadline@lorettas-ledger.local
-DTSTAMP:20261024T091741Z
+DTSTAMP:20261024T092143Z
 DTSTART;TZID=America/Los_Angeles:20261006T170000
 DTEND;TZID=America/Los_Angeles:20261006T173000
 SUMMARY:Comment Deadline: County holds hearing on six-year road and transit plan
@@ -1276,7 +1276,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:ledger-baldwin-open-space-application-meeting@lorettas-ledger.local
-DTSTAMP:20261024T091741Z
+DTSTAMP:20261024T092143Z
 DTSTART;TZID=America/Los_Angeles:20260902T183000
 DTEND;TZID=America/Los_Angeles:20260902T203000
 SUMMARY:Public Meeting: Planning Commission reviews Baldwin open space tax application
@@ -1286,7 +1286,7 @@ STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
 UID:ledger-county-road-speed-limit-ordinance-hearing@lorettas-ledger.local
-DTSTAMP:20261024T091741Z
+DTSTAMP:20261024T092143Z
 DTSTART;TZID=America/Los_Angeles:20261006T140000
 DTEND;TZID=America/Los_Angeles:20261006T153000
 SUMMARY:Public Hearing: County holds hearing on county road speed limits
@@ -1296,7 +1296,7 @@ STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
 UID:ledger-county-road-speed-limit-ordinance-comment-deadline@lorettas-ledger.local
-DTSTAMP:20261024T091741Z
+DTSTAMP:20261024T092143Z
 DTSTART;TZID=America/Los_Angeles:20261006T170000
 DTEND;TZID=America/Los_Angeles:20261006T173000
 SUMMARY:Comment Deadline: County holds hearing on county road speed limits
@@ -1311,7 +1311,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:ledger-detention-facilities-moratorium-hearing@lorettas-ledger.local
-DTSTAMP:20261024T091741Z
+DTSTAMP:20261024T092143Z
 DTSTART;TZID=America/Los_Angeles:20260805T140000
 DTEND;TZID=America/Los_Angeles:20260805T153000
 SUMMARY:Public Hearing: County holds hearing on pause for detention facilities
@@ -1321,7 +1321,7 @@ STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
 UID:ledger-detention-facilities-moratorium-comment-deadline@lorettas-ledger.local
-DTSTAMP:20261024T091741Z
+DTSTAMP:20261024T092143Z
 DTSTART;TZID=America/Los_Angeles:20260805T170000
 DTEND;TZID=America/Los_Angeles:20260805T173000
 SUMMARY:Comment Deadline: County holds hearing on pause for detention facilities
@@ -1336,7 +1336,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:ledger-grand-mound-193rd-rezone-meeting@lorettas-ledger.local
-DTSTAMP:20261024T091741Z
+DTSTAMP:20261024T092143Z
 DTSTART;TZID=America/Los_Angeles:20260916T183000
 DTEND;TZID=America/Los_Angeles:20260916T203000
 SUMMARY:Public Meeting: Planning Commission reviews Grand Mound 193rd land use and zone change
@@ -1346,7 +1346,7 @@ STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
 UID:ledger-sanitary-code-article-iii-hearing@lorettas-ledger.local
-DTSTAMP:20261024T091741Z
+DTSTAMP:20261024T092143Z
 DTSTART;TZID=America/Los_Angeles:20261013T153000
 DTEND;TZID=America/Los_Angeles:20261013T170000
 SUMMARY:Public Hearing: Health Board weighs updates to county drinking water code
@@ -1356,7 +1356,7 @@ STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
 UID:ledger-sanitary-code-article-iii-comment-deadline@lorettas-ledger.local
-DTSTAMP:20261024T091741Z
+DTSTAMP:20261024T092143Z
 DTSTART;TZID=America/Los_Angeles:20261013T170000
 DTEND;TZID=America/Los_Angeles:20261013T173000
 SUMMARY:Comment Deadline: Health Board weighs updates to county drinking water code
@@ -1371,7 +1371,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:ledger-south-thurston-economic-initiative-meeting@lorettas-ledger.local
-DTSTAMP:20261024T091741Z
+DTSTAMP:20261024T092143Z
 DTSTART;TZID=America/Los_Angeles:20260918T140000
 DTEND;TZID=America/Los_Angeles:20260918T153000
 SUMMARY:Public Meeting: County reviews South Thurston Economic Development Initiative
@@ -1381,7 +1381,7 @@ STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
 UID:ledger-south-thurston-economic-initiative-comment-deadline@lorettas-ledger.local
-DTSTAMP:20261024T091741Z
+DTSTAMP:20261024T092143Z
 DTSTART;TZID=America/Los_Angeles:20260918T170000
 DTEND;TZID=America/Los_Angeles:20260918T173000
 SUMMARY:Comment Deadline: County reviews South Thurston Economic Development Initiative
@@ -1396,7 +1396,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:ledger-tcc-chapter-2-03-hearing@lorettas-ledger.local
-DTSTAMP:20261024T091741Z
+DTSTAMP:20261024T092143Z
 DTSTART;TZID=America/Los_Angeles:20261006T140000
 DTEND;TZID=America/Los_Angeles:20261006T153000
 SUMMARY:Public Hearing: County holds hearing on Title 2 conduct rules for county buildings
@@ -1406,7 +1406,7 @@ STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
 UID:ledger-tcc-chapter-2-03-comment-deadline@lorettas-ledger.local
-DTSTAMP:20261024T091741Z
+DTSTAMP:20261024T092143Z
 DTSTART;TZID=America/Los_Angeles:20261006T170000
 DTEND;TZID=America/Los_Angeles:20261006T173000
 SUMMARY:Comment Deadline: County holds hearing on Title 2 conduct rules for county buildings
@@ -1421,7 +1421,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:ledger-tcc-chapter-24-20-meeting@lorettas-ledger.local
-DTSTAMP:20261024T091741Z
+DTSTAMP:20261024T092143Z
 DTSTART;TZID=America/Los_Angeles:20260715T183000
 DTEND;TZID=America/Los_Angeles:20260715T203000
 SUMMARY:Public Meeting: Planning Commission reviews rules for flood areas
@@ -1431,7 +1431,7 @@ STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
 UID:ledger-tcc-chapter-24-25-meeting@lorettas-ledger.local
-DTSTAMP:20261024T091741Z
+DTSTAMP:20261024T092143Z
 DTSTART;TZID=America/Los_Angeles:20261007T183000
 DTEND;TZID=America/Los_Angeles:20261007T203000
 SUMMARY:Public Meeting: Planning Commission weighs draft rules for fish and wildlife habitat
@@ -1441,7 +1441,7 @@ STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
 UID:ledger-tcc-chapter-24-30-meeting@lorettas-ledger.local
-DTSTAMP:20261024T091741Z
+DTSTAMP:20261024T092143Z
 DTSTART;TZID=America/Los_Angeles:20261007T183000
 DTEND;TZID=America/Los_Angeles:20261007T203000
 SUMMARY:Public Meeting: Planning Commission weighs draft rules for local wetlands
@@ -1451,7 +1451,7 @@ STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
 UID:ledger-tcc-development-code-new-uses-standards-meeting@lorettas-ledger.local
-DTSTAMP:20261024T091741Z
+DTSTAMP:20261024T092143Z
 DTSTART;TZID=America/Los_Angeles:20260902T183000
 DTEND;TZID=America/Los_Angeles:20260902T203000
 SUMMARY:Public Meeting: Planning Commission weighs New Uses & Standards
@@ -1461,7 +1461,7 @@ STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
 UID:ledger-tcd-rate-adjustment-ordinance-hearing@lorettas-ledger.local
-DTSTAMP:20261024T091741Z
+DTSTAMP:20261024T092143Z
 DTSTART;TZID=America/Los_Angeles:20261020T140000
 DTEND;TZID=America/Los_Angeles:20261020T153000
 SUMMARY:Public Hearing: County weighs new rates to fund Thurston Conservation District
@@ -1471,7 +1471,7 @@ STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
 UID:ledger-tcd-rate-adjustment-ordinance-comment-deadline@lorettas-ledger.local
-DTSTAMP:20261024T091741Z
+DTSTAMP:20261024T092143Z
 DTSTART;TZID=America/Los_Angeles:20261020T170000
 DTEND;TZID=America/Los_Angeles:20261020T173000
 SUMMARY:Comment Deadline: County weighs new rates to fund Thurston Conservation District
@@ -1486,7 +1486,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:ledger-thurston-county-commissioner-working-lands-fa-meeting@lorettas-ledger.local
-DTSTAMP:20261024T091741Z
+DTSTAMP:20261024T092143Z
 DTSTART;TZID=America/Los_Angeles:20261005T140000
 DTEND;TZID=America/Los_Angeles:20261005T153000
 SUMMARY:Public Meeting: County Commissioners join Working Lands Farm Tour
@@ -1496,7 +1496,7 @@ STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
 UID:ledger-thurston-county-commissioner-working-lands-fa-comment-deadline@lorettas-ledger.local
-DTSTAMP:20261024T091741Z
+DTSTAMP:20261024T092143Z
 DTSTART;TZID=America/Los_Angeles:20261005T170000
 DTEND;TZID=America/Los_Angeles:20261005T173000
 SUMMARY:Comment Deadline: County Commissioners join Working Lands Farm Tour
@@ -1511,7 +1511,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:ledger-yelm-rainier-tenino-trail-transfer-hearing@lorettas-ledger.local
-DTSTAMP:20261024T091741Z
+DTSTAMP:20261024T092143Z
 DTSTART;TZID=America/Los_Angeles:20261020T140000
 DTEND;TZID=America/Los_Angeles:20261020T153000
 SUMMARY:Public Hearing: County holds hearing on transferring part of Yelm-Rainier Tenino Trail
@@ -1521,7 +1521,7 @@ STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
 UID:ledger-yelm-rainier-tenino-trail-transfer-comment-deadline@lorettas-ledger.local
-DTSTAMP:20261024T091741Z
+DTSTAMP:20261024T092143Z
 DTSTART;TZID=America/Los_Angeles:20261020T170000
 DTEND;TZID=America/Los_Angeles:20261020T173000
 SUMMARY:Comment Deadline: County holds hearing on transferring part of Yelm-Rainier Tenino Trail
